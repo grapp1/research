@@ -12,10 +12,10 @@ library(reshape2)
 library(metR)
 library(dplyr)
 
-source("~/gr_spinup/scripts/PFB-ReadFcn.R")
-source("~/gr_spinup/scripts/storagecalc.R")
-source("~/gr_spinup/scripts/flow.R")
-source("~/gr_spinup/scripts/surface_outflow_fxn.R")
+source("~/research/scripts/PFB-ReadFcn.R")
+source("~/research/scripts/storagecalc.R")
+source("~/research/scripts/flow.R")
+source("~/research/scripts/surface_outflow_fxn.R")
 #setwd("/Users/grapp/Desktop/working/Outputs/spn4_v2_outputs_20190611")
 
 nx <- 91
@@ -27,9 +27,9 @@ dx <- 90
 plotting <- FALSE
 
 # the gridded data frames will be read into the surface outflow calculation function
-slo_x_grid <- data.frame(readpfb("~/gr_spinup/domain/garrett.slopex.pfb", verbose=F))
-slo_y_grid <- data.frame(readpfb("~/gr_spinup/domain/garrett.slopey.pfb", verbose=F))
-#dem_grid <- data.frame(readpfb("~/gr_spinup/domain/dem.pfb", verbose=F))
+slo_x_grid <- data.frame(readpfb("~/research/domain/garrett.slopex.pfb", verbose=F))
+slo_y_grid <- data.frame(readpfb("~/research/domain/garrett.slopey.pfb", verbose=F))
+#dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
 dem_grid <- data.frame(readpfb("/Users/grapp/Desktop/working/workflow/dem_v2.pfb", verbose=F))
 
 
@@ -39,8 +39,8 @@ for(i in 1:ny){
   names(dem_grid)[i] <- i
 }
 
-save(slo_x_grid,file="~/gr_spinup/domain/slo_x_grid.Rda")
-save(slo_y_grid,file="~/gr_spinup/domain/slo_y_grid.Rda")
+save(slo_x_grid,file="~/research/domain/slo_x_grid.Rda")
+save(slo_y_grid,file="~/research/domain/slo_y_grid.Rda")
 
 #slo_x_grid <- slo_x_grid[ , order(names(slo_x_grid))]
   
@@ -55,7 +55,7 @@ colnames(slopes) <- c("Y","X","xslope")
 slopes$yslope <- slo_y$value
 slopes <- inner_join(slopes, dem, by = c("Y","X"))
 slopes$smag <- (slopes$yslope**2 + slopes$xslope**2)**0.5
-save(slopes,file="~/gr_spinup/domain/domain_df.Rda")
+save(slopes,file="~/research/domain/domain_df.Rda")
 
 if(plotting == TRUE){
   dem_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = elev), colour = "black") + 
@@ -88,12 +88,12 @@ if(plotting == TRUE){
 
 qout_time_series <- data.frame(time=integer(limit), outflow_cms=double(limit))
 for(k in 1:limit){
-  qout_time_series$time[k] <- k*1000
-  qout_time_series$outflow_cms[k] <- (surface_outflow(dx, all_press[,,20,k], slo_x_grid, slo_y_grid, nx, ny, 5.52e-6)/3600)
+  qout_time_series$time[k] <- k*10000
+  qout_time_series$outflow_cms[k] <- (surface_outflow(dx, all_press[,,20,k], slo_x_grid, slo_y_grid, nx, ny, 5.52e-6,1,20)/3600)
 }
 
 outflow <- ggplot(qout_time_series, aes(x=time, y=outflow_cms)) + geom_line() + 
   scale_y_continuous(name="Outflow (cms)", limits = c(0,1)) + scale_x_continuous(name="Time (hours)",labels=scales::comma) +
-  ggtitle("Outflow from domain - Final iteration of Spin-up run #5")
+  ggtitle("Outflow from watershed - Spin-up run #6")
 outflow
 
