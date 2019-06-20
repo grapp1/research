@@ -13,11 +13,11 @@ library(plot3D)
 library(ggplot2)
 library(reshape2)
 
-source("~/gr_spinup/scripts/PFB-ReadFcn.R")
-source("~/gr_spinup/scripts/storagecalc.R")
-source("~/gr_spinup/scripts/heatmap_function.R")
-source("~/gr_spinup/scripts/water_table_elev_function.R")
-setwd("~/gr_spinup/spn6_outputs_20190620")
+source("~/research/scripts/PFB-ReadFcn.R")
+source("~/research/scripts/storagecalc.R")
+source("~/research/scripts/heatmap_function.R")
+source("~/research/scripts/water_table_elev_function.R")
+setwd("~/Desktop/spn6_outputs_20190620")
 save <- 0 # 1 to save, anything else to just display charts
 
 nx <- 91
@@ -119,13 +119,13 @@ if(save == 1){
   
 } else {
   
-  plot(storage,type="l",col="blue", main=paste("Storage for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (thousands of hours)")
+  plot(storage,type="l",col="blue", main=paste("Storage for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
   
   plot(rate_storage,type="l",col="green",log="y",ylab="Storage change divided by inflow (percent)",xlab="Time (thousands of hours)",
        main=paste("Percentage storage change for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5)
   
   pct <- ggplot(cell_chg_pct_melt, aes(x=timestep, y=value, col=percentile)) + geom_line() + 
-    scale_y_continuous(name="Storge change percentage",trans='log10') + scale_x_continuous(name="Timestep (thousands of hours)") +
+    scale_y_continuous(name="Storge change percentage",trans='log10') + scale_x_continuous(name="Timestep (x 10,000 hours)") +
     ggtitle("Percentiles of storage change percentages for cells across the domain")
   pct
   
@@ -133,12 +133,12 @@ if(save == 1){
           ticktype="detailed",xlab="X-grid", ylab="Y-grid", zlab="Head (m above bottom)", 
           main="Percentage change in storage by cell")
   
-  hm <- heat_map(nx,ny,20,0.1,0,0.2,press_files[limit],paste(limit-1,",000", sep=""))
+  hm <- heat_map(nx,ny,20,0,0,0.01,press_files[limit],paste((limit-1)*10,",000", sep=""))
   hm
   
   heat_map(nx,ny,1,0.1,400,1100,press_files[limit],paste(limit-1,",000", sep=""))
   
-  wt <- water_table_elev(nx,ny,1,200,-150,600,press_files[limit],paste("240,000",sep=""),2)
+  wt <- water_table_elev(nx,ny,1,200,-200,600,press_files[limit],paste((limit-1)*10,",000", sep=""),100,2)
   wt
   
 }

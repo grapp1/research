@@ -37,10 +37,10 @@ water_table_elev <- function(nx,ny,layer_num,layer_thickness,lim_lo,lim_hi,press
     ggtitle(paste("Depth to water (m) at t =", time,"hours")) + labs(fill = "Depth to water (m)")
   
   if(contour_int != 0){
-    contours <- matrix()
+    contours <- matrix(seq(lim_lo,lim_hi,contour_int))
     
-    wt_dtw_map <- wt_dtw_map +geom_contour(aes(z = water_table$wt_dtw), colour = "black", breaks=100) + 
-      geom_text_contour(aes(z = water_table$wt_dtw), stroke=0.2, min.size = 10)
+    wt_dtw_map <- wt_dtw_map +geom_contour(aes(z = water_table$wt_dtw), colour = "black", breaks=c(contours)) + 
+      geom_text_contour(aes(z = water_table$wt_dtw), stroke=0.2, min.size = 10, breaks=c(contours))
   }
   
   
