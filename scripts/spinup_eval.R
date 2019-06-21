@@ -17,7 +17,7 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-setwd("~/Desktop/spn6_outputs_20190620")
+setwd("~/research/spn6_outputs_20190620")
 save <- 0 # 1 to save, anything else to just display charts
 
 nx <- 91

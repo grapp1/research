@@ -7,7 +7,7 @@ water_table_elev <- function(nx,ny,layer_num,layer_thickness,lim_lo,lim_hi,press
   library(metR)
   source("~/gr_spinup/scripts/PFB-ReadFcn.R")
   
-  dem_grid <- data.frame(readpfb("/Users/grapp/ParF/parflow/runs_all/dem_v2.pfb", verbose=F))
+  dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
   sub_press <- array(,dim=c(nx,ny,1,1))
   sub_press[,,,1] = readpfb(press_pfb, verbose = F)[,,layer_num]
   sub_press <- data.frame(sub_press[,,1,])
