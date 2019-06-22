@@ -66,10 +66,10 @@
   
   
   sub_press_all <- array(,dim=c(nx,ny,1,20))
-  max_press <- array(,dim=c(1,20))
+  press_cell <- array(,dim=c(1,20))
   for(i in 1:20){
     sub_press_all[,,,i] = readpfb(filename, verbose = F)[,,i]
-    max_press[i] = max(sub_press_all[,,1,i])
+    press_cell[i] = sub_press_all[1,20,1,i]
   }
   
   
