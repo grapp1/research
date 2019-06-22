@@ -51,7 +51,7 @@
     ggtitle(paste("Bottom layer pressure - spn v6")) + labs(fill = "Pressure (m)")
   
   wt_dtw_map2 <- ggplot(water_table, aes(X,Y)) + geom_tile(aes(fill = pressure_top), colour = "black") + 
-    scale_fill_gradient(low="blue", high="red", limits=c(0,0.006)) +
+    scale_fill_gradient(low="blue", high="red", limits=c(0,0.008)) +
     ggtitle(paste("Top layer pressure - spn v6")) + labs(fill = "Pressure (m)")
   
   contours <- matrix(seq(0,1100,100))
@@ -60,7 +60,18 @@
     geom_text_contour(aes(z = water_table$pressure_bottom), stroke=0.2, min.size = 10, breaks=c(contours))
   
   wt_dtw_map1
-  #wt_dtw_map2
+  wt_dtw_map2
+  max(water_table$pressure_bottom)
+  max(water_table$pressure_top)
+  
+  
+  sub_press_all <- array(,dim=c(nx,ny,1,20))
+  max_press <- array(,dim=c(1,20))
+  for(i in 1:20){
+    sub_press_all[,,,i] = readpfb(filename, verbose = F)[,,i]
+    max_press[i] = max(sub_press_all[,,1,i])
+  }
+  
   
   
   
