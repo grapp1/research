@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Desktop/test/EcoSLIM_runs_bw/SLIM_spn5_exited_particles.bin"
+filename="/Users/grapp/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_exited_particles.bin"
 
 
 library(ggplot2)
@@ -41,7 +41,7 @@ exited_particles <- data.frame(data)
 colnames(exited_particles) <- c("Time","X","Y","Z","age","mass","source","out_as")
 
 # subsetting data just for particles that exit at the outflow point
-#exit_outflow <- subset(exited_particles, X < 90 & Y > 1621 & Y < 1710)
+exit_outflow <- subset(exited_particles, X < 90 & Y > 1711 & Y < 1800)
 
 ggplot(exited_particles, aes(x=X, y=Y)) +
   geom_point(shape=1)
@@ -74,7 +74,7 @@ pdf_num
 
 
 # Part 2 - reading restart file
-filename="/Users/grapp/Desktop/test/EcoSLIM_runs_bw/SLIM_spn5_particle_restart.bin"
+filename="/Users/grapp/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_particle_restart.bin"
 
 #This works for reading the restart file
 to.read = file(filename,"rb")
@@ -92,8 +92,9 @@ data[1,]
 particle_restart <- data.frame(data)
 colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
 
-print(nrow(exited_particles), nrow(particle_restart))
+print(nrow(exited_particles)+nrow(particle_restart))
 
+ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
 
 
 
