@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_exited_particles.bin"
+filename="/Users/grapp/Desktop/test/EcoSLIM_runs_bw/SLIM_spn7_exited_particles.bin"
 
 
 library(ggplot2)
@@ -13,6 +13,7 @@ library(cowplot)
 library(zoo)
 library(plotrix)
 library(plyr)
+library(spatstat)
 
 
 
@@ -46,11 +47,13 @@ exit_outflow <- subset(exited_particles, X < 90 & Y > 1711 & Y < 1800)
 ggplot(exited_particles, aes(x=X, y=Y)) +
   geom_point(shape=1)
 
-write.csv(file="exited_particles", x=exited_particles)
+#write.csv(file="exited_particles", x=exited_particles)
 
 # exit_summary <- data.frame(time=integer(rows),tot_exit_num=double(rows),pct_yg_num=double(rows),tot_exit_mass=double(rows),pct_yg_mass=double(rows))
 exit_summary <- aggregate(exited_particles$mass, by = list(Category = exited_particles$Time), FUN = sum)
+exit_summary_outflow <- aggregate(exit_outflow$mass, by = list(Category = exit_outflow$Time), FUN = sum)
 colnames(exit_summary) <- c("Time","tot_exit_mass")
+colnames(exit_summary_outflow) <- c("Time","tot_exit_mass")
 total_mass <- sum(exited_particles$mass)
 total_exit <- length(which(exited_particles$Time <= max(exited_particles$Time)))
 
@@ -74,7 +77,7 @@ pdf_num
 
 
 # Part 2 - reading restart file
-filename="/Users/grapp/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_particle_restart.bin"
+filename="/Users/grapp/Desktop/test/EcoSLIM_runs_bw/SLIM_spn7_particle_restart.bin"
 
 #This works for reading the restart file
 to.read = file(filename,"rb")
@@ -97,6 +100,18 @@ print(nrow(exited_particles)+nrow(particle_restart))
 ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
 
 
+#################################################
+cdf_1 <- data.frame(ewcdf(exit_summary$Time, weights = exit_summary$tot_exit_mass))
+plot(ecdf(exit_summary$tot_exit_mass))
+plot(ewcdf(particle_restart$sat_age, weights = particle_restart$mass))
+
+# for forward particle tracking - can only see at outlet
+#plot(ewcdf(exit_outflow$age, weights = exit_outflow$mass), main = "CDF of Particle Age at Outlet - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
+#     xlim = c(0,2000), ylim = c(0,1))
+
+# for backward particle tracking - plotting cdf for all exited particles
+plot(ewcdf(exited_particles$age, weights = exited_particles$mass), main = "CDF of Exiting Particle Ages - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
+     xlim = c(0,2000), ylim = c(0,1))
 
 
 
