@@ -41,18 +41,18 @@
   water_table$wt_elev <- water_table$dem_elev -1000 + water_table$pressure + (200/2)
   water_table$wt_dtw <- 1000 - (water_table$pressure + (200/2))
   
-  water_table$bot_cuts <- cut(water_table$pressure_bottom, c(0,900,Inf), include.lowest = TRUE)
+  water_table$bot_cuts <- cut(water_table$pressure_bottom, c(0,850,890,895,900,905,Inf), include.lowest = TRUE)
   levels(water_table$bot_cuts)
     
  wt_dtw_map1 <- ggplot(water_table, aes(X,Y)) + geom_tile(aes(fill = bot_cuts), colour = "black") + 
 #  wt_dtw_map1 <- ggplot(water_table, aes(X,Y)) + geom_tile(aes(fill = pressure_bottom), colour = "black") + 
     #scale_fill_gradient(low="blue", high="red", limits=c(900,1050)) +
-    scale_fill_manual(values = c("red","blue"), labels = c("< 900","> 900")) +
-    ggtitle(paste("Bottom layer pressure - spn v6")) + labs(fill = "Pressure (m)")
+    scale_fill_manual(values = c("wheat","yellow","yellowgreen","green","deepskyblue","blue"), labels = c("<850","850-890","890-895","895-900","900-905", ">905")) +
+    ggtitle(paste("Bottom layer pressure - spn v7")) + labs(fill = "Pressure (m)")
   
   wt_dtw_map2 <- ggplot(water_table, aes(X,Y)) + geom_tile(aes(fill = pressure_top), colour = "black") + 
     scale_fill_gradient(low="blue", high="red", limits=c(0,0.008)) +
-    ggtitle(paste("Top layer pressure - spn v6")) + labs(fill = "Pressure (m)")
+    ggtitle(paste("Top layer pressure - spn v7")) + labs(fill = "Pressure (m)")
   
   contours <- matrix(seq(0,1100,100))
   
