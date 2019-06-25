@@ -58,7 +58,8 @@ press_map <- ggplot(wt_surf, aes(X,Y)) + geom_tile(aes(fill = wt_depth), colour 
   ggtitle(paste("Water depth (m) for Spinup v7"))
 press_map
 
-
+depth_cell1 <- wt_surf[which(wt_surf$Y == 19 & wt_surf$X == 5),]$wt_depth
+depth_cell2 <- wt_surf[which(wt_surf$Y == 40 & wt_surf$X == 25),]$wt_depth
 
 
 
