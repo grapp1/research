@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Desktop/test/EcoSLIM_runs_bw/SLIM_spn7_exited_particles.bin"
+filename="/Users/grapp/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_exited_particles.bin"
 
 
 library(ggplot2)
@@ -14,7 +14,7 @@ library(zoo)
 library(plotrix)
 library(plyr)
 library(spatstat)
-
+source("~/research/scripts/prob_dens_fxn.R")
 
 
 lines = file.info(filename)$size
@@ -77,7 +77,7 @@ pdf_num
 
 
 # Part 2 - reading restart file
-filename="/Users/grapp/Desktop/test/EcoSLIM_runs_bw/SLIM_spn7_particle_restart.bin"
+filename="/Users/grapp/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_particle_restart.bin"
 
 #This works for reading the restart file
 to.read = file(filename,"rb")
@@ -112,6 +112,9 @@ plot(ewcdf(particle_restart$sat_age, weights = particle_restart$mass))
 # for backward particle tracking - plotting cdf for all exited particles
 plot(ewcdf(exited_particles$age, weights = exited_particles$mass), main = "CDF of Exiting Particle Ages - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
      xlim = c(0,2000), ylim = c(0,1))
+
+pdf_fig <- pdfxn(exited_particles, 2000, 5)
+pdf_fig
 
 
 
