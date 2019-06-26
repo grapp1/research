@@ -17,7 +17,7 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-setwd("~/research/spn7_outputs_20190625")
+setwd("~/research/spn7_outputs_20190627")
 save <- 0 # 1 to save, anything else to just display charts
 
 nx <- 91
@@ -80,68 +80,30 @@ names(cell_chg_pct_melt) <- c("timestep", "percentile", "value")
 #### plots ------------------------------------------
 # change working drive to figures if necessary
 
-if(save == 1){
   
-  if(substr(getwd(), nchar(getwd())-6, nchar(getwd())) == "figures"){
-    fig_folder <- ""
-  }else{
-    fig_folder <- "./figures/"
-  }
-  
-  png(paste(fig_folder,"storage_plot_",substr(getwd(), nchar(getwd())-7, nchar(getwd())),".png",sep=""))
-  plot(storage,type="l",col="blue", main=paste("Storage for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (thousands of hours)")
-  dev.off()
+plot(storage,type="l",col="blue", main=paste("Storage for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
 
-  png(paste(fig_folder,"storage_chg_",substr(getwd(), nchar(getwd())-7, nchar(getwd())),".png",sep=""))  
-  plot(rate_storage,type="l",col="green",log="y",ylab="storage change divided by inflow (percent)",xlab="time (thousands of hours)",
-     main=paste("Storage for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5)
-  dev.off()
-  
-  print(ggplot(cell_chg_pct_melt, aes(x=timestep, y=value, col=percentile)) + geom_line() + 
-    scale_y_continuous(name="Storge change percentage",trans='log10', breaks=c(0.001,0.01,0.02,0.03,0.04,0.05, 0.1,1.0)) + scale_x_continuous(name="Timestep (thousands of hours)") +
-    ggtitle("Percentiles of storage change percentages for cells across the domain"))
-  ggsave(paste(fig_folder,"storage_chg_pct_",substr(getwd(), nchar(getwd())-7, nchar(getwd())),".png",sep="")) 
-  
-  png(paste("storage_chg_3d_",substr(getwd(), nchar(getwd())-7, nchar(getwd())),".png",sep="")) 
-  persp3D(1:91,1:70,rate_storage_cell[,,limit-1],theta=30, phi=50, axes=TRUE,scale=2, box=TRUE, nticks=5, 
+plot(rate_storage,type="l",col="green",log="y",ylab="Storage change divided by inflow (percent)",xlab="Time (thousands of hours)",
+     main=paste("Percentage storage change for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5)
+
+pct <- ggplot(cell_chg_pct_melt, aes(x=timestep, y=value, col=percentile)) + geom_line() + 
+  scale_y_continuous(name="Storge change percentage",trans='log10') + scale_x_continuous(name="Timestep (x 1,000 hours)") +
+  ggtitle("Percentiles of storage change percentages for cells across the domain")
+pct
+
+persp3D(1:91,1:70,rate_storage_cell[,,limit-1],theta=30, phi=50, axes=TRUE,scale=2, box=TRUE, nticks=5, 
         ticktype="detailed",xlab="X-grid", ylab="Y-grid", zlab="Head (m above bottom)", 
-        main="Percentage change in storage by cell for final time step")
-  dev.off()
+        main="Percentage change in storage by cell")
+
+hm_surf <- heat_map(nx,ny,20,0,0,0.01,press_files[limit],paste((limit-1),",000", sep=""))
+hm_surf
+
+hm_bot <- heat_map(nx,ny,1,0.1,400,1100,press_files[limit],paste(limit-1,",000", sep=""))
+hm_bot
+
+wt <- water_table_elev(nx,ny,1,200,-200,600,press_files[limit],paste((limit-1),",000", sep=""),100,2)
+wt
   
-  hm_surf <- heat_map(ny,nx,20,0.1,0,0.05,0.1,press_files[limit],paste(limit-1,",000", sep=""))
-  ggsave(paste(fig_folder,"wt_map_surface_",substr(getwd(), nchar(getwd())-7, nchar(getwd())),".png",sep=""), plot = hm_surf) 
-  
-  hm_bot <- heat_map(ny,nx,1,0.1,0,550,1100,press_files[limit],paste(limit-1,",000", sep=""))
-  ggsave(paste(fig_folder,"wt_map_surf_",substr(getwd(), nchar(getwd())-7, nchar(getwd())),".png",sep=""), plot = hm_bot)
-  
-  wt <- water_table_elev(ny,nx,1,200,1250,1625,2000,press_files[limit],paste(limit-1,",000",sep=""))
-  ggsave(paste(fig_folder,"wt_elev_",substr(getwd(), nchar(getwd())-7, nchar(getwd())),".png",sep=""), plot = wt)
-  
-} else {
-  
-  plot(storage,type="l",col="blue", main=paste("Storage for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
-  
-  plot(rate_storage,type="l",col="green",log="y",ylab="Storage change divided by inflow (percent)",xlab="Time (thousands of hours)",
-       main=paste("Percentage storage change for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5)
-  
-  pct <- ggplot(cell_chg_pct_melt, aes(x=timestep, y=value, col=percentile)) + geom_line() + 
-    scale_y_continuous(name="Storge change percentage",trans='log10') + scale_x_continuous(name="Timestep (x 10,000 hours)") +
-    ggtitle("Percentiles of storage change percentages for cells across the domain")
-  pct
-  
-  persp3D(1:91,1:70,rate_storage_cell[,,limit-1],theta=30, phi=50, axes=TRUE,scale=2, box=TRUE, nticks=5, 
-          ticktype="detailed",xlab="X-grid", ylab="Y-grid", zlab="Head (m above bottom)", 
-          main="Percentage change in storage by cell")
-  
-  hm <- heat_map(nx,ny,20,0,0,0.01,press_files[limit],paste((limit-1)*10,",000", sep=""))
-  hm
-  
-  heat_map(nx,ny,1,0.1,400,1100,press_files[limit],paste(limit-1,",000", sep=""))
-  
-  wt <- water_table_elev(nx,ny,1,200,-200,600,press_files[limit],paste((limit-1)*10,",000", sep=""),100,2)
-  wt
-  
-}
 
 #### outputting the last percentage changes for viewing as a table ---------------------------------
 tail(rate_storage, n=1)
