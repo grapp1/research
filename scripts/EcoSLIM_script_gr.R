@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="~/Downloads/SLIM_spn7_exited_particles.bin"
+filename="~/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_exited_particles.bin"
 
 
 library(ggplot2)
