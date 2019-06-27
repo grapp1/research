@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="~/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_exited_particles.bin"
+filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw/SLIM_spn7_exited_particles.bin"
 
 
 library(ggplot2)
@@ -77,28 +77,28 @@ pdf_num
 ##########################################################################################################
 
 
-# # Part 2 - reading restart file
-# filename="/Users/grapp/Desktop/test/EcoSLIM_runs_fw/SLIM_spn7_particle_restart.bin"
-# 
-# #This works for reading the restart file
-# to.read = file(filename,"rb")
-# npart=readBin(to.read, integer(), endian="little",size=4,n=1)
-# print(npart)
-# 
-# #NOTE: These are written out transposed from the exited particles file see below
-# data = matrix(0,ncol=10,nrow=npart,byrow=F)
-# for (i in 1:10) {
-#   #print(i)
-#   data[,i] = readBin(to.read, double(), endian="little",size=8,n=npart)
-# }
-# close(to.read)
-# data[1,]
-# particle_restart <- data.frame(data)
-# colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
-# 
-# print(nrow(exited_particles)+nrow(particle_restart))
-# 
-# ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
+# Part 2 - reading restart file
+filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw/SLIM_spn7_particle_restart.bin"
+
+#This works for reading the restart file
+to.read = file(filename,"rb")
+npart=readBin(to.read, integer(), endian="little",size=4,n=1)
+print(npart)
+
+#NOTE: These are written out transposed from the exited particles file see below
+data = matrix(0,ncol=10,nrow=npart,byrow=F)
+for (i in 1:10) {
+  #print(i)
+  data[,i] = readBin(to.read, double(), endian="little",size=8,n=npart)
+}
+close(to.read)
+data[1,]
+particle_restart <- data.frame(data)
+colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
+
+print(nrow(exited_particles)+nrow(particle_restart))
+
+ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
 
 
 #################################################
@@ -124,6 +124,10 @@ pdf_fig1
 pdf_fig2 <- ggplot(pdf_exited_out, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (hours)",trans='log10', limits = c(1,2000)) +
   ggtitle("PDF of particles exiting at the outflow point for spinup v7") + scale_y_continuous(labels = scales::comma)
 pdf_fig2
+
+hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 5) + ggtitle("Histogram of particles exiting at the outflow point for spinup v7") + 
+  scale_y_continuous(name="Particle Count",labels = scales::comma, trans = "log10") + scale_x_continuous(name="Age (hours)")
+hist_fig
 
 
 

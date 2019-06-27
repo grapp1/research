@@ -11,8 +11,8 @@
   nx <- 91
   ny <- 70
   
-  #filename <- "/Users/garrettrapp/Downloads/gr_sp5.out.press.00100.pfb"
-  filename <- press_files[limit]
+  filename <- "/Users/grapp/Downloads/gr_sp7_v2.out.press.00002.pfb"
+  #filename <- press_files[limit]
   
   dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
   sub_press1 <- array(,dim=c(nx,ny,1,1))
@@ -66,10 +66,15 @@
   
   
   sub_press_all <- array(,dim=c(nx,ny,1,20))
-  press_cell <- array(,dim=c(1,20))
+  press_cell <- array(,dim=c(20,6))
   for(i in 1:20){
-    sub_press_all[,,,i] = readpfb(filename, verbose = F)[,,i]
-    press_cell[i] = sub_press_all[25,40,1,i]
+    #sub_press_all[,,,i] = readpfb(filename, verbose = F)[,,i]
+    press_cell[i,1] = sub_press_all[3,20,1,i]      # saturated cell
+    press_cell[i,2] = sub_press_all[11,27,1,i]     # saturated cell
+    press_cell[i,3] = sub_press_all[18,5,1,i]     # saturated cell
+    press_cell[i,4] = sub_press_all[5,19,1,i]     # unsaturated cell
+    press_cell[i,5] = sub_press_all[25,40,1,i]     # unsaturated cell
+    press_cell[i,6] = sub_press_all[75,20,1,i]     # unsaturated cell
   }
   
   

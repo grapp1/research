@@ -33,3 +33,5 @@ for(i in 1:nx){
 
 names(flux_stream) <- c(paste(title_string))
 write.table(flux_stream, file = "~/research/EcoSLIM/gr_sp7.out.evaptrans.00001.sa", sep = "",row.names=FALSE)
+
+paste(sum(flux_stream$header)/(0.00035),"saturated surface grid cells,", round(sum(flux_stream$header)*100/((0.00035)*nx*ny),1),"percent of the domain")
