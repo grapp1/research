@@ -11,7 +11,7 @@
   nx <- 91
   ny <- 70
   
-  filename <- "/Users/grapp/Downloads/gr_sp7_v2.out.press.00002.pfb"
+  filename <- "/Users/grapp/research/spn7_outputs_20190627/gr_sp7.out.press.00600.pfb"
   #filename <- press_files[limit]
   
   dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
@@ -21,6 +21,9 @@
   sub_press1 <- data.frame(sub_press1[,,1,])
   sub_press2[,,,1] = readpfb(filename, verbose = F)[,,20]
   sub_press2 <- data.frame(sub_press2[,,1,])
+  
+  df.press.cells <- data.frame(X = c(3,11,18,5,25,75), Y = c(20,27,5,19,40,20))
+  df.press.cells$choose <- 1
   
   for(i in 1:ny){
     names(dem_grid)[i] <- i
@@ -43,21 +46,23 @@
   
   water_table$bot_cuts <- cut(water_table$pressure_bottom, c(0,850,890,895,900,905,Inf), include.lowest = TRUE)
   levels(water_table$bot_cuts)
+  
+  water_table <- left_join(water_table, df.press.cells, by = c("X" = "X", "Y" = "Y"))
     
  wt_dtw_map1 <- ggplot(water_table, aes(X,Y)) + geom_tile(aes(fill = bot_cuts), colour = "black") + 
-#  wt_dtw_map1 <- ggplot(water_table, aes(X,Y)) + geom_tile(aes(fill = pressure_bottom), colour = "black") + 
-    #scale_fill_gradient(low="blue", high="red", limits=c(900,1050)) +
     scale_fill_manual(values = c("wheat","yellow","yellowgreen","green","deepskyblue","blue"), labels = c("<850","850-890","890-895","895-900","900-905", ">905")) +
-    ggtitle(paste("Bottom layer pressure - spn v7")) + labs(fill = "Pressure (m)")
+    ggtitle(paste("Bottom layer pressure - spn v7")) + labs(fill = "Pressure (m)") + geom_point(aes(X,Y, size = as.numeric(choose)))
   
   wt_dtw_map2 <- ggplot(water_table, aes(X,Y)) + geom_tile(aes(fill = pressure_top), colour = "black") + 
     scale_fill_gradient(low="blue", high="red", limits=c(0,0.008)) +
-    ggtitle(paste("Top layer pressure - spn v7")) + labs(fill = "Pressure (m)")
+    ggtitle(paste("Top layer pressure - spn v7")) + labs(fill = "Pressure (m)") + geom_point(aes(X,Y, size = as.numeric(choose)))
+  
   
   contours <- matrix(seq(0,1100,100))
   
-  wt_dtw_map1 <- wt_dtw_map1 +geom_contour(aes(z = water_table$pressure_bottom), colour = "black", breaks=c(contours)) + 
-    geom_text_contour(aes(z = water_table$pressure_bottom), stroke=0.2, min.size = 10, breaks=c(contours))
+  #wt_dtw_map1 <- wt_dtw_map1 +geom_contour(aes(z = water_table$pressure_bottom), colour = "black", breaks=c(contours)) + 
+  #  geom_text_contour(aes(z = water_table$pressure_bottom), stroke=0.2, min.size = 10, breaks=c(contours)) +
+    #geom_point(aes(X,Y, size = 1))
   
   wt_dtw_map1
   wt_dtw_map2
@@ -68,7 +73,7 @@
   sub_press_all <- array(,dim=c(nx,ny,1,20))
   press_cell <- array(,dim=c(20,6))
   for(i in 1:20){
-    #sub_press_all[,,,i] = readpfb(filename, verbose = F)[,,i]
+    sub_press_all[,,,i] = readpfb(filename, verbose = F)[,,i]
     press_cell[i,1] = sub_press_all[3,20,1,i]      # saturated cell
     press_cell[i,2] = sub_press_all[11,27,1,i]     # saturated cell
     press_cell[i,3] = sub_press_all[18,5,1,i]     # saturated cell

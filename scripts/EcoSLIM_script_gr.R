@@ -40,85 +40,86 @@ close(to.read)
 
 exited_particles <- data.frame(data)
 colnames(exited_particles) <- c("Time","X","Y","Z","age","mass","source","out_as")
-exited_particles <- exited_particles[exited_particles$source == 2,]
+exited_particles <- exited_particles[exited_particles$source == 2,] # because a few initial particles snuck into my run for some reason...
+exited_particles <- exited_particles[exited_particles$age > 1,] # since there are SO many particles that immediately exit
 
-# subsetting data just for particles that exit at the outflow point
+# subsetting data just for particles that exit at the outflow point (only necessary for forward tracking)
 exit_outflow <- subset(exited_particles, X < 90 & Y > 1711 & Y < 1800)
 
 ggplot(exited_particles, aes(x=X, y=Y)) +
-  geom_point(shape=1)
+  geom_point(aes(colour = factor(age))) 
 
 #write.csv(file="exited_particles", x=exited_particles)
 
 # exit_summary <- data.frame(time=integer(rows),tot_exit_num=double(rows),pct_yg_num=double(rows),tot_exit_mass=double(rows),pct_yg_mass=double(rows))
-exit_summary <- aggregate(exited_particles$mass, by = list(Category = exited_particles$Time), FUN = sum)
-exit_summary_outflow <- aggregate(exit_outflow$mass, by = list(Category = exit_outflow$Time), FUN = sum)
-colnames(exit_summary) <- c("Time","tot_exit_mass")
-colnames(exit_summary_outflow) <- c("Time","tot_exit_mass")
-total_mass <- sum(exited_particles$mass)
-total_exit <- length(which(exited_particles$Time <= max(exited_particles$Time)))
-
-
-for(i in 1:nrow(exit_summary)){
-  exit_summary$pct_yg_mass[i] <- sum(exit_summary$tot_exit_mass[1:i])/total_mass
-  exit_summary$tot_exit_num[i] <- length(which(exited_particles$Time == exit_summary$Time[i]))
-  exit_summary$pct_yg_num[i] <- sum(exit_summary$tot_exit_num[1:i])/total_exit
-}
-
-pdf_mass <- ggplot(exit_summary, aes(x=Time, y=pct_yg_mass)) +
-  geom_point(shape=1) + scale_x_continuous(trans='log10') + ggtitle("Cumulative distribution function for run")
-  #geom_point(shape=1) + ggtitle("Cumulative distribution function for run")
-pdf_num <- ggplot(exit_summary, aes(x=Time, y=pct_yg_num)) +
-  geom_point(shape=1)
-pdf_mass
-pdf_num
+# exit_summary <- aggregate(exited_particles$mass, by = list(Category = exited_particles$Time), FUN = sum)
+# exit_summary_outflow <- aggregate(exit_outflow$mass, by = list(Category = exit_outflow$Time), FUN = sum)
+# colnames(exit_summary) <- c("Time","tot_exit_mass")
+# colnames(exit_summary_outflow) <- c("Time","tot_exit_mass")
+# total_mass <- sum(exited_particles$mass)
+# total_exit <- length(which(exited_particles$Time <= max(exited_particles$Time)))
+# 
+# 
+# for(i in 1:nrow(exit_summary)){
+#   exit_summary$pct_yg_mass[i] <- sum(exit_summary$tot_exit_mass[1:i])/total_mass
+#   exit_summary$tot_exit_num[i] <- length(which(exited_particles$Time == exit_summary$Time[i]))
+#   exit_summary$pct_yg_num[i] <- sum(exit_summary$tot_exit_num[1:i])/total_exit
+# }
+# 
+# pdf_mass <- ggplot(exit_summary, aes(x=Time, y=pct_yg_mass)) +
+#   geom_point(shape=1) + scale_x_continuous(trans='log10') + ggtitle("Cumulative distribution function for run")
+#   #geom_point(shape=1) + ggtitle("Cumulative distribution function for run")
+# pdf_num <- ggplot(exit_summary, aes(x=Time, y=pct_yg_num)) +
+#   geom_point(shape=1)
+# pdf_mass
+# pdf_num
 
 
 ##########################################################################################################
 
-
-# Part 2 - reading restart file
-filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw/SLIM_spn7_particle_restart.bin"
-
-#This works for reading the restart file
-to.read = file(filename,"rb")
-npart=readBin(to.read, integer(), endian="little",size=4,n=1)
-print(npart)
-
-#NOTE: These are written out transposed from the exited particles file see below
-data = matrix(0,ncol=10,nrow=npart,byrow=F)
-for (i in 1:10) {
-  #print(i)
-  data[,i] = readBin(to.read, double(), endian="little",size=8,n=npart)
-}
-close(to.read)
-data[1,]
-particle_restart <- data.frame(data)
-colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
-
-print(nrow(exited_particles)+nrow(particle_restart))
-
-ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
+# 
+# # Part 2 - reading restart file
+# filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw/SLIM_spn7_particle_restart.bin"
+# 
+# #This works for reading the restart file
+# to.read = file(filename,"rb")
+# npart=readBin(to.read, integer(), endian="little",size=4,n=1)
+# print(npart)
+# 
+# #NOTE: These are written out transposed from the exited particles file see below
+# data = matrix(0,ncol=10,nrow=npart,byrow=F)
+# for (i in 1:10) {
+#   #print(i)
+#   data[,i] = readBin(to.read, double(), endian="little",size=8,n=npart)
+# }
+# close(to.read)
+# data[1,]
+# particle_restart <- data.frame(data)
+# colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
+# 
+# print(nrow(exited_particles)+nrow(particle_restart))
+# 
+# ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
 
 
 #################################################
-cdf_1 <- data.frame(ewcdf(exit_summary$Time, weights = exit_summary$tot_exit_mass))
-plot(ecdf(exit_summary$tot_exit_mass))
-plot(ewcdf(particle_restart$sat_age, weights = particle_restart$mass))
+# cdf_1 <- data.frame(ewcdf(exit_summary$Time, weights = exit_summary$tot_exit_mass))
+# plot(ecdf(exit_summary$tot_exit_mass))
+# plot(ewcdf(particle_restart$sat_age, weights = particle_restart$mass))
+# 
+# # for forward particle tracking - can only see at outlet
+# #plot(ewcdf(exit_outflow$age, weights = exit_outflow$mass), main = "CDF of Particle Age at Outlet - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
+# #     xlim = c(0,2000), ylim = c(0,1))
+# 
+# # for backward particle tracking - plotting cdf for all exited particles
+# plot(ewcdf(exited_particles$age, weights = exited_particles$mass), main = "CDF of Exiting Particle Ages - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
+#      xlim = c(0,2000), ylim = c(0,1))
 
-# for forward particle tracking - can only see at outlet
-#plot(ewcdf(exit_outflow$age, weights = exit_outflow$mass), main = "CDF of Particle Age at Outlet - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
-#     xlim = c(0,2000), ylim = c(0,1))
-
-# for backward particle tracking - plotting cdf for all exited particles
-plot(ewcdf(exited_particles$age, weights = exited_particles$mass), main = "CDF of Exiting Particle Ages - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
-     xlim = c(0,2000), ylim = c(0,1))
-
-pdf_exited_all <- pdfxn(exited_particles, 2000, 1)
+pdf_exited_all <- pdfxn(exited_particles, 16008, 24)
 pdf_exited_out <- pdfxn(exit_outflow, 2000, 1)
 
-pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (hours)",trans='log10', limits = c(1,2000)) +
-  ggtitle("PDF of all exited particles for spinup v7") + scale_y_continuous(trans = "log10", limits = c(100,1000000000))
+pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (hours)",trans='log10', limits = c(10,16000), labels = scales::comma) +
+  ggtitle("PDF of all exited particles for spinup v7 (backwards tracking)") + scale_y_continuous(labels = scales::comma)
 pdf_fig1
 
 pdf_fig2 <- ggplot(pdf_exited_out, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (hours)",trans='log10', limits = c(1,2000)) +
@@ -126,7 +127,7 @@ pdf_fig2 <- ggplot(pdf_exited_out, aes(age,Density)) + geom_line() + scale_x_con
 pdf_fig2
 
 hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 5) + ggtitle("Histogram of particles exiting at the outflow point for spinup v7") + 
-  scale_y_continuous(name="Particle Count",labels = scales::comma, trans = "log10") + scale_x_continuous(name="Age (hours)")
+  scale_y_continuous(name="Particle Count",labels = scales::comma) + scale_x_continuous(name="Age (hours)")
 hist_fig
 
 
