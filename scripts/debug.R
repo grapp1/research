@@ -11,7 +11,7 @@
   nx <- 91
   ny <- 70
   
-  filename <- "/Users/grapp/research/spn7_outputs_20190627/gr_sp7.out.press.00600.pfb"
+  filename <- "/Users/grapp/Downloads/gr_sp7_v2.out.press.00001.pfb"
   #filename <- press_files[limit]
   
   dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
@@ -81,8 +81,30 @@
     press_cell[i,5] = sub_press_all[25,40,1,i]     # unsaturated cell
     press_cell[i,6] = sub_press_all[75,20,1,i]     # unsaturated cell
   }
-  
-  
-  
-  
+
+  press_cell <- data.frame(press_cell)
+  names(press_cell) <- c("(3,20)","(11,27)","(18,5)","(5,19)","(25,40)","(75,20)")  
+  press_cell_diff <- press_cell
+  press_cell$lyr_diff <- c(0,200,200,150,100,75,50,35,20,20,20,15,6,2,2,2,1.5,0.8,0.45,0.2)
+  press_cell_diff[1,] <- NA
+for(i in 2:20){
+  for(j in 1:6){
+   if(press_cell[i,j]<0){
+     press_cell_diff[i,j] <- NA
+   } else {
+     press_cell_diff[i,j] <- abs((press_cell[i,j]-press_cell[i-1,j])+press_cell[i,7])
+   }
+  }
+}  
+
+
+press_cell_diff <- melt(press_cell_diff)
+press_cell_diff$layer <- c(1:20)
+
+gg <- ggplot(press_cell_diff, aes(x=layer, y=value, group=variable, col=variable)) 
+gg + geom_line()
+
+print(mean(press_cell_diff$variable))
+
+
   
