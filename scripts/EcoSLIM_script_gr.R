@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw/SLIM_spn7_exited_particles.bin"
+filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw2/SLIM_spn7_exited_particles.bin"
 
 
 library(ggplot2)
@@ -93,7 +93,7 @@ ggplot(exited_particles, aes(x=X, y=Y)) + geom_point()
 
 
 # Part 2 - reading restart file
-filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw/SLIM_spn7_particle_restart.bin"
+filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw2/SLIM_spn7_particle_restart.bin"
 
 #This works for reading the restart file
 to.read = file(filename,"rb")
@@ -111,7 +111,7 @@ data[1,]
 particle_restart <- data.frame(data)
 colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
 
-print(nrow(exited_particles)+nrow(particle_restart))
+print(nrow(exited_particles)+nrow(particle_restart)) 
 
 ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
 
@@ -123,10 +123,12 @@ ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step"
 #      xlim = c(0,2000), ylim = c(0,1))
 
 pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 7)
+pdf_exited_all$Density <- pdf_exited_all$Density/10000
+
 pdf_exited_out <- pdfxn(exit_outflow, 2000, 1)
 
-pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(7,1000), labels = scales::comma) +
-  ggtitle("PDF of all exited particles for spinup v7 (backwards tracking)") + scale_y_continuous(labels = scales::comma)
+pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(7,2100), labels = scales::comma) +
+  ggtitle("PDF of all exited particles for spinup v7 (backwards tracking)") + scale_y_continuous(name="Density (x10^4)")
 pdf_fig1
 
 #pdf_fig2 <- ggplot(pdf_exited_out, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (hours)",trans='log10', limits = c(1,2000)) +
