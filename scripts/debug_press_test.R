@@ -8,6 +8,19 @@
   library(metR)
   source("~/gr_spinup/scripts/PFB-ReadFcn.R")
   
+  setwd("~/research/press_test")
+  
+  nx <- 91
+  ny <- 70
+  press_files <- list.files(pattern="press_test.out.press.*.pfb")
+  limit <- length(press_files)
+  all_press <- array(,dim=c(nx,ny,10,limit))
+  
+  # reading all of the pressure files - this usually takes the longest
+  for(i in 1:limit){
+    all_press[,,,i] = readpfb(press_files[i], verbose = F)
+  }
+  
   press_cell <- array(,dim=c(10,6,22))
   for(i in 1:10){
     for(j in 1:limit){
@@ -20,7 +33,6 @@
       press_cell[i,6,j] = all_press[75,20,i,j]     # unsaturated cell      
     }
   }
-<<<<<<< HEAD
   
 div_ts <- data.frame(time=c(1:limit),divergence=c(1:limit))  
   
@@ -44,39 +56,19 @@ for(k in 1:limit){
   
   press_cell_diff <- melt(press_cell_diff)
   press_cell_diff$layer <- c(1:10)
+  names(press_cell_diff)[names(press_cell_diff) == "variable"] <- "cell_no"
   
-  gg <- ggplot(press_cell_diff, aes(x=layer, y=value, group=variable, col=variable)) + geom_line() +ggtitle(paste("hydrostatic divergence for t =",k*10000,"hours"))
-  ggsave(paste("press_test_div_",k,".png",sep=""), plot = gg) 
+  
+  gg <- ggplot(press_cell_diff, aes(x=layer, y=value, group=cell_no, col=cell_no)) + geom_line() +ggtitle(paste("Hydrostatic Divergence for t =",k*10000,"hours")) +
+    scale_y_continuous(name="Divergence from expected hydrostatic condition (m)", expand=c(0,0)) + scale_x_continuous(limits = c(2,10), breaks = c(seq(2, 10, by = 1)))
+  gg
+  if(k > 5){
+    ggsave(paste("press_test_div_",k,".png",sep=""), plot = gg) 
+  }
+  
   
   div_ts$divergence[k] <- mean(na.exclude(press_cell_diff$value))
 }
-
-=======
-
-  press_cell <- data.frame(press_cell)
-  names(press_cell) <- c("(3,20)","(11,27)","(18,5)","(5,19)","(25,40)","(75,20)")  
-  press_cell_diff <- press_cell
-  press_cell$lyr_diff <- c(0,15,6,2,2,2,1.5,0.8,0.45,0.2)
-  press_cell_diff[1,] <- NA
-for(i in 2:20){
-  for(j in 1:6){
-   if(press_cell[i,j]<0){
-     press_cell_diff[i,j] <- NA
-   } else {
-     press_cell_diff[i,j] <- abs((press_cell[i,j]-press_cell[i-1,j])+press_cell[i,7])
-   }
-  }
-}  
-
-
-press_cell_diff <- melt(press_cell_diff)
-press_cell_diff$layer <- c(1:20)
-
-gg <- ggplot(press_cell_diff, aes(x=layer, y=value, group=variable, col=variable)) 
-gg + geom_line()
-
-print(mean(na.exclude(press_cell_diff$value)))
->>>>>>> 4a1f105e5c4656b7d880f96dcd82b4595c2fd5e5
 
 
   
