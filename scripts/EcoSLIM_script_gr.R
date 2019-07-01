@@ -127,8 +127,8 @@ pdf_exited_all$Density <- pdf_exited_all$Density/10000
 
 pdf_exited_out <- pdfxn(exit_outflow, 2000, 1)
 
-pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(7,2100), labels = scales::comma) +
-  ggtitle("PDF of all exited particles for spinup v7 (backwards tracking)") + scale_y_continuous(name="Density (x10^4)")
+pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(5,max(exited_particles$age)), labels = scales::comma, expand=c(0,0)) +
+  ggtitle("PDF of all exited particles for spinup v7 (backwards tracking)") + scale_y_continuous(name="Density (x10^4)", expand=c(0,0))
 pdf_fig1
 
 #pdf_fig2 <- ggplot(pdf_exited_out, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (hours)",trans='log10', limits = c(1,2000)) +
@@ -136,7 +136,7 @@ pdf_fig1
 #pdf_fig2
 
 hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 7) + ggtitle("Histogram of all particles exiting the domain for spinup v7") + 
-  scale_y_continuous(name="Particle Count",labels = scales::comma) + scale_x_continuous(name="Age (days)")
+  scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0)) + scale_x_continuous(name="Age (days)", expand=c(0,0))
 hist_fig
 
 
