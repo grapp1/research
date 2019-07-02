@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw2/SLIM_spn7_exited_particles.bin"
+filename="/Users/grapp/Desktop/test/A_v1_EcoSLIM/HPC_outputs/SLIM_A_v1_bw_exited_particles.bin"
 
 
 library(ggplot2)
@@ -49,7 +49,7 @@ exited_particles$age <- exited_particles$age_hr/24
 
 
 # subsetting data just for particles that exit at the outflow point (only necessary for forward tracking)
-exit_outflow <- subset(exited_particles, X < 90 & Y > 1711 & Y < 1800)
+#exit_outflow <- subset(exited_particles, X > 90 & X < 180 & Y > 1711 & Y < 1800)
 
 ggplot(exited_particles, aes(x=X, y=Y)) + geom_point()
   #geom_point(aes(colour = factor(age))) 
@@ -122,21 +122,25 @@ ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step"
 # plot(ewcdf(exited_particles$age, weights = exited_particles$mass), main = "CDF of Exiting Particle Ages - Spinup v7", ylab="Fraction younger", xlab="Age (hours)",
 #      xlim = c(0,2000), ylim = c(0,1))
 
+paste("Maximum particle age is", format(max(exited_particles$age), nsmall = 1), "days")
+
 pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 7)
-pdf_exited_all$Density <- pdf_exited_all$Density/10000
+pdf_exited_all$Density <- pdf_exited_all$Density/100000
 
 pdf_exited_out <- pdfxn(exit_outflow, 2000, 1)
 
-pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(5,max(exited_particles$age)), labels = scales::comma, expand=c(0,0)) +
-  ggtitle("PDF of all exited particles for spinup v7 (backwards tracking)") + scale_y_continuous(name="Density (x10^4)", expand=c(0,0))
+pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(5,12000), labels = scales::comma, expand=c(0,0)) +
+  ggtitle("PDF of all exited particles for Scenario A (backwards tracking)") + scale_y_continuous(name=expression('Density  x10'^"5"), expand=c(0,0), breaks = seq(0,8,1)) +
+  expand_limits(x = 5, y = 0)
 pdf_fig1
 
 #pdf_fig2 <- ggplot(pdf_exited_out, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (hours)",trans='log10', limits = c(1,2000)) +
 #  ggtitle("PDF of particles exiting at the outflow point for spinup v7") + scale_y_continuous(labels = scales::comma)
 #pdf_fig2
 
-hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 7) + ggtitle("Histogram of all particles exiting the domain for spinup v7") + 
-  scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0)) + scale_x_continuous(name="Age (days)", expand=c(0,0))
+hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 7) + ggtitle("Histogram of all particles exiting the domain for Scenario A") + 
+  scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0)) + scale_x_continuous(name="Age (days)", expand=c(0,0),labels = scales::comma) +
+  expand_limits(x = 0, y = 0)
 hist_fig
 
 
