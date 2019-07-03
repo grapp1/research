@@ -21,7 +21,7 @@
     all_press[,,,i] = readpfb(press_files[i], verbose = F)
   }
   
-  press_cell <- array(,dim=c(10,6,22))
+  press_cell <- array(,dim=c(10,6,limit))
   for(i in 1:10){
     for(j in 1:limit){
       #sub_press_all[,,,i] = readpfb(filename, verbose = F)[,,i]
@@ -37,7 +37,7 @@
 div_ts <- data.frame(time=c(1:limit),divergence=c(1:limit))  
   
   
-for(k in 1:limit){
+for(k in 47:limit){
   press_cell_exc <- data.frame(press_cell[,,k])
   names(press_cell_exc) <- c("(3,20)","(11,27)","(18,5)","(5,19)","(25,40)","(75,20)")  
   press_cell_diff <- press_cell_exc
@@ -59,16 +59,18 @@ for(k in 1:limit){
   names(press_cell_diff)[names(press_cell_diff) == "variable"] <- "cell_no"
   
   
-  gg <- ggplot(press_cell_diff, aes(x=layer, y=value, group=cell_no, col=cell_no)) + geom_line() +ggtitle(paste("Hydrostatic Divergence for t =",k*10000,"hours")) +
-    scale_y_continuous(name="Divergence from expected hydrostatic condition (m)", expand=c(0,0)) + scale_x_continuous(limits = c(2,10), breaks = c(seq(2, 10, by = 1)))
-  gg
-  if(k > 5){
-    ggsave(paste("press_test_div_",k,".png",sep=""), plot = gg) 
-  }
+  gg <- ggplot(press_cell_diff, aes(x=layer, y=value, group=cell_no, col=cell_no)) + geom_line() +ggtitle(paste("Hydrostatic Divergence for t =",k*1000,"hours")) +
+    scale_y_continuous(name="Divergence from expected hydrostatic condition (m)", expand=c(0,0),limits = c(0,1)) + scale_x_continuous(limits = c(2,10), breaks = c(seq(2, 10, by = 1)))
+  print(gg)
+#  if(k > 5){
+#    ggsave(paste("press_test_div_",k,".png",sep=""), plot = gg) 
+#  }
   
   
   div_ts$divergence[k] <- mean(na.exclude(press_cell_diff$value))
 }
+
+ggplot(div_ts, aes(time,divergence)) + geom_line() + ggtitle("Time series of divergence for test")
 
 
   

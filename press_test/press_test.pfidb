@@ -53,8 +53,8 @@ Solver.WriteCLMBinary
 False
 23
 TimingInfo.DumpInterval
-5
-10000
+4
+1000
 23
 PhaseSources.water.Type
 8
@@ -529,8 +529,8 @@ Cycle.constant.Repeat
 -1
 19
 TimingInfo.StopTime
-9
-2000000.0
+8
+250000.0
 22
 Solver.PrintSaturation
 4
