@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Downloads/SLIM_A_v1_fw_exited_particles.bin"
+filename="/Users/grapp/Downloads/SLIM_A_v1_bw_exited_particles.bin"
 
 
 library(ggplot2)
@@ -93,7 +93,7 @@ ggplot(exited_particles, aes(x=X, y=Y)) + geom_point()
 
 
 # Part 2 - reading restart file
-filename="/Users/grapp/Desktop/test/spn7_EcoSLIM_v2/EcoSLIM_runs_bw2/SLIM_spn7_particle_restart.bin"
+filename="/Users/grapp/Downloads/SLIM_A_v1_bw_pulse_particle_restart.bin"
 
 #This works for reading the restart file
 to.read = file(filename,"rb")
@@ -111,7 +111,7 @@ data[1,]
 particle_restart <- data.frame(data)
 colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
 
-print(nrow(exited_particles)+nrow(particle_restart)) 
+print(nrow(exited_particles)+nrow(particle_restart))
 
 ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
 

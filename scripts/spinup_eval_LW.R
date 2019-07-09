@@ -95,7 +95,7 @@ persp3D(1:91,1:70,rate_storage_cell[,,limit-1],theta=30, phi=50, axes=TRUE,scale
         ticktype="detailed",xlab="X-grid", ylab="Y-grid", zlab="Head (m above bottom)", 
         main="Percentage change in storage by cell")
 
-hm_surf <- heat_map(nx,ny,20,0,0,0.01,press_files[limit],paste((limit-1),",000", sep=""))
+hm_surf <- heat_map(nx,ny,50,0,0,0.03,press_files[limit],paste((limit-1),",000", sep=""))
 hm_surf
 
 hm_bot <- heat_map(nx,ny,1,0.1,400,1100,press_files[limit],paste(limit-1,",000", sep=""))
@@ -116,8 +116,19 @@ if(rate_storage[limit-1] < 0.01){
   }
 
 
-sub_press <- array(,dim=c(ny,nx,1,1))
-sub_press[,,,1] = readpfb(press_files[limit], verbose = F)[,,20]
+sub_press <- array(,dim=c(ny,nx))
+sub_press[,] = readpfb(press_files[limit], verbose = F)[,,50]
+
+sub_press_cell <- array(,dim=c(50,6))
+for(i in 1:50){
+  sub_press_cell[i,1] = all_press[14,21,i,limit]  #saturated
+  sub_press_cell[i,2] = all_press[39,32,i,limit]  #saturated
+  sub_press_cell[i,3] = all_press[3,20,i,limit]   #saturated
+  sub_press_cell[i,4] = all_press[30,10,i,limit]  #unsaturated
+  sub_press_cell[i,5] = all_press[20,30,i,limit]  #unsaturated
+  sub_press_cell[i,6] = all_press[5,10,i,limit]  #unsaturated
+}
+
 
 
 
