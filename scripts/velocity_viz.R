@@ -13,9 +13,9 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-velx_file <- "/Users/garrettrapp/Desktop/EcoSLIM_runs/A_v1.out.velx.00001.pfb"
-vely_file <- "/Users/garrettrapp/Desktop/EcoSLIM_runs/A_v1.out.vely.00001.pfb"
-velz_file <- "/Users/garrettrapp/Desktop/EcoSLIM_runs/A_v1.out.velz.00001.pfb"
+velx_file <- "~/research/A_v1/A_v1.out.velx.00001.pfb"
+vely_file <- "~/research/A_v1/A_v1.out.vely.00001.pfb"
+velz_file <- "~/research/A_v1/A_v1.out.velz.00001.pfb"
 
 
 
