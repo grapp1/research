@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Downloads/SLIM_A_v1_bw_exited_particles.bin"
+filename="/Users/garrettrapp/Desktop/EcoSLIM_runs/bw_20190708/SLIM_A_v1_bw_pulse_exited_particles.bin"
 
 
 library(ggplot2)
@@ -92,28 +92,28 @@ ggplot(exited_particles, aes(x=X, y=Y)) + geom_point()
 ##########################################################################################################
 
 
-# Part 2 - reading restart file
-filename="/Users/grapp/Downloads/SLIM_A_v1_bw_pulse_particle_restart.bin"
-
-#This works for reading the restart file
-to.read = file(filename,"rb")
-npart=readBin(to.read, integer(), endian="little",size=4,n=1)
-print(npart)
-
-#NOTE: These are written out transposed from the exited particles file see below
-data = matrix(0,ncol=10,nrow=npart,byrow=F)
-for (i in 1:10) {
-  #print(i)
-  data[,i] = readBin(to.read, double(), endian="little",size=8,n=npart)
-}
-close(to.read)
-data[1,]
-particle_restart <- data.frame(data)
-colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
-
-print(nrow(exited_particles)+nrow(particle_restart))
-
-ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
+# # Part 2 - reading restart file
+# filename="/Users/grapp/Downloads/SLIM_A_v1_bw_pulse_particle_restart.bin"
+# 
+# #This works for reading the restart file
+# to.read = file(filename,"rb")
+# npart=readBin(to.read, integer(), endian="little",size=4,n=1)
+# print(npart)
+# 
+# #NOTE: These are written out transposed from the exited particles file see below
+# data = matrix(0,ncol=10,nrow=npart,byrow=F)
+# for (i in 1:10) {
+#   #print(i)
+#   data[,i] = readBin(to.read, double(), endian="little",size=8,n=npart)
+# }
+# close(to.read)
+# data[1,]
+# particle_restart <- data.frame(data)
+# colnames(particle_restart) <- c("X","Y","Z","age","sat_age","mass","source","status", "conc","exit_status")
+# 
+# print(nrow(exited_particles)+nrow(particle_restart))
+# 
+# ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step", pad = FALSE)
 
 
 #################################################
@@ -124,13 +124,13 @@ ggplot(exit_summary, aes(x = time, y = tot_exit_mass)) + stat_ecdf(geom = "step"
 
 paste("Maximum particle age is", format(max(exited_particles$age), nsmall = 1), "days")
 
-pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 7)
-pdf_exited_all$Density <- pdf_exited_all$Density/100000
+pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 365)
+pdf_exited_all$Density <- pdf_exited_all$Density
 
 pdf_exited_out <- pdfxn(exit_outflow, 2000, 1)
 
-pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(5,12000), labels = scales::comma, expand=c(0,0)) +
-  ggtitle("PDF of all exited particles for Scenario A (forwards tracking)") + scale_y_continuous(name=expression('Density  x10'^"5"), expand=c(0,0), breaks = seq(0,12,2), limits = c(0,12)) +
+pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(200,100000), labels = scales::comma, expand=c(0,0)) +
+  ggtitle("PDF of all exited particles for Scenario A (backwards tracking)") + scale_y_continuous(name=expression('Density'), expand=c(0,0), breaks = seq(0,100,20), limits = c(0,100)) +
   expand_limits(x = 5, y = 0)
 pdf_fig1
 
@@ -139,7 +139,7 @@ pdf_fig1
 #pdf_fig2
 
 hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 7, color = "red", fill = "red") + ggtitle("Histogram of all particles exiting the domain for Scenario A") + 
-  scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0),breaks = seq(0,3200,200), limits = c(0,3200)) + scale_x_continuous(name="Age (days)", expand=c(0,0),labels = scales::comma) +
+  scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0),breaks = seq(0,20,2), limits = c(0,20)) + scale_x_continuous(name="Age (days)", expand=c(0,0),labels = scales::comma) +
   expand_limits(x = 0, y = 0)
 hist_fig
 
