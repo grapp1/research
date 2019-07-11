@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/garrettrapp/Desktop/EcoSLIM_runs/bw_20190708/SLIM_A_v1_bw_pulse_exited_particles.bin"
+filename="/Users/garrettrapp/Downloads/SLIM_A_v1_bw_pulse_exited_particles.bin"
 
 
 library(ggplot2)
@@ -138,8 +138,8 @@ pdf_fig1
 #  ggtitle("PDF of particles exiting at the outflow point for spinup v7") + scale_y_continuous(labels = scales::comma)
 #pdf_fig2
 
-hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 7, color = "red", fill = "red") + ggtitle("Histogram of all particles exiting the domain for Scenario A") + 
-  scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0),breaks = seq(0,20,2), limits = c(0,20)) + scale_x_continuous(name="Age (days)", expand=c(0,0),labels = scales::comma) +
+hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 365, color = "red", fill = "red") + ggtitle("Histogram of all particles exiting the domain for Scenario A") + 
+  scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0),breaks = seq(0,20,2), limits = c(0,200)) + scale_x_continuous(name="Age (days)", expand=c(0,0),labels = scales::comma) +
   expand_limits(x = 0, y = 0)
 hist_fig
 

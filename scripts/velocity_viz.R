@@ -41,27 +41,23 @@ for(i in 1:nx){
   }
 }
 
-velx_file <- data.frame(velx_new)
-vely_file <- vely_new
-velz_file <- velz_new
+velx_file <- melt(data.frame(velx_new))
+vely_file <- melt(data.frame(vely_new))
+velz_file <- melt(data.frame(velz_new))
 
-for(i in 1:ny){
-  names(velx_file)[i] <- as.character(i)
+# data frame with all velocities
+v_all.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),z=rep(1:nz,each=nx*ny),
+                       vx=velx_file$value,vy=vely_file$value,vz=velz_file$value)
+
+for(j in 1:nz){
+  layer_num <- j
+  v_lyr.df <- v_all.df[v_all.df$z == layer_num,]
+
+  vel_map <- ggplot(v_lyr.df, aes(x,y)) + geom_tile(aes(fill = vz), colour = "black") + 
+    scale_fill_gradient(low="blue", high="red") + 
+    ggtitle(paste("Velocity in Z direction for layer",layer_num))
+  print(vel_map)
 }
-
-
-
-all_vels <- array(,dim=c(nx,ny,nz,3))
-all_vels[,,,1] = velx_file
-all_vels[,,,2] = vely_file
-all_vels[,,,3] = velz_file
-
-v_all.df <- melt(data.frame(all_vels))
-
-press_map <- ggplot(sub_press, aes(X,Y)) + geom_tile(aes(fill = water_level), colour = "black") + 
-  scale_fill_gradient(low="blue", high="red", limits=c(lim_lo,lim_hi)) + 
-  #geom_contour(aes(z = sub_press$water_level)) + geom_text_contour(aes(z = sub_press$water_level), stroke=0.2, min.size = 10) +
-  ggtitle(paste("Water depth (m) at t =", time,"hours and layer", layer_num))
 
 
 
