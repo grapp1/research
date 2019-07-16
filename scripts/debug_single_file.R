@@ -12,12 +12,12 @@
   
   nx <- 91
   ny <- 70
-  press_files <- list.files(pattern="gr_sp7_v3.out.press.00010.pfb")
+  press_files <- list.files(pattern="gr_sp7_v3.out.press.00014.pfb")
   limit <- length(press_files)
   all_press <- array(,dim=c(nx,ny,20,1))
   
   # reading all of the pressure files - this usually takes the longest
-  all_press[,,,1] = readpfb("gr_sp7_v3.out.press.00010.pfb", verbose = F)
+  all_press[,,,1] = readpfb("gr_sp7_v3.out.press.00014.pfb", verbose = F)
   
   press_cell <- array(,dim=c(20,6))
   for(i in 1:20){

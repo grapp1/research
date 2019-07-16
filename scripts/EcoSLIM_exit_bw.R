@@ -1,7 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/garrettrapp/Downloads/SLIM_A_v1_bw_pulse_exited_particles.bin"
+filename="/Users/garrettrapp/Desktop/EcoSLIM_runs/bw_20190710/SLIM_A_v1_bw_pulse_exited_particles_1.bin"
 
 
 library(ggplot2)
@@ -52,13 +52,11 @@ ggplot(exited_particles, aes(x=X, y=Y)) + geom_point()
 
 paste("Maximum particle age is", format(max(exited_particles$age_d), nsmall = 1), "days")
 
-pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age_d), 365)
-pdf_exited_all$Density <- pdf_exited_all$Density
+pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), (24*365)
+pdf_exited_all$Density <- pdf_exited_all$Density/0.2835
 
-pdf_exited_out <- pdfxn(exit_outflow, 2000, 1)
-
-pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(200,100000), labels = scales::comma, expand=c(0,0)) +
-  ggtitle("PDF of all exited particles for Scenario A (backwards tracking)") + scale_y_continuous(name=expression('Density'), expand=c(0,0), breaks = seq(0,100,20), limits = c(0,100)) +
+pdf_fig1 <- ggplot(pdf_exited_all, aes(age,Density)) + geom_line() + scale_x_continuous(name="Age (days)",trans='log10', limits = c(200,1000000), labels = scales::comma, expand=c(0,0)) +
+  ggtitle("PDF of all exited particles for Scenario A (backwards tracking)") + scale_y_continuous(name=expression('Density'), expand=c(0,0), breaks = seq(0,10,2), limits = c(0,10)) +
   expand_limits(x = 5, y = 0)
 pdf_fig1
 
