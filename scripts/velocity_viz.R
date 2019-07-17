@@ -50,6 +50,9 @@ velz_file <- melt(data.frame(velz_new))
 v_all.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),z=rep(1:nz,each=nx*ny),
                        vx=velx_file$value,vy=vely_file$value,vz=velz_file$value)
 
+v_lyr20.df <- v_all.df[v_all.df$z == 20,]
+
+# saving plots
 for(j in 1:nz){
   layer_num <- j
   v_lyr.df <- v_all.df[v_all.df$z == layer_num,]

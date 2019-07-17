@@ -1,8 +1,8 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
-filename="/Users/grapp/Downloads/SLIM_A_v1_bw_pulse_exited_particles.bin"
-#filename2="/Users/grapp/Desktop/working/bw_20190710/bw_20190710_2/SLIM_A_v1_bw_pulse_exited_particles.bin"
+filename="/Users/grapp/Desktop/working/bw_20190710/SLIM_A_v1_bw_pulse_exited_particles.bin"
+filename2="/Users/grapp/Desktop/working/bw_20190710/bw_20190710_2/SLIM_A_v1_bw_pulse_exited_particles.bin"
 
 
 library(ggplot2)
@@ -65,13 +65,14 @@ ggplot(exited_particles, aes(x=X, y=Y)) + geom_point()
 paste("Maximum particle age is", format(max(exited_particles$age), nsmall = 1), "days")
 
 pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), (365))
-pdf_exited_all$Density <- pdf_exited_all$Density*10
+pdf_exited_all$Density <- pdf_exited_all$Density/0.2835
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all_1k, aes(x = age,y = Density), color="blue") + geom_line(data = pdf_exited_all, aes(x = age,y = Density), color="red") +
+pdf_fig1 <- ggplot() + #geom_line(data = pdf_exited_all_1k, aes(x = age,y = Density), color="blue") + 
+  geom_line(data = pdf_exited_all, aes(x = age,y = Density), color="red") +
   scale_x_log10(name="Age (days)",limits = c(100,500000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
     labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
   ggtitle("PDF of all exited particles for Scenario A (backwards tracking)") + 
-  scale_y_continuous(name="Density (1,000 ppc - blue line)", expand=c(0,0), breaks = seq(0,250,25), limits = c(0,250), sec.axis = sec_axis(~ ./10, name = "Density (100 ppc - red line)") +
+  scale_y_continuous(name="Density (1,000 ppc - blue line)", expand=c(0,0), breaks = seq(0,250,25), limits = c(0,250)) + #, sec.axis = sec_axis(~ ./10, name = "Density (100 ppc - red line)") +
   expand_limits(x = 100, y = 0)
 pdf_fig1
 
@@ -80,8 +81,6 @@ hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 365, 
   scale_x_continuous(name="Age (days)", expand=c(0,0),breaks = seq(0,85000,10000), limits = c(0,85000),labels = scales::comma) +
   expand_limits(x = 0, y = 0)
 hist_fig
-
-pdf_exited_all_1k <- pdf_exited_all
 
 # # Part 2 - reading restart file
 # filename="/Users/grapp/Desktop/working/bw_20190710/bw_20190710_2/SLIM_A_v1_bw_pulse_particle_restart.bin"
