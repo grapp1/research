@@ -38,7 +38,7 @@ for(i in 1:nx){
     vely_new[,i,] <- vely[,i+1,]
   }
   if(i <= nz){
-    velz_new[,,i] <- velz[,,i+1]
+    velz_new[,,i] <- velz[,,i]
   }
 }
 
