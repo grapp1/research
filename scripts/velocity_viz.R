@@ -13,6 +13,7 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
+setwd("~/research/A_v1/velz_map/")
 velx_file <- "~/research/A_v1/A_v1.out.velx.00001.pfb"
 vely_file <- "~/research/A_v1/A_v1.out.vely.00001.pfb"
 velz_file <- "~/research/A_v1/A_v1.out.velz.00001.pfb"
@@ -56,7 +57,11 @@ for(j in 1:nz){
   vel_map <- ggplot(v_lyr.df, aes(x,y)) + geom_tile(aes(fill = vz), colour = "black") + 
     scale_fill_gradient(low="blue", high="red") + 
     ggtitle(paste("Velocity in Z direction for layer",layer_num))
-  print(vel_map)
+  if(layer_num > 9){
+    ggsave(paste("velz_", layer_num,".png",sep="")) 
+  } else {
+    ggsave(paste("velz_0", layer_num,".png",sep="")) 
+  }
 }
 
 
