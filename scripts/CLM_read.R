@@ -1,4 +1,4 @@
-# CLM read file 20190716
+# CLM read file 20190716 - reading CLM data, taking subset to generate forcings on my domain
 
 filename <- "~/research/CLM/1DForcings/Forcing1D.txt"
 
@@ -6,10 +6,38 @@ forcing <- data.frame(read.table(filename, header = FALSE))
 colnames(forcing) <- c("DSWRF","DLWRF","APCP","TMP","UGRD","VGRD","PRES","SPFH")
 # precip is in mm/s
 
+forcing <- forcing[1:81192,] # clipped through January 3rd, 2017
+
 forcing$APCP_mhr <- forcing$APCP*3600/1000
+forcing$hr <- rep(1:24)
 
-plot(forcing$APCP_mhr[8785:52585], type="l")
-mean(forcing$APCP_mhr[8785:52585])
+for(i in 1:nrow(forcing)){
+  forcing$cu_prec[i] <- sum(forcing$APCP_mhr[1:i])
+}
 
-precip_days <- forcing[forcing$APCP > 0,]
-     
+# creating date time series and adding it to data frame
+date_range <- data.frame(seq(as.Date('2007-10-1'),to=as.Date('2017-1-3'),by='day'))
+
+for(j in 1:nrow(date_range)){
+  date_range$year[j] <- as.integer(substr(date_range[j,1], 1, 4))
+  date_range$month[j] <- as.integer(substr(date_range[j,1], 6, 7))
+  date_range$day[j] <- as.integer(substr(date_range[j,1], 9, 10))
+}
+
+forcing$year <- rep(date_range$year, each=24)
+forcing$month <- rep(date_range$month, each=24)
+forcing$day <- rep(date_range$day, each=24)
+
+
+# creating subsetted data frame with data from 20081001 to 20130930
+forcing_gr <- forcing[8785:52608,]
+
+# correcting cumulative precipitation counter
+forcing_gr$cu_prec <- forcing_gr$cu_prec - min(forcing_gr$cu_prec)
+plot(forcing_gr$cu_prec, type="l", col = "blue")
+
+# aggregating precipitation by month
+monthly_precip <- aggregate(forcing_gr$APCP_mhr, by = list(forcing_gr$month), FUN = sum)
+colnames(monthly_precip) <- c("month","precip_m")
+monthly_precip$precip_cm <- monthly_precip$precip_m*100/5
+ggplot(monthly_precip, aes(month,precip_cm)) + geom_col()

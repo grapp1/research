@@ -2,7 +2,7 @@
 # adapted from Reed_EcoSLIM_script
 # read binary particle file
 exit_file <- "~/Desktop/test/A_v1_EcoSLIM/bw_20190723/0100ppc/SLIM_A_v1_bw_pulse_100ppc_exited_particles.bin"
-restart_file <- "~/Desktop/test/A_v1_EcoSLIM/bw_20190723/0100ppc/SLIM_A_v1_bw_pulse_100ppc_particle_restart.bin"
+restart_file <- "~/Desktop/test/A_v1_EcoSLIM/SLIM_A_v1_bw_ppul2_1000_particle_restart.bin"
 
 library(ggplot2)
 library(tidyr)
