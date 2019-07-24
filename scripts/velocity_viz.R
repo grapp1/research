@@ -50,7 +50,20 @@ velz_file <- melt(data.frame(velz_new))
 v_all.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),z=rep(1:nz,each=nx*ny),
                        vx=velx_file$value,vy=vely_file$value,vz=velz_file$value)
 
-v_lyr20.df <- v_all.df[v_all.df$z == 20,]
+v_lyr20.df <- v_all.df[v_all.df$z == 8,]
+
+v_lyr20pos.df <- v_lyr20.df[v_lyr20.df$vz > 0,]
+v_lyr20neg.df <- v_lyr20.df[v_lyr20.df$vz < 0,]
+
+ggplot(v_lyr20pos.df, aes(x,y)) + geom_tile(aes(fill = vz), colour = "black") + 
+  scale_fill_gradient(low="blue", high="red")
+ggplot(v_lyr20neg.df, aes(x,y)) + geom_tile(aes(fill = vz), colour = "black") + 
+  scale_fill_gradient(low="blue", high="red")
+
+summary(v_lyr20neg.df$vz)
+
+
+
 
 # saving plots
 for(j in 1:nz){

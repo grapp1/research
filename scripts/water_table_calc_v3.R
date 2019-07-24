@@ -7,8 +7,8 @@ library(reshape2)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/garrettrapp/research/A_v1/A_v1.out.press.00001.pfb"
-satur_file <- "/Users/garrettrapp/research/A_v1/A_v1.out.satur.00001.pfb"
+press_file <- "~/research/A_v1/A_v1.out.press.00001.pfb"
+satur_file <- "~/research/A_v1/A_v1.out.satur.00001.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -29,14 +29,13 @@ satur <- melt(data.frame(readpfb(satur_file, verbose = F)))
 press_sat.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),z=rep(1:nz,each=nx*ny),
                          press=press$value,satur=satur$value)
 system.time(
-subset_particles <- subset(press_sat.df, z == 4))
-ggplot(subset_particles, aes(x, y)) + geom_tile(aes(fill = satur), colour = "black") + 
+subset_particles <- subset(press_sat.df, z == 20))
+ggplot(subset_particles, aes(x, y)) + geom_tile(aes(fill = press), colour = "black") + 
   scale_fill_gradient(low="blue", high="red") + 
   ggtitle(paste("Pressure"))
 
 
-
-# water table elevation function - takes around 6 minutes
+# water table elevation function - takes a while
 wt_elev.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),wt_elev=0)
 
 system.time(
