@@ -24,7 +24,7 @@ dx <- 90
 #cell_length <- 90
 #porosity <- 0.01
 #area <- nx*ny*cell_length**2
-plotting <- FALSE
+plotting <- TRUE
 
 # the gridded data frames will be read into the surface outflow calculation function
 slo_x_grid <- data.frame(readpfb("~/research/domain/garrett.slopex.pfb", verbose=F))
@@ -60,7 +60,8 @@ save(slopes,file="~/research/domain/domain_df.Rda")
 if(plotting == TRUE){
   dem_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = elev), colour = "black") + 
     scale_fill_gradient2(low="green", mid = "yellow",midpoint=2050, high="red", limits=c(1200,2900)) +
-    ggtitle("Elevations (m)") + geom_contour(aes(z = slopes$elev)) 
+    ggtitle("Elevations (m)") + geom_contour(aes(z = slopes$elev)) + scale_x_continuous(expand=c(0,0)) +
+    scale_y_continuous(expand=c(0,0))
   
   dem_contour <- dem_fig +geom_contour(aes(z = slopes$elev)) + geom_text_contour(aes(z = slopes$elev),
                                                               stroke=0.2, min.size = 10)
