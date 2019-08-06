@@ -55,35 +55,44 @@ colnames(slopes) <- c("Y","X","xslope")
 slopes$yslope <- slo_y$value
 slopes <- inner_join(slopes, dem, by = c("Y","X"))
 slopes$smag <- (slopes$yslope**2 + slopes$xslope**2)**0.5
+slopes$Y_cell <- slopes$Y
+slopes$X_cell <- slopes$X
+slopes$Y <- slopes$Y * 90 - 45
+slopes$X <- slopes$X * 90 - 45
 save(slopes,file="~/research/domain/domain_df.Rda")
 
 if(plotting == TRUE){
-  dem_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = elev), colour = "black") + 
-    scale_fill_gradient2(low="green", mid = "yellow",midpoint=2050, high="red", limits=c(1200,2900)) +
-    ggtitle("Elevations (m)") + geom_contour(aes(z = slopes$elev)) + scale_x_continuous(expand=c(0,0)) +
-    scale_y_continuous(expand=c(0,0))
+  dem_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = elev)) + 
+    scale_fill_gradient2(low="green", mid = "yellow",midpoint=2050, high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600))) +
+    #scale_fill_gradient(low="green", high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600))) +
+    ggtitle("Domain Elevations (m)") + scale_x_continuous(expand=c(0,0)) +
+    scale_y_continuous(expand=c(0,0)) + labs(fill = "Elevation (m)") + theme_bw() + theme(panel.border = element_rect(colour = "black", size=1, fill=NA))
   
   dem_contour <- dem_fig +geom_contour(aes(z = slopes$elev)) + geom_text_contour(aes(z = slopes$elev),
-                                                              stroke=0.2, min.size = 10)
+                                                              stroke=0.2, min.size = 10, color = "black")
   
   xslope_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = xslope), colour = "black") + 
     scale_fill_gradient2(low="green", mid = "yellow", high="red", limits=c(-0.5,0.5)) +
     ggtitle("Slopes in the x-direction") +geom_contour(aes(z = slopes$elev)) + geom_text_contour(aes(z = slopes$elev),
-                                                                                                 stroke=0.2, min.size = 10)
+                                                                                                 stroke=0.2, min.size = 10) + 
+    scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
   
   yslope_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = yslope), colour = "black") + 
     scale_fill_gradient2(low="green", mid = "yellow", high="red", limits=c(-0.5,0.5)) +
     ggtitle("Slopes in the y-direction") + geom_contour(aes(z = slopes$elev)) + geom_text_contour(aes(z = slopes$elev),
-                                                                                                 stroke=0.2, min.size = 10)
+                                                                                                 stroke=0.2, min.size = 10) +
+    scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
+  
   smag_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = smag), colour = "black") + 
     scale_fill_gradient2(low="green", mid = "yellow", high="red",midpoint=0.25, limits=c(0,0.51)) +
     ggtitle("Slope magnitudes") + geom_contour(aes(z = slopes$elev)) + geom_text_contour(aes(z = slopes$elev),
-                                                                                                  stroke=0.2, min.size = 10)
+                                                                                                  stroke=0.2, min.size = 10) +
+    scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
   
-  dem_contour
-  xslope_fig
-  yslope_fig
-  smag_fig
+  print(dem_contour)
+  print(xslope_fig)
+  print(yslope_fig)
+  print(smag_fig)
   
 }
 
