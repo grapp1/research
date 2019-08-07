@@ -62,11 +62,12 @@ slopes$X <- slopes$X * 90 - 45
 save(slopes,file="~/research/domain/domain_df.Rda")
 
 if(plotting == TRUE){
-  dem_fig <- ggplot(slopes, aes(X,Y)) + geom_tile(aes(fill = elev)) + 
+  dem_fig <- ggplot() + geom_tile(data = slopes, aes(x = X,y = Y, fill = elev)) + 
     scale_fill_gradient2(low="green", mid = "yellow",midpoint=2050, high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600))) +
     #scale_fill_gradient(low="green", high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600))) +
     ggtitle("Domain Elevations (m)") + scale_x_continuous(expand=c(0,0)) +
-    scale_y_continuous(expand=c(0,0)) + labs(fill = "Elevation (m)") + theme_bw() + theme(panel.border = element_rect(colour = "black", size=1, fill=NA))
+    scale_y_continuous(expand=c(0,0)) + labs(fill = "Elevation (m)") + theme_bw() + 
+    theme(panel.border = element_rect(colour = "black", size=1, fill=NA))
   
   dem_contour <- dem_fig +geom_contour(aes(z = slopes$elev)) + geom_text_contour(aes(z = slopes$elev),
                                                               stroke=0.2, min.size = 10, color = "black")
