@@ -3,6 +3,7 @@
 # read binary particle file
 
 library(ggplot2)
+library(ggnewscale)
 library(tidyr)
 library(readr)
 library(dplyr)
@@ -35,11 +36,10 @@ exited_particles <- exited_particles[exited_particles$age > 365,] # since there 
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
 exit_pts <- dem_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (days)") +
-  #scale_fill_gradient(low = "white", high="green") +
+  scale_colour_gradient(low = "white", high="midnightblue") +
   ggtitle("Locations and ages of exited particles for A_v1 - forward tracking with IC of 10 particles per cell")
+
 exit_pts
-
-
 
 
 paste("Maximum particle age is", format(max(exited_particles$age), nsmall = 1), "days")
