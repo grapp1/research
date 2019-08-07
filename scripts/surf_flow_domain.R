@@ -63,7 +63,8 @@ save(slopes,file="~/research/domain/domain_df.Rda")
 
 if(plotting == TRUE){
   dem_fig <- ggplot() + geom_tile(data = slopes, aes(x = X,y = Y, fill = elev)) + 
-    scale_fill_gradient2(low="green", mid = "yellow",midpoint=2050, high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600))) +
+    scale_fill_gradient2(low="green", mid = "yellow",midpoint=2050, high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600)),
+                         labels=c("1,200","1,800","2,400","3,000")) +
     #scale_fill_gradient(low="green", high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600))) +
     ggtitle("Domain Elevations (m)") + scale_x_continuous(expand=c(0,0)) +
     scale_y_continuous(expand=c(0,0)) + labs(fill = "Elevation (m)") + theme_bw() + 

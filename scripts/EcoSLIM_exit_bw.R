@@ -25,9 +25,9 @@ restart_particles <- ES_read(restart_file, type = "restart")
 
 # converting age to days, but still keeping the hours column
 exited_particles$age_hr <- exited_particles$age  
-exited_particles$age <- exited_particles$age_hr/24
+exited_particles$age <- exited_particles$age_hr/(24*365)
 
-exited_particles <- exited_particles[exited_particles$age > 365,] # since there are many particles that immediately exit
+exited_particles <- exited_particles[exited_particles$age > 1,] # since there are many particles that immediately exit
 
 
 #exit_pts <- ggplot(exited_particles, aes(x=X, y=Y)) + geom_point(aes(colour = age)) + scale_x_continuous(limits = c(0,8190), expand=c(0,0), minor_breaks = seq(0 , 8190, 90)) +
@@ -35,8 +35,9 @@ exited_particles <- exited_particles[exited_particles$age > 365,] # since there 
 #  theme(panel.grid.minor = element_line(colour="grey", size=0.1)) + labs(color = "Age (hours)")
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- dem_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (days)") +
-  scale_colour_gradient(low = "white", high="midnightblue") +
+exit_pts <- dem_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+  scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(100,600),breaks=c(seq(0,600,100)), 
+                        labels=c("0","≤100","200","300","400","500","600")) +
   ggtitle("Locations and ages of exited particles for A_v1 - forward tracking with IC of 10 particles per cell")
 
 exit_pts
