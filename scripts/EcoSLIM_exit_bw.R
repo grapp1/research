@@ -19,7 +19,7 @@ source("~/research/scripts/EcoSLIM_read_fxn.R")
 exit_file <- "/Users/grapp/Downloads/SLIM_A_v1_fw_pulse_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 
-restart_file <- "/Users/grapp/Desktop/test/A_v1_EcoSLIM/10kppc_pt/SLIM_A_v1_bw_pulse_10kppc_particle_restart.bin"
+restart_file <- "/Users/grapp/Desktop/test/A_v1_EcoSLIM/fw_20190805/SLIM_A_v1_fw_pulse_particle_restart.bin"
 restart_particles <- ES_read(restart_file, type = "restart")
 
 
@@ -45,7 +45,7 @@ exit_pts
 
 paste("Maximum particle age is", format(max(exited_particles$age), nsmall = 1), "days")
 
-pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 1000)
+pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 3)
 max_density <- max(pdf_exited_all$Density)
 pdf_exited_all$Density_norm <- pdf_exited_all$Density/max_density
 
@@ -56,7 +56,7 @@ pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_
   #geom_line(data = pdf_exit_2k, aes(x = age,y = Density_norm), color="blue") +
   #geom_line(data = pdf_exit_5k, aes(x = age,y = Density_norm), color="green") +
   #geom_line(data = pdf_exit_10k, aes(x = age,y = Density_norm), color="orange") +
-  scale_x_log10(name="Age (days)",limits = c(1000,1000000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
+  scale_x_log10(name="Age (years)",limits = c(1,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
     labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
   ggtitle("PDF of all exited particles for Scenario A (forward tracking)") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
