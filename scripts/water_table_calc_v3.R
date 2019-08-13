@@ -62,5 +62,16 @@ ggplot(wt_elev.df, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black")
   scale_fill_gradient(low="blue", high="red") + 
   ggtitle(paste("Water Table Elevation"))
 
+wt_elev.df2 <- inner_join(wt_elev.df, slopes, by = c("x" = "X_cell","y" = "Y_cell"))
+wt_elev.df2$wt_elev <- wt_elev.df2$wt_elev + wt_elev.df2$elev - 1000
+
+wt_elev_plot <- ggplot(wt_elev.df2, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
+  scale_fill_gradient(low="blue", high="red") + 
+  ggtitle(paste("Water Table Elevation")) 
+wt_elev_plot_contour <- wt_elev_plot + geom_contour(aes(z = wt_elev.df2$wt_elev)) + 
+  geom_text_contour(aes(z = wt_elev.df2$wt_elev), stroke=0.2, min.size = 10, color = "black")
+wt_elev_plot_contour
+
+save(wt_elev.df, "~/research/A_v1/wt_")
 
 

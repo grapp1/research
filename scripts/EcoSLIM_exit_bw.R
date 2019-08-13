@@ -16,10 +16,10 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-exit_file <- "/Users/grapp/Downloads/SLIM_A_v1_fw_pulse_exited_particles.bin"
+exit_file <- "/Users/garrettrapp/Downloads/bw_20190808_ppul3/SLIM_A_v1_bw_ppul3_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 
-restart_file <- "/Users/grapp/Desktop/test/A_v1_EcoSLIM/fw_20190805/SLIM_A_v1_fw_pulse_particle_restart.bin"
+restart_file <- "/Users/garrettrapp/Downloads/bw_20190808_ppul3/SLIM_A_v1_bw_ppul3_particle_restart.bin"
 restart_particles <- ES_read(restart_file, type = "restart")
 
 
@@ -49,10 +49,10 @@ pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 3)
 max_density <- max(pdf_exited_all$Density)
 pdf_exited_all$Density_norm <- pdf_exited_all$Density/max_density
 
-#pdf_exit_2k <- pdf_exited_all
+#pdf_exit_ppul4 <- pdf_exited_all
 
 pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm), color="red") +
-  #geom_line(data = pdf_exit_1k, aes(x = age,y = Density_norm), color="black") +
+  geom_line(data = pdf_exit_ppul4, aes(x = age,y = Density_norm), color="black") +
   #geom_line(data = pdf_exit_2k, aes(x = age,y = Density_norm), color="blue") +
   #geom_line(data = pdf_exit_5k, aes(x = age,y = Density_norm), color="green") +
   #geom_line(data = pdf_exit_10k, aes(x = age,y = Density_norm), color="orange") +

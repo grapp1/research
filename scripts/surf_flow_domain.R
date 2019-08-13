@@ -30,7 +30,7 @@ plotting <- TRUE
 slo_x_grid <- data.frame(readpfb("~/research/domain/garrett.slopex.pfb", verbose=F))
 slo_y_grid <- data.frame(readpfb("~/research/domain/garrett.slopey.pfb", verbose=F))
 #dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
-dem_grid <- data.frame(readpfb("/Users/grapp/Desktop/working/workflow/dem_v2.pfb", verbose=F))
+dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
 
 
 for(i in 1:ny){
