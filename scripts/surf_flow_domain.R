@@ -61,6 +61,9 @@ slopes$Y <- slopes$Y * 90 - 45
 slopes$X <- slopes$X * 90 - 45
 save(slopes,file="~/research/domain/domain_df.Rda")
 
+
+load("~/research/domain/domain_df.Rda")
+
 if(plotting == TRUE){
   dem_fig <- ggplot() + geom_tile(data = slopes, aes(x = X,y = Y, fill = elev)) + 
     scale_fill_gradient2(low="green", mid = "yellow",midpoint=2050, high="red", limits=c(1200,3000), breaks = c(seq(1200,3000,600)),

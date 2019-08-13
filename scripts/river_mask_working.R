@@ -14,7 +14,11 @@ river_mask_df$river[river_mask_df$X == 20 & river_mask_df$Y == 40] <- 2
 river_mask_df$river[river_mask_df$X == 32 & river_mask_df$Y == 19] <- 2
 
 
-ggplot() + geom_tile(data = river_mask_df, aes(x = X,y = Y,fill = factor(river)))
+ggplot() + geom_tile(data = river_mask_df, aes(x = X,y = Y,fill = factor(river))) + 
+  scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) + 
+  ggtitle(paste("Depth to Water for Scenario A with Constant Recharge")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), 
+        panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 save(river_mask_df,file="~/research/domain/river_mask_df.Rda")
 
 test <- filter(river_mask_df, (X==36 & Y == 47))

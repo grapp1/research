@@ -72,6 +72,16 @@ wt_elev_plot_contour <- wt_elev_plot + geom_contour(aes(z = wt_elev.df2$wt_elev)
   geom_text_contour(aes(z = wt_elev.df2$wt_elev), stroke=0.2, min.size = 10, color = "black")
 wt_elev_plot_contour
 
-save(wt_elev.df, "~/research/A_v1/wt_")
+wt_elev.df2$dtw <- wt_elev.df2$elev - wt_elev.df2$wt_elev
+wt_dtw_plot <- ggplot(wt_elev.df2, aes(x, y)) + geom_tile(aes(fill = dtw), colour = "black") + labs(fill = "Depth to Water (m)") +
+  scale_fill_gradient(low="blue", high="red",limits=c(-1,401),breaks=c(seq(0,400,100))) + 
+  scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) + 
+  ggtitle(paste("Depth to Water for Scenario A with Constant Recharge")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+wt_dtw_plot
 
+df_sa <- wt_elev.df2[ -c(1,2,4:9) ]
+
+write.table(wt_elev.df2, "wt_elev.df2.csv", sep="\t", row.names=FALSE, col.names=TRUE) 
+save(df_sa, file="~/research/A_v1/wt_A_v1", ascii=TRUE)
 
