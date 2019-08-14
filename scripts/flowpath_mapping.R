@@ -9,8 +9,6 @@ load(file="~/research/domain/dem_grid.Rda")
 nx <- nrow(dem_grid)
 ny <- ncol(dem_grid)
 
-# for(i in 3:(nx-2)){
-#   for(j in 3:(ny-2)){
 for(i in 3:(nx-2)){
   for(j in 3:(ny-2)){
     flowpath_fig <- flowpath_fxn(i,j,nx,ny,dem_grid)
