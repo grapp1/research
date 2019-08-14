@@ -29,7 +29,6 @@ plotting <- TRUE
 # the gridded data frames will be read into the surface outflow calculation function
 slo_x_grid <- data.frame(readpfb("~/research/domain/garrett.slopex.pfb", verbose=F))
 slo_y_grid <- data.frame(readpfb("~/research/domain/garrett.slopey.pfb", verbose=F))
-#dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
 dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
 
 
