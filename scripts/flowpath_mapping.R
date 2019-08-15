@@ -9,10 +9,23 @@ load(file="~/research/domain/dem_grid.Rda")
 nx <- nrow(dem_grid)
 ny <- ncol(dem_grid)
 
+
+# part 1 - for quickly printing individual maps
+i <- 9
+j <- 23
+
+flowpath_fig <- flowpath_fxn(i,j,nx,ny,dem_grid)
+flowpath_fig
+ggsave(filename = paste("~/Desktop/flowpath_maps/fp_c",sprintf("%02d",i),sprintf("%02d", j),".png",sep=""), plot = flowpath_fig)
+
+
+
+# part 2 - for bulk generation and saving of maps
+system.time(
 for(i in 3:(nx-2)){
   for(j in 3:(ny-2)){
     flowpath_fig <- flowpath_fxn(i,j,nx,ny,dem_grid)
     ggsave(filename = paste("~/Desktop/flowpath_maps/fp_c",sprintf("%02d",i),sprintf("%02d", j),".png",sep=""), plot = flowpath_fig)
   }
-}
+})
 

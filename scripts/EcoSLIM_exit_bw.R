@@ -16,7 +16,7 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-exit_file <- "/Users/grapp/Downloads/bw_20190808_ppul4/SLIM_A_v1_bw_ppul4_exited_particles.bin"
+exit_file <- "/Users/grapp/Desktop/test/A_v1_EcoSLIM/10kppc_pt_20190805/SLIM_A_v1_bw_pulse_10kppc_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 
 restart_file <- "/Users/garrettrapp/Downloads/bw_20190808_ppul3/SLIM_A_v1_bw_ppul3_particle_restart.bin"
@@ -27,7 +27,7 @@ restart_particles <- ES_read(restart_file, type = "restart")
 exited_particles$age_hr <- exited_particles$age  
 exited_particles$age <- exited_particles$age_hr/(24*365)
 
-exited_particles <- exited_particles[exited_particles$age > 1,] # since there are many particles that immediately exit
+exited_particles <- exited_particles[exited_particles$age > 5,] # since there are many particles that immediately exit
 
 
 #exit_pts <- ggplot(exited_particles, aes(x=X, y=Y)) + geom_point(aes(colour = age)) + scale_x_continuous(limits = c(0,8190), expand=c(0,0), minor_breaks = seq(0 , 8190, 90)) +
@@ -35,10 +35,10 @@ exited_particles <- exited_particles[exited_particles$age > 1,] # since there ar
 #  theme(panel.grid.minor = element_line(colour="grey", size=0.1)) + labs(color = "Age (hours)")
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- dem_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(100,600),breaks=c(seq(0,600,100)), 
                         labels=c("0","≤100","200","300","400","500","600")) +
-  ggtitle("Locations and ages of exited particles for A_v1 - backwards tracking from cell [32,19]")
+  ggtitle("Locations and ages of exited particles for A_v1 - backwards tracking from cell [9,23]")
 
 exit_pts
 
@@ -52,8 +52,8 @@ pdf_exited_all$Density_norm <- pdf_exited_all$Density/max_density
 #pdf_exit_ppul4 <- pdf_exited_all
 
 pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm), color="red") +
-  geom_line(data = pdf_exit_ppul3, aes(x = age,y = Density_norm), color="black") +
-  geom_line(data = pdf_exit_ppul4, aes(x = age,y = Density_norm), color="blue") +
+  #geom_line(data = pdf_exit_ppul3, aes(x = age,y = Density_norm), color="black") +
+  #geom_line(data = pdf_exit_ppul4, aes(x = age,y = Density_norm), color="blue") +
   #geom_line(data = pdf_exit_5k, aes(x = age,y = Density_norm), color="green") +
   #geom_line(data = pdf_exit_10k, aes(x = age,y = Density_norm), color="orange") +
   scale_x_log10(name="Age (years)",limits = c(1,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 

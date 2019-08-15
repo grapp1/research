@@ -1,18 +1,6 @@
 # 20190807 flowpath_fxn
 # for a given cell, calculate the cells that would contribute local and intermediate flows
 
-# require(reshape2)
-# require(ggplot2)
-# source("~/research/scripts/local_flow_fxn.R")
-# 
-# 
-# load(file="~/research/domain/dem_grid.Rda")
-# nx <- nrow(dem_grid)
-# ny <- ncol(dem_grid)
-# 
-# x_cell <- 30
-# y_cell <- 40
-
 flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid){
   require(reshape2)
   require(ggplot2)
@@ -41,13 +29,13 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid){
       flowpath_grid <- local_flow((x_cell+1-i), j, dem_grid, flowpath_grid)
     }
   }
-  
-  for(i in ((x_cell+1):(nx-1))){
+
+  for(i in ((x_cell-1):(nx-1))){ # need to start with x_cell to account for new possible local flowpaths
     for(j in (1:(y_cell-1))){
-      flowpath_grid <- local_flow(x_cell, (y_cell+1-j), dem_grid, flowpath_grid)
+      flowpath_grid <- local_flow(i, (y_cell+1-j), dem_grid, flowpath_grid)
     }
     for(j in ((y_cell+1):(ny-1))){
-      flowpath_grid <- local_flow(x_cell, j, dem_grid, flowpath_grid)
+      flowpath_grid <- local_flow(i, j, dem_grid, flowpath_grid)
     }
   }
   
@@ -66,18 +54,26 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid){
   flowpath_df$X_cell <- flowpath_df$X
   flowpath_df$Y <- as.integer(flowpath_df$Y) * 90 - 45
   flowpath_df$X <- as.integer(flowpath_df$X) * 90 - 45
+  local_cells <- sum(flowpath_df$flowpath == 1)
   
-  flowpath_fig <- ggplot() + geom_tile(data = flowpath_df, aes(x = X,y = Y, fill = factor(flowpath)), color="gray") + 
-    scale_fill_manual(values=c("black", "blue", "orange"),labels = c("Chosen Point", "Local", "Intermediate")) +
-    scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
-    scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-    ggtitle(paste("Flowpath map for cell [",x_cell,",",y_cell,"]",sep="")) + labs(fill = "Flowpath") + theme_bw() +
-    theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1))
+  if(local_cells == 0){
+    flowpath_fig <- ggplot() + geom_tile(data = flowpath_df, aes(x = X,y = Y, fill = factor(flowpath)), color="gray") + 
+      scale_fill_manual(values=c("black", "orange"),labels = c("Chosen Point", "Intermediate")) +
+      scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+      scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+      ggtitle(paste("Flowpath map for cell [",x_cell,",",y_cell,"]",sep="")) + labs(fill = "Flowpath") + theme_bw() +
+      theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1))
+  } else {
+    flowpath_fig <- ggplot() + geom_tile(data = flowpath_df, aes(x = X,y = Y, fill = factor(flowpath)), color="gray") + 
+      scale_fill_manual(values=c("black", "blue", "orange"),labels = c("Chosen Point", paste("Local (",local_cells," cells)",sep=""), "Intermediate")) +
+      scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+      scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+      ggtitle(paste("Flowpath map for cell [",x_cell,",",y_cell,"]",sep="")) + labs(fill = "Flowpath") + theme_bw() +
+      theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1))
+  }
   return(flowpath_fig)
 }
 
-fig1 <- flowpath_fxn(30,40,nx,ny,dem_grid)
-fig1
 
 
 
