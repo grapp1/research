@@ -16,49 +16,47 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-exit_file <- "/Users/grapp/Desktop/test/A_v1_EcoSLIM/10kppc_pt_20190805/SLIM_A_v1_bw_pulse_10kppc_exited_particles.bin"
+exit_file <- "/Users/grapp/Downloads/intermediate200/SLIM_A_v1_fw_200ppc_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 
 restart_file <- "/Users/garrettrapp/Downloads/bw_20190808_ppul3/SLIM_A_v1_bw_ppul3_particle_restart.bin"
 restart_particles <- ES_read(restart_file, type = "restart")
 
 
-# converting age to days, but still keeping the hours column
+# converting age to years, but still keeping the hours column
 exited_particles$age_hr <- exited_particles$age  
 exited_particles$age <- exited_particles$age_hr/(24*365)
 
-exited_particles <- exited_particles[exited_particles$age > 5,] # since there are many particles that immediately exit
+# clipping outputs since there are many particles that immediately exit
+exited_particles <- exited_particles[exited_particles$age > 1,] 
+
+# generating pdf
+pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 3)
+max_density <- max(pdf_exited_all$Density)
+pdf_exited_all$Density_norm <- pdf_exited_all$Density/max_density
 
 
-#exit_pts <- ggplot(exited_particles, aes(x=X, y=Y)) + geom_point(aes(colour = age)) + scale_x_continuous(limits = c(0,8190), expand=c(0,0), minor_breaks = seq(0 , 8190, 90)) +
-#  scale_y_continuous(limits = c(0,6300), expand=c(0,0), minor_breaks = seq(0 , 6300, 90)) + ggtitle("Locations and ages of exited particles for A_v1 - 2,000 particle pulse at edge of saturated zone") +
-#  theme(panel.grid.minor = element_line(colour="grey", size=0.1)) + labs(color = "Age (hours)")
+
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles$age)), "years")
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- dem_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(100,600),breaks=c(seq(0,600,100)), 
                         labels=c("0","≤100","200","300","400","500","600")) +
   ggtitle("Locations and ages of exited particles for A_v1 - backwards tracking from cell [9,23]")
 
 exit_pts
 
-
-paste("Maximum particle age is", format(max(exited_particles$age), nsmall = 1), "days")
-
-pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 3)
-max_density <- max(pdf_exited_all$Density)
-pdf_exited_all$Density_norm <- pdf_exited_all$Density/max_density
-
-#pdf_exit_ppul4 <- pdf_exited_all
+#pdf_exit_fw100 <- pdf_exited_all
 
 pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm), color="red") +
-  #geom_line(data = pdf_exit_ppul3, aes(x = age,y = Density_norm), color="black") +
-  #geom_line(data = pdf_exit_ppul4, aes(x = age,y = Density_norm), color="blue") +
+  geom_line(data = pdf_exit_fw10, aes(x = age,y = Density_norm), color="black") +
+  geom_line(data = pdf_exit_fw100, aes(x = age,y = Density_norm), color="blue") +
   #geom_line(data = pdf_exit_5k, aes(x = age,y = Density_norm), color="green") +
   #geom_line(data = pdf_exit_10k, aes(x = age,y = Density_norm), color="orange") +
   scale_x_log10(name="Age (years)",limits = c(1,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
     labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
-  ggtitle("PDF of all exited particles for Scenario A (backwards tracking from different points)") + 
+  ggtitle("PDF of all exited particles for Scenario A (forward tracking with different amounts of particles)") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
