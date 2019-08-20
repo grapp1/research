@@ -4,7 +4,6 @@
 flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid){
   require(reshape2)
   require(ggplot2)
-  require(PriorityFlow)
   source("~/research/scripts/local_flow_fxn.R")
   
   flowpath_grid <- matrix(2, nrow = nx, ncol = ny)
@@ -40,30 +39,6 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid){
     }
   }
   
-  
-  # adding watershed delineation to local flow grid
-  dir_grid <- as.matrix(read.table(file="~/research/domain/slope_processing_outputs/direction_grid.txt", header=TRUE, sep=" "))
-  cell_wtrshed <- DelinWatershed(c(x_cell,y_cell), dir_grid)
-  cell_wtrshed <- cell_wtrshed$watershed
-  #image.plot(dir_grid)
-
-  # adding subbasin delineation  
-  subbasin_df_1 <- read.csv(file="~/research/domain/subbasin_df.csv", header=TRUE)
-  
-  basin_no <- subbasin_df_1$GR_new[subbasin_df_1$X_cell == x_cell & subbasin_df_1$Y_cell == y_cell]
-  
-  
-  for(i in 1:nx){
-    for(j in 1:ny){
-      if(cell_wtrshed[i,j] == 1){
-        flowpath_grid[i,j] <- 1
-      }
-      if(flowpath_grid[i,j] != 1){
-        flowpath_grid[i,j] <- subbasin_df_1$GR_new[subbasin_df_1$X_cell == i & subbasin_df_1$Y_cell == j]
-      }
-    }
-  }
-  
   # setting specified point as zero
   flowpath_grid[x_cell,y_cell] <- 0
   
@@ -83,14 +58,14 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid){
   
   if(local_cells == 0){
     flowpath_fig <- ggplot() + geom_tile(data = flowpath_df, aes(x = X,y = Y, fill = factor(flowpath)), color="gray") + 
-      #scale_fill_manual(values=c("black", "orange"),labels = c("Chosen Point", "Intermediate")) +
+      scale_fill_manual(values=c("black", "orange"),labels = c("Chosen Point", "Intermediate")) +
       scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
       scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
       ggtitle(paste("Flowpath map for cell [",x_cell,",",y_cell,"]",sep="")) + labs(fill = "Flowpath") + theme_bw() +
       theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1))
   } else {
     flowpath_fig <- ggplot() + geom_tile(data = flowpath_df, aes(x = X,y = Y, fill = factor(flowpath)), color="gray") + 
-      #scale_fill_manual(values=c("black", "blue", "orange"),labels = c("Chosen Point", paste("Local (",local_cells," cells)",sep=""), "Intermediate")) +
+      scale_fill_manual(values=c("black", "blue", "orange"),labels = c("Chosen Point", paste("Local (",local_cells," cells)",sep=""), "Intermediate")) +
       scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
       scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
       ggtitle(paste("Flowpath map for cell [",x_cell,",",y_cell,"]",sep="")) + labs(fill = "Flowpath") + theme_bw() +

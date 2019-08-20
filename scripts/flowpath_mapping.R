@@ -12,10 +12,10 @@ ny <- ncol(dem_grid)
 
 
 # part 1 - for quickly printing individual maps
-i <- 9
-j <- 23
+x <- 3
+y <- 20
 
-flowpath_fig <- flowpath_fxn(i,j,nx,ny,dem_grid)
+flowpath_fig <- flowpath_fxn(x,y,nx,ny,dem_grid)
 flowpath_fig
 ggsave(filename = paste("~/Desktop/flowpath_maps/fp_c",sprintf("%02d",i),sprintf("%02d", j),".png",sep=""), plot = flowpath_fig)
 
@@ -48,14 +48,21 @@ subbasin_df$X_cell <- as.integer(subbasin_df$X)
 subbasin_df$Y <- as.integer(subbasin_df$Y) * 90 - 45
 subbasin_df$X <- as.integer(subbasin_df$X) * 90 - 45
 subbasin_cat <- read.csv(file="~/research/domain/slope_processing_outputs/garrett.Subbasin_Summary.txt", header=TRUE, sep=" ")
+subbasin_cat$GR_new <- subbasin_cat$GR_new + 1
+subbasin_cat$GR_new[subbasin_cat$GR_new == 1] <- 7 # 7 denotes outside the main basin
 subbasin_df <- full_join(subbasin_df, subbasin_cat, by = c("subbasin_no" = "Basin_ID"))
 
 
-rivermask_df <- melt(rivermask) # taken from garrett_domain.R file
+rivermask_df <- melt(rivermask)         # taken from garrett_domain.R file
 colnames(rivermask_df) <- c("X","Y","river")
 rivermask_df[rivermask_df == 0] <- NA
-subbasin_df <- inner_join(subbasin_df, rivermask_df, by = c("X_cell" = "X","Y_cell" = "Y"))
+subbasin_df <- full_join(subbasin_df, rivermask_df, by = c("X_cell" = "X","Y_cell" = "Y"))
+subbasin_df$GR_new[is.na(subbasin_df$GR_new)] <- 7
+subbasin_df <- subbasin_df[-c(6:11)]
+write.csv(subbasin_df, file = "~/research/domain/subbasin_df.csv", row.names = FALSE)
+
 subbasin_df$GR_new[subbasin_df$river == 1] <- -1
+
 
 subbasin_fig <- ggplot() + geom_tile(data = subbasin_df, aes(x = X,y = Y, fill = factor(GR_new)), color="gray") + 
   scale_fill_manual(values=c("black","white", "orange","blue","green","red","darkmagenta"),
@@ -74,7 +81,7 @@ domain_mask <- init$mask
 stream_dist <- StreamDist(direction_grid, rivermask, domain_mask, d4 = c(1, 2, 3, 4))
 image.plot(stream_dist$stream.dist)
 image.plot(stream_dist$stream.yind)
-#write.table(stream_dist$stream.yind, "~/research/domain/slope_processing_outputs/stream_yind.txt", row.names=F)
+write.table(direction_grid, "~/research/domain/slope_processing_outputs/direction_grid.txt", row.names=F)
 
 outlet_wtrshed <- DelinWatershed(c(64,7), direction_grid, d4 = c(1, 2, 3, 4), printflag = F)
 image.plot(outlet_wtrshed$watershed)
