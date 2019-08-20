@@ -3,6 +3,7 @@
 library(fields)   #for plotting the pfb file
 library(ggplot2)
 library(reshape2)
+library(metR)
 
 source("~/research/scripts/PFB-ReadFcn.R")
 
@@ -35,7 +36,7 @@ ggplot(subset_particles, aes(x, y)) + geom_tile(aes(fill = press), colour = "bla
   ggtitle(paste("Pressure"))
 
 
-# water table elevation function - takes a while
+# water table elevation function - takes a while, but you only need to do it once 
 wt_elev.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),wt_elev=0)
 
 system.time(
@@ -58,25 +59,40 @@ system.time(
     }
   })
 
+
+
+
+
+
 ggplot(wt_elev.df, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
   scale_fill_gradient(low="blue", high="red") + 
   ggtitle(paste("Water Table Elevation"))
 
 wt_elev.df2 <- inner_join(wt_elev.df, slopes, by = c("x" = "X_cell","y" = "Y_cell"))
 wt_elev.df2$wt_elev <- wt_elev.df2$wt_elev + wt_elev.df2$elev - 1000
+wt_elev.df2$dtw <- wt_elev.df2$elev - wt_elev.df2$wt_elev
 
-wt_elev_plot <- ggplot(wt_elev.df2, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
-  scale_fill_gradient(low="blue", high="red") + 
-  ggtitle(paste("Water Table Elevation")) 
+
+#########################################################################################################################################################
+# read in wt_elev.df2 file that was already generated above
+wt_elev.df2 <- read.csv(file="~/research/A_v1/A_v1_wt.csv", header=TRUE, sep="\t")
+
+
+
+wt_elev_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
+  scale_fill_gradient(name="Water Table Elevation (m)",low="blue", high="red") + 
+  scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) +
+  ggtitle(paste("Water Table Elevation for Scenario A with Constant Recharge")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_elev_plot_contour <- wt_elev_plot + geom_contour(aes(z = wt_elev.df2$wt_elev)) + 
   geom_text_contour(aes(z = wt_elev.df2$wt_elev), stroke=0.2, min.size = 10, color = "black")
 wt_elev_plot_contour
 
-wt_elev.df2$dtw <- wt_elev.df2$elev - wt_elev.df2$wt_elev
-wt_dtw_plot <- ggplot(wt_elev.df2, aes(x, y)) + geom_tile(aes(fill = dtw), colour = "black") + labs(fill = "Depth to Water (m)") +
-  scale_fill_gradient(low="blue", high="red",limits=c(-1,401),breaks=c(seq(0,400,100))) + 
+
+wt_dtw_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = dtw), colour = "black") + labs(fill = "Depth to Water (m)") +
+  scale_fill_gradient(low="blue", high="blue",limits=c(-1,0),breaks=c(seq(0,400,100))) + 
   scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) + 
-  ggtitle(paste("Depth to Water for Scenario A with Constant Recharge")) + theme_bw() +
+  ggtitle(paste("Saturated Area for Scenario A with Constant Recharge")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_plot
 
