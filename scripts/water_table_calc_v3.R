@@ -96,6 +96,20 @@ wt_dtw_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = dtw), colou
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_plot
 
+wt_elev.df2$dtw_cuts <- cut(wt_elev.df2$dtw, c(-1,0,2,5,10,20,50,100,Inf), include.lowest = TRUE)
+levels(wt_elev.df2$dtw_cuts)
+
+wt_dtw_binplot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = factor(dtw_cuts)), colour = "black") + labs(fill = "Depth to Water (m)") +
+  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","beige"),
+                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100")) +
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  ggtitle(paste("Depth to Water for Scenario A with Constant Recharge")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+wt_dtw_binplot
+
+
+
 df_sa <- wt_elev.df2[ -c(1,2,4:9) ]
 
 write.table(wt_elev.df2, "wt_elev.df2.csv", sep="\t", row.names=FALSE, col.names=TRUE) 
