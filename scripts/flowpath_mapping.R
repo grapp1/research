@@ -12,10 +12,10 @@ ny <- ncol(dem_grid)
 
 
 # part 1 - for quickly printing individual maps
-x <- 3
-y <- 20
+x <- 73
+y <- 18
 
-flowpath_fig <- flowpath_fxn(x,y,nx,ny,dem_grid)
+flowpath_fig <- flowpath_fxn(x,y,nx,ny,dem_grid,riverflag = 1)
 flowpath_fig
 ggsave(filename = paste("~/Desktop/flowpath_maps/fp_c",sprintf("%02d",i),sprintf("%02d", j),".png",sep=""), plot = flowpath_fig)
 
@@ -82,6 +82,9 @@ stream_dist <- StreamDist(direction_grid, rivermask, domain_mask, d4 = c(1, 2, 3
 image.plot(stream_dist$stream.dist)
 image.plot(stream_dist$stream.yind)
 write.table(direction_grid, "~/research/domain/slope_processing_outputs/direction_grid.txt", row.names=F)
+stream_dist <- as.matrix(read.table("~/research/domain/slope_processing_outputs/streamdist.txt",header=TRUE))
+image.plot(stream_dist)
+
 
 outlet_wtrshed <- DelinWatershed(c(64,7), direction_grid, d4 = c(1, 2, 3, 4), printflag = F)
 image.plot(outlet_wtrshed$watershed)
