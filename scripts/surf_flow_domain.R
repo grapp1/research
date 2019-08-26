@@ -29,14 +29,18 @@ plotting <- TRUE
 # the gridded data frames will be read into the surface outflow calculation function
 slo_x_grid <- data.frame(readpfb("~/research/domain/garrett.slopex.pfb", verbose=F))
 slo_y_grid <- data.frame(readpfb("~/research/domain/garrett.slopey.pfb", verbose=F))
-dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
+#dem_grid <- data.frame(readpfb("~/research/domain/dem.pfb", verbose=F))
+dem_pr_grid <- as.data.frame(travHS$dem)
 
 
 for(i in 1:ny){
   names(slo_x_grid)[i] <- i
   names(slo_y_grid)[i] <- i
-  names(dem_grid)[i] <- i
+  #names(dem_grid)[i] <- i
+  names(dem_pr_grid)[i] <- i
 }
+
+save(dem_pr_grid,file="~/research/domain/dem_pr_grid.Rda")
 
 save(slo_x_grid,file="~/research/domain/slo_x_grid.Rda")
 save(slo_y_grid,file="~/research/domain/slo_y_grid.Rda")
@@ -46,7 +50,8 @@ save(slo_y_grid,file="~/research/domain/slo_y_grid.Rda")
 
 slo_x <- melt(t(slo_x_grid))
 slo_y <- melt(t(slo_y_grid))
-dem <- melt(t(dem_grid))
+#dem <- melt(t(dem_grid))
+dem <- melt(t(dem_pr_grid))
 
 slopes <- slo_x
 colnames(dem) <- c("Y","X","elev")
@@ -58,10 +63,10 @@ slopes$Y_cell <- slopes$Y
 slopes$X_cell <- slopes$X
 slopes$Y <- slopes$Y * 90 - 45
 slopes$X <- slopes$X * 90 - 45
-save(slopes,file="~/research/domain/domain_df.Rda")
+save(slopes,file="~/research/domain/domain_pr_df.Rda")
 
 
-load("~/research/domain/domain_df.Rda")
+load("~/research/domain/domain_pr_df.Rda")
 
 if(plotting == TRUE){
   dem_fig <- ggplot() + geom_tile(data = slopes, aes(x = X,y = Y, fill = elev)) + 

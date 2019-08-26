@@ -6,14 +6,14 @@ library(reshape2)
 library(dplyr)
 source("~/research/scripts/flowpath_fxn.R")
 
-load(file="~/research/domain/dem_grid.Rda")
-nx <- nrow(dem_grid)
-ny <- ncol(dem_grid)
+load(file="~/research/domain/dem_pr_grid.Rda")
+nx <- nrow(dem_pr_grid)
+ny <- ncol(dem_pr_grid)
 
 
 # part 1 - for quickly printing individual maps
-x <- 73
-y <- 18
+x <- 37
+y <- 36
 
 flowpath_fig <- flowpath_fxn(x,y,nx,ny,dem_grid,riverflag = 1)
 flowpath_fig

@@ -20,8 +20,8 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid,riverflag = 0){
   for(j in ((y_cell+1):(ny-1))){
     flowpath_grid <- local_flow(x_cell, j, dem_grid, flowpath_grid)
   }
-  
-  
+
+
   # above and below the chosen point
   for(i in (2:(x_cell-1))){
     for(j in (1:(y_cell-1))){
@@ -57,10 +57,13 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid,riverflag = 0){
   for(i in 1:nx){
     for(j in 1:ny){
       if(cell_wtrshed[i,j] == 1){
-        flowpath_grid[i,j] <- 1
+        flowpath_grid[i,j] <- 8
       }
       if(flowpath_grid[i,j] != 1){
         flowpath_grid[i,j] <- subbasin_df_1$GR_new[subbasin_df_1$X_cell == i & subbasin_df_1$Y_cell == j]
+      }
+      if(cell_wtrshed[i,j] == 1){
+        flowpath_grid[i,j] <- 8
       }
     }
   }
@@ -93,16 +96,17 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid,riverflag = 0){
   flowpath_df$cat <- "Outside of Main Basin"
   flowpath_df$cat[flowpath_df$flowpath == -1] <- "River"
   flowpath_df$cat[flowpath_df$flowpath == 0] <- "Chosen Point"
-  flowpath_df$cat[flowpath_df$flowpath == 1] <- "Local Flowpath"
+  flowpath_df$cat[flowpath_df$flowpath == 1] <- "Local Flowpath (GR)"
   flowpath_df$cat[flowpath_df$flowpath == 2] <- "Subbasin 1"
   flowpath_df$cat[flowpath_df$flowpath == 3] <- "Subbasin 2"
   flowpath_df$cat[flowpath_df$flowpath == 4] <- "Subbasin 3"
   flowpath_df$cat[flowpath_df$flowpath == 5] <- "Subbasin 4"
   flowpath_df$cat[flowpath_df$flowpath == 6] <- "Subbasin 5"
+  flowpath_df$cat[flowpath_df$flowpath == 8] <- "Local Flowpath (DelinWatershed)"
   
   if(riverflag == 1){
     flowpath_fig <- ggplot() + geom_tile(data = flowpath_df, aes(x = X,y = Y, fill = factor(cat)), color="gray") + 
-      scale_fill_manual(values=c("black", "gold","white","deepskyblue4","magenta","chocolate","aquamarine","forestgreen","firebrick")) +
+      scale_fill_manual(values=c("black", "gold","orange","white","deepskyblue4","magenta","chocolate","aquamarine","forestgreen","firebrick")) +
       scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
       scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
       ggtitle(paste("Flowpath map for cell [",x_cell,",",y_cell,"]",sep="")) + labs(fill = "Flowpath") + theme_bw() +

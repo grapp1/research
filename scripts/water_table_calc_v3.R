@@ -8,8 +8,8 @@ library(metR)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "~/research/A_v1/A_v1.out.press.00001.pfb"
-satur_file <- "~/research/A_v1/A_v1.out.satur.00001.pfb"
+press_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.press.01017.pfb"
+satur_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.satur.01017.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -104,7 +104,7 @@ wt_dtw_binplot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = factor(d
                     labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Depth to Water for Scenario A with Constant Recharge")) + theme_bw() +
+  ggtitle(paste("Depth to Water for Scenario A with Variable Forcing")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_binplot
 
