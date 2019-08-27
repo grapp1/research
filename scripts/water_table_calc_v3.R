@@ -8,8 +8,8 @@ library(metR)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/B_v0_outputs/C_v0.out.press.00017.pfb"
-satur_file <- "/Users/grapp/Desktop/working/B_v0_outputs/C_v0.out.satur.00017.pfb"
+press_file <- "/Users/grapp/Desktop/working/B_v0_outputs/B_v0.out.press.00017.pfb"
+satur_file <- "/Users/grapp/Desktop/working/B_v0_outputs/B_v0.out.satur.00017.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
