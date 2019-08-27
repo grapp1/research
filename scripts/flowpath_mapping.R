@@ -4,6 +4,7 @@
 library(ggplot2)
 library(reshape2)
 library(dplyr)
+library(fields)
 source("~/research/scripts/flowpath_fxn.R")
 
 load(file="~/research/domain/dem_pr_grid.Rda")
@@ -12,8 +13,16 @@ ny <- ncol(dem_pr_grid)
 
 
 # part 1 - for quickly printing individual maps
-x <- 15
+x <- 25
 y <- 32
+
+# dir_grid <- as.matrix(read.table(file="~/research/domain/slope_processing_outputs/direction_grid.txt", header=TRUE, sep=" "))
+# delin_watershed <- DelinWatershed(c(x,y), dir_grid)
+# image.plot(delin_watershed$watershed)
+# image.plot(dir_grid)
+# dir_grid[x,y] <- 5
+# image.plot(dir_grid)
+
 
 flowpath_fig <- flowpath_fxn(x,y,nx,ny,dem_grid,riverflag = 1)
 flowpath_fig
