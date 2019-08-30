@@ -16,10 +16,10 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-exit_file <- "/Users/grapp/Downloads/intermediate200/SLIM_A_v1_fw_200ppc_exited_particles.bin"
+exit_file <- "/Users/grapp/Desktop/working/bw_20190828/testing/SLIM_A_v3_bw1_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 
-restart_file <- "/Users/garrettrapp/Downloads/bw_20190808_ppul3/SLIM_A_v1_bw_ppul3_particle_restart.bin"
+restart_file <- "/Users/grapp/Desktop/working/bw_20190828/testing/SLIM_A_v3_bw1_particle_restart.bin"
 restart_particles <- ES_read(restart_file, type = "restart")
 
 
@@ -32,9 +32,6 @@ exited_particles <- exited_particles[exited_particles$age > 1,]
 
 # generating pdf
 pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 3)
-max_density <- max(pdf_exited_all$Density)
-pdf_exited_all$Density_norm <- pdf_exited_all$Density/max_density
-
 
 
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles$age)), "years")
@@ -50,8 +47,8 @@ exit_pts
 #pdf_exit_fw100 <- pdf_exited_all
 
 pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm), color="red") +
-  geom_line(data = pdf_exit_fw10, aes(x = age,y = Density_norm), color="black") +
-  geom_line(data = pdf_exit_fw100, aes(x = age,y = Density_norm), color="blue") +
+  #geom_line(data = pdf_exit_fw10, aes(x = age,y = Density_norm), color="black") +
+  #geom_line(data = pdf_exit_fw100, aes(x = age,y = Density_norm), color="blue") +
   #geom_line(data = pdf_exit_5k, aes(x = age,y = Density_norm), color="green") +
   #geom_line(data = pdf_exit_10k, aes(x = age,y = Density_norm), color="orange") +
   scale_x_log10(name="Age (years)",limits = c(1,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 

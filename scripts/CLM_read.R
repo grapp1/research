@@ -36,6 +36,13 @@ forcing_gr <- forcing[8785:52608,]
 forcing_gr$cu_prec <- forcing_gr$cu_prec - min(forcing_gr$cu_prec)
 plot(forcing_gr$cu_prec, type="l", col = "blue")
 
+avg_annual_precip <- max(forcing_gr$cu_prec)/5
+precip_09 <- sum(forcing_gr$APCP_mhr[1:8760])
+precip_10 <- sum(forcing_gr$APCP_mhr[8761:17520])
+precip_11 <- sum(forcing_gr$APCP_mhr[17521:26280])
+precip_12 <- sum(forcing_gr$APCP_mhr[26281:35064])
+precip_13 <- sum(forcing_gr$APCP_mhr[35065:43824])
+
 # aggregating precipitation by month
 monthly_precip <- aggregate(forcing_gr$APCP_mhr, by = list(forcing_gr$month), FUN = sum)
 colnames(monthly_precip) <- c("month","precip_m")

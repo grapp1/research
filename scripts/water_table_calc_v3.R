@@ -4,12 +4,13 @@ library(fields)   #for plotting the pfb file
 library(ggplot2)
 library(reshape2)
 library(metR)
+library(dplyr)
 
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/B_v0_outputs/B_v0.out.press.00017.pfb"
-satur_file <- "/Users/grapp/Desktop/working/B_v0_outputs/B_v0.out.satur.00017.pfb"
+press_file <- "/Users/grapp/Desktop/working/C_v0_outputs/C_v0.out.press.00032.pfb"
+satur_file <- "/Users/grapp/Desktop/working/C_v0_outputs/C_v0.out.satur.00032.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -106,7 +107,7 @@ wt_dtw_binplot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = factor(d
                     labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Depth to Water for Scenario B with Constant Recharge")) + theme_bw() +
+  ggtitle(paste("Depth to Water for Scenario C with Constant Recharge")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_binplot
 

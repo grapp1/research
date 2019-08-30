@@ -13,10 +13,14 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-setwd("~/research/A_v1/velz_map/")
-velx_file <- "~/research/A_v1/A_v1.out.velx.00001.pfb"
-vely_file <- "~/research/A_v1/A_v1.out.vely.00001.pfb"
-velz_file <- "~/research/A_v1/A_v1.out.velz.00001.pfb"
+setwd("/Users/grapp/Desktop/working/A_v3/A_v3_outputs/")
+velx_file <- "/Users/grapp/Desktop/working/A_v3/A_v3.out.velx.00002.pfb"
+vely_file <- "/Users/grapp/Desktop/working/A_v3/A_v3.out.vely.00002.pfb"
+velz_file <- "/Users/grapp/Desktop/working/A_v3/A_v3.out.velz.00002.pfb"
+
+#velx_file <- "/Users/grapp/Desktop/working/A_v1_ES_testing/A_v1.out.velx.00001.pfb"
+#vely_file <- "/Users/grapp/Desktop/working/A_v1_ES_testing/A_v1.out.vely.00001.pfb"
+#velz_file <- "/Users/grapp/Desktop/working/A_v1_ES_testing/A_v1.out.velz.00001.pfb"
 
 
 
@@ -50,15 +54,32 @@ velz_file <- melt(data.frame(velz_new))
 v_all.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),z=rep(1:nz,each=nx*ny),
                        vx=velx_file$value,vy=vely_file$value,vz=velz_file$value)
 
-v_lyr20.df <- v_all.df[v_all.df$z == 8,]
+v_all.df2 <- inner_join(v_all.df, slopes, by = c("x" = "X_cell","y" = "Y_cell"))
 
-v_lyr20pos.df <- v_lyr20.df[v_lyr20.df$vz > 0,]
-v_lyr20neg.df <- v_lyr20.df[v_lyr20.df$vz < 0,]
+for(k in 15:20){
+  v_lyr20.df <- v_all.df2[v_all.df2$z == k,]
+  
+  v_lyr20pos.df <- v_lyr20.df[v_lyr20.df$vz > 0,]
+  v_lyr20neg.df <- v_lyr20.df[v_lyr20.df$vz < 0,]
+  
+  v_lyr20pos.df$log_vz <- log10(v_lyr20pos.df$vz)
+  v_lyr20neg.df$log_vz <- log10(-v_lyr20neg.df$vz)
+  
+  v_lyr20neg.df$vz_cuts <- cut(v_lyr20neg.df$log_vz, c(seq(-8,0,1)), include.lowest = TRUE)
+  levels(v_lyr20neg.df$vz_cuts)
+  
+  
+  
+  #pos_plot <- ggplot(v_lyr20pos.df, aes(x,y)) + geom_tile(aes(fill = vz), colour = "black") + 
+  #  scale_fill_gradient(low="blue", high="red")
+  neg_plot <- ggplot(v_lyr20neg.df, aes(X,Y)) + geom_tile(aes(fill = vz_cuts), colour = "black") + labs(fill = "Log[vz (m/hr)]") +
+    scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),limits = c(0,nx*90),labels = scales::comma) + 
+    scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),limits = c(0,ny*90),labels = scales::comma) +
+    ggtitle(paste("Negative velocities for layer",k)) + theme_bw() +
+    theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  print(neg_plot)
+}
 
-ggplot(v_lyr20pos.df, aes(x,y)) + geom_tile(aes(fill = vz), colour = "black") + 
-  scale_fill_gradient(low="blue", high="red")
-ggplot(v_lyr20neg.df, aes(x,y)) + geom_tile(aes(fill = vz), colour = "black") + 
-  scale_fill_gradient(low="blue", high="red")
 
 summary(v_lyr20neg.df$vz)
 

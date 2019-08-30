@@ -13,6 +13,12 @@ pdfxn <- function(df_exited,max_time,bin_length){
   
   colnames(df_exited_pdf) <- c("bin","Density","age")
   
+  max_density <- max(df_exited_pdf$Density)
+  df_exited_pdf$Density_norm <- df_exited_pdf$Density/max_density
+  
+  sum_norm <- sum(df_exited_pdf$Density_norm)
+  df_exited_pdf$Density_pdf <- df_exited_pdf$Density_norm/sum_norm
+  
   return(df_exited_pdf)
   
 }
