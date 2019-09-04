@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/C_v0_outputs/C_v0.out.press.00032.pfb"
-satur_file <- "/Users/grapp/Desktop/working/C_v0_outputs/C_v0.out.satur.00032.pfb"
+press_file <- "/Users/grapp/Desktop/working/C_v0_outputs/C_v0.out.press.00053.pfb"
+satur_file <- "/Users/grapp/Desktop/working/C_v0_outputs/C_v0.out.satur.00053.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -32,9 +32,9 @@ press_sat.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),z=rep(1:nz,each=nx*ny
                          press=press$value,satur=satur$value)
 system.time(
 subset_particles <- subset(press_sat.df, z == 20))
-ggplot(subset_particles, aes(x, y)) + geom_tile(aes(fill = press), colour = "black") + 
-  scale_fill_gradient(low="blue", high="red") + 
-  ggtitle(paste("Pressure"))
+#ggplot(subset_particles, aes(x, y)) + geom_tile(aes(fill = press), colour = "black") + 
+#  scale_fill_gradient(low="blue", high="red") + 
+#  ggtitle(paste("Pressure"))
 
 
 # water table elevation function - takes a while, but you only need to do it once 

@@ -16,10 +16,10 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-exit_file <- "/Users/grapp/Desktop/working/bw_20190828/testing/SLIM_A_v3_bw1_exited_particles.bin"
+exit_file <- "/Users/grapp/Desktop/working/bw_20190903/bw2/SLIM_A_v3_bw2_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 
-restart_file <- "/Users/grapp/Desktop/working/bw_20190828/testing/SLIM_A_v3_bw1_particle_restart.bin"
+restart_file <- "/Users/grapp/Desktop/working/bw_20190903/bw2/SLIM_A_v3_bw2_particle_restart.bin"
 restart_particles <- ES_read(restart_file, type = "restart")
 
 
@@ -37,7 +37,7 @@ pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 3)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles$age)), "years")
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- dem_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- dem_fig + geom_point(data = restart_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(100,600),breaks=c(seq(0,600,100)), 
                         labels=c("0","≤100","200","300","400","500","600")) +
   ggtitle("Locations and ages of exited particles for A_v1 - backwards tracking from cell [9,23]")

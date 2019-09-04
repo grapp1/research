@@ -17,7 +17,7 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-setwd("/Users/grapp/Desktop/working/B_v0_outputs")
+setwd("/Users/grapp/Desktop/working/C_v0_outputs")
 save <- 0 # 1 to save, anything else to just display charts
 
 nx <- 91
@@ -29,7 +29,7 @@ rech_rate <- 0.000035        # recharge rate in model (in m/hr)
 
 
 
-press_files <- list.files(pattern="B_v0.out.press.*.pfb")
+press_files <- list.files(pattern="C_v0.out.press.*.pfb")
 limit <- length(press_files)
 storage <- matrix(,limit,1)
 rate_storage <- matrix(,limit-1,1)
@@ -87,7 +87,7 @@ plot(rate_storage,type="l",col="green",log="y",ylab="Storage change divided by i
      main=paste("Percentage storage change for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5)
 
 pct <- ggplot(cell_chg_pct_melt, aes(x=timestep, y=value, col=percentile)) + geom_line() + 
-  scale_y_continuous(name="Storage change percentage",trans='log10') + scale_x_continuous(name="Timestep (x 1,000 hours)") +
+  scale_y_continuous(name="Storage change percentage",trans='log10') + scale_x_continuous(name="Timestep (x 10,000 hours)") +
   ggtitle("Percentiles of storage change percentages for cells across the domain")
 pct
 
