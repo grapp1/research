@@ -64,7 +64,7 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid,riverflag = 0){
   # labels for legend
   flowpath_df$cat <- "Outside of Main Basin"
   flowpath_df$cat[flowpath_df$flowpath == -1] <- "River"
-  flowpath_df$cat[flowpath_df$flowpath == 0] <- "Chosen Point"
+  flowpath_df$cat[flowpath_df$flowpath == 0] <- paste("Cell [",x_cell,",",y_cell,"]",sep="")
   flowpath_df$cat[flowpath_df$flowpath == 1] <- "Local"
   flowpath_df$cat[flowpath_df$flowpath == 8] <- "Intermediate"
   if(basin_no == 2){
@@ -105,7 +105,8 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid,riverflag = 0){
   
   if(riverflag == 1){
     flowpath_fig <- ggplot() + geom_tile(data = flowpath_df, aes(x = X,y = Y, fill = factor(cat)), color="gray") + 
-      scale_fill_manual(values=c("black", "aquamarine","firebrick","magenta","yellow","white","deepskyblue4")) +
+      scale_fill_manual(values=c("black", "aquamarine","lightcoral","magenta","yellow","white","deepskyblue4")) +
+      #scale_fill_manual(values=c("black", "aquamarine","lightcoral","yellow","white","deepskyblue4")) +
       scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
       scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
       ggtitle(paste("Flowpath map for cell [",x_cell,",",y_cell,"]",sep="")) + labs(fill = "Flowpath") + theme_bw() +
