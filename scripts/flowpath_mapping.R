@@ -94,6 +94,10 @@ write.table(direction_grid, "~/research/domain/slope_processing_outputs/directio
 stream_dist <- as.matrix(read.table("~/research/domain/slope_processing_outputs/streamdist.txt",header=TRUE))
 image.plot(stream_dist)
 
+stream_xind <- as.matrix(read.table("~/research/domain/slope_processing_outputs/stream_xind.txt",header=TRUE))
+image.plot(stream_yind)
+stream_yind <- as.matrix(read.table("~/research/domain/slope_processing_outputs/stream_yind.txt",header=TRUE))
+
 
 outlet_wtrshed <- DelinWatershed(c(64,7), direction_grid, d4 = c(1, 2, 3, 4), printflag = F)
 image.plot(outlet_wtrshed$watershed)
