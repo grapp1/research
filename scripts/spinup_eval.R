@@ -17,7 +17,7 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-setwd("/Users/grapp/Desktop/working/C_v0_outputs")
+setwd("/Users/grapp/Desktop/working/D_v0_outputs")
 save <- 0 # 1 to save, anything else to just display charts
 
 nx <- 91
@@ -29,7 +29,7 @@ rech_rate <- 0.000035        # recharge rate in model (in m/hr)
 
 
 
-press_files <- list.files(pattern="C_v0.out.press.*.pfb")
+press_files <- list.files(pattern="D_v0.out.press.*.pfb")
 limit <- length(press_files)
 storage <- matrix(,limit,1)
 rate_storage <- matrix(,limit-1,1)

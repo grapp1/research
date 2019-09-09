@@ -16,12 +16,25 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-restart_file <- "/Users/garrettrapp/Downloads/20190906_dl/SLIM_A_v3_bw4_particle_restart.bin"
-restart_particles <- ES_read(restart_file, type = "restart")
+restart_file_1 <- "/Users/grapp/Desktop/working/B_v2_ES_local/bw3/SLIM_B_v2_bw3_particle_restart.bin"
+restart_particles_1 <- ES_read(restart_file_1, type = "restart")
 
 
-exit_file <- "/Users/garrettrapp/Downloads/SLIM_A_v3_bw1_exited_particles.bin"
-exited_particles <- ES_read(exit_file, type = "exited")
+
+restart_file_2 <- "/Users/grapp/Desktop/working/bw_20190903/20190908_dl/SLIM_A_v3_bw4_particle_restart.bin"
+restart_particles_2 <- ES_read(restart_file_2, type = "restart")
+
+
+exit_file_1 <- "/Users/grapp/Desktop/working/bw_20190903/20190906_dl/SLIM_A_v3_bw4_exited_particles.bin"
+exited_particles_1 <- ES_read(exit_file_1, type = "exited")
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_1$age)/(24*365)), "years")
+
+exit_file_2 <- "/Users/grapp/Desktop/working/bw_20190903/20190908_dl/SLIM_A_v3_bw4_exited_particles.bin"
+exited_particles_2 <- ES_read(exit_file_2, type = "exited")
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_2$age)/(24*365)), "years")
+
+exited_particles <- rbind(exited_particles_1,exited_particles_2)
+exited_particles <- exited_particles[!duplicated(exited_particles),]
 
 # converting age to years, but still keeping the hours column
 exited_particles$age_hr <- exited_particles$age  
@@ -32,30 +45,33 @@ exited_particles <- exited_particles[exited_particles$age > 1,]
 
 # generating pdf
 pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 3)
-pdf_exited_bw1fin <- pdfxn(exited_particles, max(exited_particles$age), 3)
+#pdf_exited_bw1fin <- pdfxn(exited_particles, max(exited_particles$age), 3)
 
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles$age)), "years")
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = restart_particles_1, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(100,800),breaks=c(seq(0,600,100)), 
                         labels=c("0","≤100","200","300","400","500","600")) +
   ggtitle("Locations and ages of exited particles for A_v3 - backwards tracking from cell [38,32]")
 
 exit_pts
 
-#pdf_exit_bw2 <- pdf_exited_all
-#save(pdf_exit_bw2,file="~/research/Scenario_A/A_v3/pdf_exit_bw2.Rda")
+#pdf_exit_bw1 <- pdf_exited_all
+#save(pdf_exit_bw1,file="~/research/Scenario_A/A_v3/pdf_exit_bw1.Rda")
+
+load(file="~/research/Scenario_A/A_v3/pdf_exit_bw2.Rda")
 
 pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm), color="red") +
-  geom_line(data = pdf_exite_bw1fin, aes(x = age,y = Density_norm), color="black") +
+  geom_line(data = pdf_exit_bw1, aes(x = age,y = Density_norm), color="black") +
   geom_line(data = pdf_exit_bw2, aes(x = age,y = Density_norm), color="blue") +
   #geom_line(data = pdf_exit_5k, aes(x = age,y = Density_norm), color="green") +
   #geom_line(data = pdf_exit_10k, aes(x = age,y = Density_norm), color="orange") +
-  scale_x_log10(name="Age (years)",limits = c(30,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
+  scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
     labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
   ggtitle("PDF of all exited particles for Scenario A (backward tracking at different locations)") + 
   scale_y_continuous(name="Normalized Density", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
+  scale_color_manual(values = c("firebrick", "dodgerblue","green"))  +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig1
