@@ -16,27 +16,26 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/working/B_v2_ES_local/bw3/SLIM_B_v2_bw3_particle_restart.bin"
+restart_file_1 <- "/Users/grapp/Desktop/working/B_v2_ES_local/bw1/SLIM_B_v2_bw1_particle_restart.bin"
 restart_particles_1 <- ES_read(restart_file_1, type = "restart")
-
 
 
 restart_file_2 <- "/Users/grapp/Desktop/working/bw_20190903/20190908_dl/SLIM_A_v3_bw4_particle_restart.bin"
 restart_particles_2 <- ES_read(restart_file_2, type = "restart")
 
 
-exit_file_1 <- "/Users/grapp/Desktop/working/bw_20190903/20190906_dl/SLIM_A_v3_bw4_exited_particles.bin"
+exit_file_1 <- "/Users/grapp/Desktop/working/B_v2_ES_local/bw2/SLIM_B_v2_bw2_exited_particles.bin"
 exited_particles_1 <- ES_read(exit_file_1, type = "exited")
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_1$age)/(24*365)), "years")
 
-exit_file_2 <- "/Users/grapp/Desktop/working/bw_20190903/20190908_dl/SLIM_A_v3_bw4_exited_particles.bin"
+exit_file_2 <- "/Users/grapp/Desktop/working/B_v2_ES_local/bw3/SLIM_B_v2_bw3_exited_particles.bin"
 exited_particles_2 <- ES_read(exit_file_2, type = "exited")
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_2$age)/(24*365)), "years")
 
 exited_particles <- rbind(exited_particles_1,exited_particles_2)
 exited_particles <- exited_particles[!duplicated(exited_particles),]
 
-exited_particles <- exited_particles_1
+exited_particles <- exited_particles_2
 
 # converting age to years, but still keeping the hours column
 exited_particles$age_hr <- exited_particles$age  
@@ -55,14 +54,14 @@ paste("Maximum particle age is", sprintf("%02g",max(exited_particles$age)), "yea
 exit_pts <- flowpath_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(100,800),breaks=c(seq(0,800,100)), 
                         labels=c("0","≤100","200","300","400","500","600","700","800")) +
-  ggtitle("Locations and ages of exited particles for A_v3 - backwards tracking from cell [38,17]")
+  ggtitle("Locations and ages of exited particles for B_v2 - backwards tracking from cell [38,17]")
 
 exit_pts
 
-pdf_exit_bw4 <- pdf_exited_all
+pdf_exit_B_bw2 <- pdf_exited_all
 
-exited_particles_bw1 <- exited_particles
-save(exited_particles_bw1,file="~/research/Scenario_A/A_v3/exited_particles_bw1.Rda")
+exited_particles_B_bw3 <- exited_particles
+save(pdf_exit_B_bw2,file="~/research/Scenario_B/B_v2/pdf_exit_B_bw2.Rda")
 
 load(file="~/research/Scenario_A/A_v3/pdf_exit_bw1.Rda")
 load(file="~/research/Scenario_A/A_v3/pdf_exit_bw2.Rda")
@@ -72,14 +71,20 @@ pdf_exit_bw2$st_cell <- "[15,32]"
 pdf_exit_bw4$st_cell <- "[38,17]"
 pdf_exited_all <- rbind(pdf_exit_bw1,pdf_exit_bw2,pdf_exit_bw4)
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm, group=st_cell,col = st_cell)) +
-  #geom_line(data = pdf_exit_5k, aes(x = age,y = Density_norm), color="green") +
-  #geom_line(data = pdf_exit_10k, aes(x = age,y = Density_norm), color="orange") +
-  scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
+pdf_exit_bw4$scen <- "A"
+pdf_exit_B_bw3$st_cell <- "[38,17]"
+pdf_exit_B_bw3$scen <- "B"
+pdf_exited_all <- rbind(pdf_exit_bw4,pdf_exit_B_bw3)
+
+
+
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm, group=scen,col = scen)) +
+#pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
+  scale_x_log10(name="Age (years)",limits = c(10,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
     labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
-  ggtitle("PDF of all exited particles for Scenario A (backward tracking at different locations)") + 
+  ggtitle("PDF of all exited particles for Scenarios A and B (backward tracking from cell [38,17])") + 
   scale_y_continuous(name="Normalized Density", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
-  scale_color_manual(values = c("firebrick", "dodgerblue","black"))  + labs(color = "Starting Cell") +
+  scale_color_manual(values = c("firebrick", "dodgerblue"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig1

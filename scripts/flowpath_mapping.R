@@ -13,8 +13,8 @@ ny <- ncol(dem_pr_grid)
 
 
 # part 1 - for quickly printing individual maps
-x <- 15
-y <- 32
+x <- 38
+y <- 17
 
 # dir_grid <- as.matrix(read.table(file="~/research/domain/slope_processing_outputs/direction_grid.txt", header=TRUE, sep=" "))
 # delin_watershed <- DelinWatershed(c(x,y), dir_grid)
