@@ -17,6 +17,6 @@ pulse_start[rownum] <- 3.500000e-04
 
 pulse_start = rbind(c("91 70 20"), pulse_start)
 
-write.table(pulse_start, file = "/Users/grapp/Desktop/working/A_v3/pulse_files/A_v3_bw4.sa",
+write.table(pulse_start, file = "/Users/grapp/Desktop/working/A_v3/pulse_files/A_v3_bw5.sa",
             row.names = FALSE, col.names = FALSE, quote = FALSE)
 
