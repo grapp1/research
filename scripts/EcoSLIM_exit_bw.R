@@ -78,13 +78,14 @@ pdf_exited_all <- rbind(pdf_exit_bw4,pdf_exit_B_bw3)
 
 
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm, group=scen,col = scen)) +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=st_cell,col = st_cell)) +
 #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
-  scale_x_log10(name="Age (years)",limits = c(10,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
-    labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
+  #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
+  #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
+  scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = c(100,200,300,400,500,800,1000),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of all exited particles for Scenarios A and B (backward tracking from cell [38,17])") + 
-  scale_y_continuous(name="Normalized Density", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
-  scale_color_manual(values = c("firebrick", "dodgerblue"))  + labs(color = "Scenario") +
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.04,0.005), limits = c(0,0.04)) + 
+  scale_color_manual(values = c("firebrick", "dodgerblue","green"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig1

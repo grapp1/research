@@ -9,8 +9,8 @@ pulse_start <- matrix(0, nrow = nx*ny*nz)
 
 
 # layer numbers for indicator file (from bottom to top)
-x_cell <- 38
-y_cell <- 17
+x_cell <- 20
+y_cell <- 22
 
 rownum <- (nx*ny*(nz-1)) + x_cell + (nx*(y_cell-1))
 pulse_start[rownum] <- 3.500000e-04
