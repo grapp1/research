@@ -55,8 +55,8 @@ flowpath_fxn <- function(x_cell,y_cell,nx,ny,dem_grid,riverflag = 0){
   local_cells <- sum(flowpath_df$flowpath == 1)
   
   if(riverflag == 1){
-    load(file="~/research/domain/river_mask_df.Rda")
-    flowpath_df <- inner_join(flowpath_df,river_mask_df, by = c("X_cell" = "X", "Y_cell" = "Y"))
+    load(file="~/research/domain/river_mask_df_cln.Rda")
+    flowpath_df <- inner_join(flowpath_df,river_mask_df_cln, by = c("X_cell" = "X", "Y_cell" = "Y"))
     flowpath_df$flowpath[flowpath_df$river == 1] <- -1
     flowpath_df$flowpath[flowpath_df$X_cell == x_cell & flowpath_df$Y_cell == y_cell] <- 0
   }
