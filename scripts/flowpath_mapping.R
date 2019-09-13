@@ -101,3 +101,14 @@ stream_yind <- as.matrix(read.table("~/research/domain/slope_processing_outputs/
 
 outlet_wtrshed <- DelinWatershed(c(64,7), direction_grid, d4 = c(1, 2, 3, 4), printflag = F)
 image.plot(outlet_wtrshed$watershed)
+
+
+load(file="~/research/domain/river_mask_df.Rda")
+river_mask_df_cln <- river_mask_df
+river_mask_df_cln$river[river_mask_df_cln$X > 54 & river_mask_df_cln$Y > 52] <- 0
+river_mask_df_cln$river[river_mask_df_cln$X < 8 & river_mask_df_cln$Y > 35] <- 0
+river_mask_df_cln$river[river_mask_df_cln$X < 33 & river_mask_df_cln$Y < 9] <- 0
+river_mask_df_cln$river[river_mask_df_cln$X > 89] <- 0
+save(river_mask_df_cln, file="~/research/domain/river_mask_df_cln.Rda")
+
+
