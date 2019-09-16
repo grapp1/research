@@ -16,14 +16,14 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/working/A_v3/pulse_files/SLIM_A_v3_bw6_particle_restart.bin"
+restart_file_1 <- "/Users/grapp/Desktop/working/A_v3/bw6/second_run/SLIM_A_v3_bw6_particle_restart.bin"
 restart_particles_1 <- ES_read(restart_file_1, type = "restart")
 
 
-exit_file_A <- "/Users/garrettrapp/Desktop/ecoslim_B_bw5/SLIM_A_v3_bw5_exited_particles.bin"
-exited_particles_A <- ES_read(exit_file_A, type = "exited")
-paste("Maximum particle age is", sprintf("%02g",max(exited_particles_A$age)/(24*365)), "years")
-exit_file_A2 <- "/Users/grapp/Desktop/working/A_v3/bw_20190903/20190908_dl/SLIM_A_v3_bw4_exited_particles.bin"
+exit_file_A1 <- "/Users/grapp/Desktop/working/A_v3/bw6/first_run/SLIM_A_v3_bw6_exited_particles.bin"
+exited_particles_A1 <- ES_read(exit_file_A1, type = "exited")
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_A1$age)/(24*365)), "years")
+exit_file_A2 <- "/Users/grapp/Desktop/working/A_v3/bw6/second_run/SLIM_A_v3_bw6_exited_particles.bin"
 exited_particles_A2 <- ES_read(exit_file_A2, type = "exited")
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_A2$age)/(24*365)), "years")
 exited_particles_A <- rbind(exited_particles_A1,exited_particles_A2)
