@@ -5,10 +5,10 @@ load(file = "~/research/domain/watershed_mask.Rda")
 nx <- 91
 ny <- 70
 
-mask <- matrix(0, nrow = nx*ny)
-for(i in 1:nx){
-  for(j in 1:ny){
-    mask[(i-1)*nx+j] <- watershed_mask$flowpath[watershed_mask$X_cell == i & watershed_mask$Y_cell == j]
+mask <- matrix(nrow = ny, ncol = nx)
+for(i in 1:ny){
+  for(j in 1:nx){
+    mask[ny+1-i,j] <- watershed_mask$flowpath[watershed_mask$X_cell == j & watershed_mask$Y_cell == i]
   }
 }
 
