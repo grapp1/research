@@ -53,7 +53,7 @@ storage[1] = storagecalc(mean(all_press[,,1,1]), 200, area, porosity)
 for(j in 1:nx){
   for(k in 1:ny){
     if(mask[j,k,1] == 0){
-      storage_cell[j,k,1]
+      storage_cell[j,k,1] <- 0
     } else {
       storage_cell[j,k,1] = storagecalc(all_press[j,k,1,1], 200, cell_length**2, porosity)
     }
@@ -66,8 +66,13 @@ for(i in 2:limit){
   rate_storage[i-1] = abs(((storage[i]-storage[i-1])/(rech_rate*area*1000))*100)
   for(j in 1:nx){
     for(k in 1:ny){
-      storage_cell[j,k,i] = storagecalc(all_press[j,k,1,i], 200, cell_length**2, porosity)*mask[j,k,1]
-      rate_storage_cell[j,k,i-1] = abs(((storage_cell[j,k,i]-storage_cell[j,k,i-1])/(rech_rate*(cell_length**2)*1000))*100)
+      if(mask[j,k,1] == 0){
+        storage_cell[j,k,i] <- 0
+        rate_storage_cell[j,k,i-1] <- 0
+      } else {
+      storage_cell[j,k,i] <- storagecalc(all_press[j,k,1,i], 200, cell_length**2, porosity)*mask[j,k,1]
+      rate_storage_cell[j,k,i-1] <- abs(((storage_cell[j,k,i]-storage_cell[j,k,i-1])/(rech_rate*(cell_length**2)*1000))*100)
+      }
     }
   }
   cell_change_pctile[i-1,2:5] = quantile(rate_storage_cell[,,i-1], c(.5,0.75,.9,0.9999))
