@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/A_v4_outputs/A_v4.out.press.00044.pfb"
-satur_file <- "/Users/grapp/Desktop/working/A_v4_outputs/A_v4.out.satur.00044.pfb"
+press_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.press.01017.pfb"
+satur_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.satur.01017.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -116,6 +116,27 @@ wt_dtw_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fact
   ggtitle(paste("Depth to Water for Scenario A with Constant Forcings")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_binplot
+
+
+wt_elev.df3$wt_elev[wt_elev.df3$flowpath == 0] <- 9999
+wt_elev.df3$wt_elev_cuts <- cut(wt_elev.df3$wt_elev, c(1200,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,Inf), include.lowest = TRUE)
+levels(wt_elev.df3$wt_elev_cuts)
+
+paste("Average water table elevation =",mean(wt_elev.df3$wt_elev[wt_elev.df3$wt_elev < 9999]))
+
+wt_elev_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = factor(wt_elev_cuts)), colour = "black") + labs(fill = "Water table elevation (m)") +
+  #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","wheat","gray50"),
+  #                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100","Outside of Main Basin")) +
+  scale_fill_manual(values=c("navy","cyan4","cyan", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","black","gray50"),
+                    labels=c("1,200-1,400","1,400-1,500","1,500-1,600","1,600-1,700","1,700-1,800","1,800-1,900","1,900-2,000","2,000-2,100","2,100-2,200","2,200-2,300","2,300-2,400","2,400-2,500","Outside of Main Basin")) +
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  ggtitle(paste("Water Table Elevation for Scenario A_v4")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+wt_elev_binplot
+
+
+
 
 
 
