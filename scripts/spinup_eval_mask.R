@@ -22,8 +22,9 @@ nx <- 91
 ny <- 70
 cell_length <- 90
 porosity <- 0.01
-area <- nx*ny*cell_length**2
-rech_rate <- 0.000035        # recharge rate in model (in m/hr)
+area <- cell_length**2
+rech_rate <- 0.000030        # recharge rate in model (in m/hr)
+active_cells <- 3948         # number of active cells in the domain with the mask
 
 mask <- readpfb("/Users/grapp/Desktop/working/A_v4_outputs/A_v4.out.mask.pfb", verbose = F)
 
@@ -42,11 +43,51 @@ cell_change_pctile <- data.frame(
   maximum = c(1:limit-1)
 )
 
-
 # reading all of the pressure files - this usually takes the longest
 for(i in 1:limit){
   all_press[,,,i] = readpfb(press_files[i], verbose = F)
 }
+
+load("~/research/domain/watershed_mask.Rda")
+bot_press.df <- watershed_mask
+for(i in 1:limit){
+  print(paste("t = ",i,"/",limit,sep=""))
+  for(j in 1:nx){
+    for(k in 1:ny){
+      if(bot_press.df$flowpath[bot_press.df$X_cell == j & bot_press.df$Y_cell == k] == 1){
+        header <- paste("stor_t",i,sep="")
+        bot_press.df$storage[bot_press.df$X_cell == j & bot_press.df$Y_cell == k] <- storagecalc(all_press[j,k,1,i], 200, area, porosity)
+      } else {
+        bot_press.df$storage[bot_press.df$X_cell == j & bot_press.df$Y_cell == k] <- 0
+      }
+    }
+  }
+  colnames(bot_press.df)[which(names(bot_press.df) == "storage")] <- header
+}
+
+
+# storage calcs
+storage[1] <- sum(bot_press.df[which(names(bot_press.df) == "stor_t1")])
+for(i in 2:limit){
+  header <- paste("stor_t",i,sep="")
+  storage[i] <- sum(bot_press.df[which(names(bot_press.df) == header)])
+  rate_storage[i-1] <- abs((storage[i] - storage[i-1])/(rech_rate*(cell_length**2)*10000*active_cells))*100
+}
+
+
+plot(storage,type="l",col="blue", main="Storage for Scenario A Spinup Run", tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
+
+plot(rate_storage,type="l",col="green",log="y",ylab="Storage change divided by inflow (percent)",xlab="Time (x10,000 hours)",
+     main=paste("Percentage storage change for Scenario A Spinup Run"), tck =1, tcl = 0.5)
+
+
+
+
+
+
+
+
+
 
 # calculating the storage for the first timestep
 storage[1] = storagecalc(mean(all_press[,,1,1]), 200, area, porosity)
@@ -88,7 +129,7 @@ names(cell_chg_pct_melt) <- c("timestep", "percentile", "value")
 # change working drive to figures if necessary
 
   
-plot(storage,type="l",col="blue", main=paste("Storage for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
+plot(storage,type="l",col="blue", main="Storage for Scenario A Spinup Run", tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
 
 plot(rate_storage,type="l",col="green",log="y",ylab="Storage change divided by inflow (percent)",xlab="Time (thousands of hours)",
      main=paste("Percentage storage change for",substr(getwd(), nchar(getwd())-7, nchar(getwd())), "spinup run"), tck =1, tcl = 0.5)
