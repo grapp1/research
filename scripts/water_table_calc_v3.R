@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.press.01017.pfb"
-satur_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.satur.01017.pfb"
+press_file <- "/Users/garrettrapp/Downloads/A_v5.out.press.01042.pfb"
+satur_file <- "/Users/garrettrapp/Downloads/A_v5.out.satur.01042.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -65,9 +65,9 @@ system.time(
 
 
 
-ggplot(wt_elev.df, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
-  scale_fill_gradient(low="blue", high="red") + 
-  ggtitle(paste("Water Table Elevation"))
+#ggplot(wt_elev.df, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
+#  scale_fill_gradient(low="blue", high="red") + 
+#  ggtitle(paste("Water Table Elevation"))
 
 load("~/research/domain/domain_pr_df.Rda")
 
@@ -99,7 +99,7 @@ wt_elev_plot_contour
 wt_dtw_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = dtw), colour = "black") + labs(fill = "Depth to Water (m)") +
   scale_fill_gradient(low="blue", high="red",limits=c(-1,400),breaks=c(seq(0,400,100))) + 
   scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) + 
-  ggtitle(paste("Saturated Area for Scenario A with Constant Recharge")) + theme_bw() +
+  ggtitle(paste("Saturated area for Scenario A_v5 (CLM with solid file)")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_plot
 
@@ -113,7 +113,7 @@ wt_dtw_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fact
                     labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400","> 400","Outside of Main Basin")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Depth to Water for Scenario A with Constant Forcings")) + theme_bw() +
+  ggtitle(paste("Depth to Water for Scenario A_v5 (CLM with solid file)")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_binplot
 
