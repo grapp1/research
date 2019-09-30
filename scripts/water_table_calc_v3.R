@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.press.01017.pfb"
-satur_file <- "/Users/grapp/Desktop/working/A_v2_outputs_all/A_v2.out.satur.01017.pfb"
+press_file <- "/Users/grapp/Desktop/working/B_v1_outputs/B_v1.out.press.01037.pfb"
+satur_file <- "/Users/grapp/Desktop/working/B_v1_outputs/B_v1.out.satur.01037.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -61,14 +61,6 @@ system.time(
   })
 
 
-
-
-
-
-ggplot(wt_elev.df, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
-  scale_fill_gradient(low="blue", high="red") + 
-  ggtitle(paste("Water Table Elevation"))
-
 load("~/research/domain/domain_pr_df.Rda")
 
 wt_elev.df2 <- inner_join(wt_elev.df, slopes, by = c("x" = "X_cell","y" = "Y_cell"))
@@ -82,26 +74,7 @@ wt_elev.df3$dtw[wt_elev.df3$flowpath == 0] <- 9999
 
 #########################################################################################################################################################
 # read in wt_elev.df2 file that was already generated above
-wt_elev.df2 <- read.csv(file="~/research/A_v1/A_v1_wt.csv", header=TRUE, sep="\t")
-
-
-
-wt_elev_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
-  scale_fill_gradient(name="Water Table Elevation (m)",low="blue", high="red") + 
-  scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) +
-  ggtitle(paste("Water Table Elevation for Scenario A with Constant Recharge")) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
-wt_elev_plot_contour <- wt_elev_plot + geom_contour(aes(z = wt_elev.df2$wt_elev)) + 
-  geom_text_contour(aes(z = wt_elev.df2$wt_elev), stroke=0.2, min.size = 10, color = "black")
-wt_elev_plot_contour
-
-
-wt_dtw_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = dtw), colour = "black") + labs(fill = "Depth to Water (m)") +
-  scale_fill_gradient(low="blue", high="red",limits=c(-1,400),breaks=c(seq(0,400,100))) + 
-  scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) + 
-  ggtitle(paste("Saturated Area for Scenario A with Constant Recharge")) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
-wt_dtw_plot
+#wt_elev.df2 <- read.csv(file="~/research/A_v1/A_v1_wt.csv", header=TRUE, sep="\t")
 
 wt_elev.df3$dtw_cuts <- cut(wt_elev.df3$dtw, c(-1,0,2,5,10,20,50,100,200,300,400,1000,Inf), include.lowest = TRUE)
 levels(wt_elev.df3$dtw_cuts)
@@ -113,7 +86,7 @@ wt_dtw_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fact
                     labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400","> 400","Outside of Main Basin")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Depth to Water for Scenario A with Constant Forcings")) + theme_bw() +
+  ggtitle(paste("Depth to Water for Scenario B with Constant Forcings")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_binplot
 
@@ -131,13 +104,44 @@ wt_elev_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fac
                     labels=c("1,200-1,400","1,400-1,500","1,500-1,600","1,600-1,700","1,700-1,800","1,800-1,900","1,900-2,000","2,000-2,100","2,100-2,200","2,200-2,300","2,300-2,400","2,400-2,500","Outside of Main Basin")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Water Table Elevation for Scenario A_v4")) + theme_bw() +
+  ggtitle(paste("Water Table Elevation for Scenario B_v3")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_elev_binplot
 
 
 
 
+
+
+
+
+
+
+
+
+
+## other plots from prior versions of water table calc
+
+ggplot(wt_elev.df, aes(x, y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
+  scale_fill_gradient(low="blue", high="red") + 
+  ggtitle(paste("Water Table Elevation"))
+
+wt_elev_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = wt_elev), colour = "black") + 
+  scale_fill_gradient(name="Water Table Elevation (m)",low="blue", high="red") + 
+  scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) +
+  ggtitle(paste("Water Table Elevation for Scenario A with Constant Recharge")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+wt_elev_plot_contour <- wt_elev_plot + geom_contour(aes(z = wt_elev.df2$wt_elev)) + 
+  geom_text_contour(aes(z = wt_elev.df2$wt_elev), stroke=0.2, min.size = 10, color = "black")
+wt_elev_plot_contour
+
+
+wt_dtw_plot <- ggplot(wt_elev.df2, aes(X, Y)) + geom_tile(aes(fill = dtw), colour = "black") + labs(fill = "Depth to Water (m)") +
+  scale_fill_gradient(low="blue", high="red",limits=c(-1,400),breaks=c(seq(0,400,100))) + 
+  scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0)) + 
+  ggtitle(paste("Saturated Area for Scenario A with Constant Recharge")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+wt_dtw_plot
 
 
 df_sa <- wt_elev.df2[ -c(1,2,4:9) ]

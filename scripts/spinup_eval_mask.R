@@ -16,7 +16,7 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-setwd("/Users/grapp/Desktop/working/A_v4_outputs/")
+setwd("/Users/grapp/Desktop/working/B_v3_outputs/")
 
 nx <- 91
 ny <- 70
@@ -28,7 +28,7 @@ active_cells <- 3948         # number of active cells in the domain with the mas
 
 mask <- readpfb("/Users/grapp/Desktop/working/A_v4_outputs/A_v4.out.mask.pfb", verbose = F)
 
-press_files <- list.files(pattern="A_v4.out.press.*.pfb")
+press_files <- list.files(pattern="B_v3.out.press.*.pfb")
 limit <- length(press_files)
 storage <- matrix(,limit,1)
 rate_storage <- matrix(,limit-1,1)
