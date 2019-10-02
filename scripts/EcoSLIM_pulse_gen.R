@@ -9,11 +9,11 @@ pulse_start <- matrix(0, nrow = nx*ny*nz)
 
 
 # layer numbers for indicator file (from bottom to top)
-x_cell <- 12
-y_cell <- 19
+x_cell <- 29
+y_cell <- 23
 
 rownum <- (nx*ny*(nz-1)) + x_cell + (nx*(y_cell-1))
-pulse_start[rownum] <- 3.500000e-04
+pulse_start[rownum] <- 3e-04
 
 
 #for(i in 1:nrow(river_mask_df_cln)){
@@ -23,6 +23,6 @@ pulse_start[rownum] <- 3.500000e-04
 
 pulse_start = rbind(c("91 70 20"), pulse_start)
 
-write.table(pulse_start, file = "/Users/grapp/Desktop/working/rivers.sa",
+write.table(pulse_start, file = "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/A_v6_bw3.sa",
             row.names = FALSE, col.names = FALSE, quote = FALSE)
 

@@ -13,8 +13,8 @@ ny <- ncol(dem_pr_grid)
 
 
 # part 1 - for quickly printing individual maps
-x <- 12
-y <- 19
+x <- 29
+y <- 23
 
 # dir_grid <- as.matrix(read.table(file="~/research/domain/slope_processing_outputs/direction_grid.txt", header=TRUE, sep=" "))
 # delin_watershed <- DelinWatershed(c(x,y), dir_grid)
@@ -27,6 +27,11 @@ y <- 19
 flowpath_fig <- flowpath_fxn(x,y,nx,ny,dem_grid,riverflag = 1)
 flowpath_fig
 ggsave(filename = paste("~/Desktop/flowpath_maps/fp_c",sprintf("%02d",i),sprintf("%02d", j),".png",sep=""), plot = flowpath_fig)
+
+for(i in 79:85){
+  print(slopes$xslope[slopes$X_cell == i & slopes$Y_cell == 25])
+}
+
 
 
 
