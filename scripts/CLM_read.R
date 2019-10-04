@@ -1,12 +1,12 @@
 # CLM read file 20190716 - reading CLM data, taking subset to generate forcings on my domain
 
-filename <- "~/research/CLM/1DForcings/Forcing1D.txt"
+filename <- "~/research/CLM/Forcing1D_gr.txt"
 
 forcing <- data.frame(read.table(filename, header = FALSE))
 colnames(forcing) <- c("DSWRF","DLWRF","APCP","TMP","UGRD","VGRD","PRES","SPFH")
 # precip is in mm/s
 
-forcing <- forcing[1:81192,] # clipped through January 3rd, 2017
+#forcing <- forcing[1:81192,] # clipped through January 3rd, 2017
 
 forcing$APCP_mhr <- forcing$APCP*3600/1000
 forcing$hr <- rep(1:24)
@@ -16,7 +16,7 @@ for(i in 1:nrow(forcing)){
 }
 
 # creating date time series and adding it to data frame
-date_range <- data.frame(seq(as.Date('2007-10-1'),to=as.Date('2017-1-3'),by='day'))
+date_range <- data.frame(seq(as.Date('2007-10-1'),to=as.Date('2012-9-30'),by='day'))
 
 for(j in 1:nrow(date_range)){
   date_range$year[j] <- as.integer(substr(date_range[j,1], 1, 4))
@@ -48,3 +48,26 @@ monthly_precip <- aggregate(forcing_gr$APCP_mhr, by = list(forcing_gr$month), FU
 colnames(monthly_precip) <- c("month","precip_m")
 monthly_precip$precip_cm <- monthly_precip$precip_m*100/5
 ggplot(monthly_precip, aes(month,precip_cm)) + geom_col()
+
+
+
+# pdf of precipitation
+bin_length <- 0.0001
+max_precip <- max(forcing$APCP_mhr)
+time_bins <- matrix(seq(0,max_precip+bin_length,bin_length))
+precip_pdf <- data.frame(forcing$APCP_mhr)
+precip_pdf$bin <- cut(forcing$APCP_mhr, c(time_bins), include.lowest = TRUE)
+precip_pdf$count <- 1
+
+precip_pdf <- aggregate(precip_pdf$count, by = list(bin = precip_pdf$bin), FUN = sum)
+precip_pdf$count <- as.integer(precip_pdf$bin)*bin_length
+
+colnames(precip_pdf) <- c("bin","Density","precip")
+
+max_density <- max(precip_pdf$Density)
+precip_pdf$Density_norm <- precip_pdf$Density/max_density
+
+sum_norm <- sum(precip_pdf$Density_norm)
+precip_pdf$Density_pdf <- precip_pdf$Density_norm/sum_norm
+
+plot(precip_pdf$Density_pdf)
