@@ -14,9 +14,9 @@ source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
 setwd("/Users/grapp/Desktop/working/A_v3/A_v3_outputs/")
-velx_file <- "/Users/grapp/Desktop/working/A_v3/A_v3.out.velx.00002.pfb"
-vely_file <- "/Users/grapp/Desktop/working/A_v3/A_v3.out.vely.00002.pfb"
-velz_file <- "/Users/grapp/Desktop/working/A_v3/A_v3.out.velz.00002.pfb"
+velx_file <- "/Users/garrettrapp/Desktop/A_v6_bw1/A_v6.out.velx.08760.pfb"
+vely_file <- "/Users/garrettrapp/Desktop/A_v6_bw1/A_v6.out.vely.08760.pfb"
+velz_file <- "/Users/garrettrapp/Desktop/A_v6_bw1/A_v6.out.velz.08760.pfb"
 
 #velx_file <- "/Users/grapp/Desktop/working/A_v1_ES_testing/A_v1.out.velx.00001.pfb"
 #vely_file <- "/Users/grapp/Desktop/working/A_v1_ES_testing/A_v1.out.vely.00001.pfb"
@@ -54,6 +54,7 @@ velz_file <- melt(data.frame(velz_new))
 v_all.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),z=rep(1:nz,each=nx*ny),
                        vx=velx_file$value,vy=vely_file$value,vz=velz_file$value)
 
+load("~/research/domain/domain_pr_df.Rda")
 v_all.df2 <- inner_join(v_all.df, slopes, by = c("x" = "X_cell","y" = "Y_cell"))
 
 for(k in 15:20){
@@ -80,8 +81,15 @@ for(k in 15:20){
   print(neg_plot)
 }
 
+vel_map <- ggplot(v_lyr20.df, aes(x,y)) + geom_tile(aes(fill = vx), colour = "black") + 
+  scale_fill_gradient(low="blue", high="red") + 
+  ggtitle(paste("Velocity in Z direction for layer",layer_num))
+vel_map
 
-summary(v_lyr20neg.df$vz)
+
+
+
+sum(v_lyr20pos.df$vz)
 
 
 
