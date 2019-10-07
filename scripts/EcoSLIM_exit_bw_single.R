@@ -16,11 +16,11 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn.R")
 
-restart_file_1 <- "/Users/garrettrapp/Downloads/SLIM_A_v6_bw1_particle_restart.bin"
+restart_file_1 <- "/Users/grapp/Downloads/SLIM_A_v6_bw2_particle_restart.bin"
 restart_particles_1 <- ES_read(restart_file_1, type = "restart")
 
 
-exit_file <- "/Users/garrettrapp/Downloads/SLIM_A_v6_bw1_exited_particles.bin"
+exit_file <- "/Users/grapp/Desktop/working/A_v6_outputs/bw_20191002/bw2/SLIM_A_v6_bw2_exited_particles_2.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 paste("Maximum particle age is", sprintf("%02f",max(exited_particles$age)/(24*365)), "years")
 
@@ -29,38 +29,34 @@ paste("Maximum particle age is", sprintf("%02f",max(exited_particles$age)/(24*36
 # converting ages and removing particles with age < 1 yr
 exited_particles$age_hr <- exited_particles$age  
 exited_particles$age <- exited_particles$age_hr/(24*365)
-exited_particles <- exited_particles[exited_particles_A$age > 1,] 
+exited_particles <- exited_particles[exited_particles$age > 1,] 
 
 
 # generating pdf
-pdf_exit_all <- pdfxn(exited_particles_A, max(exited_particles_A$age), 1)
+pdf_exited_all <- pdfxn(exited_particles, max(exited_particles$age), 1)
 
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = restart_particles_1, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = exited_particles, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(50,600),breaks=c(50,100,200,300,400,500,600), 
                         labels=c("≤50","100","200","300","400","500","600")) +
   #guides(color = guide_legend(override.aes = list(size = 5))) +
-  ggtitle("Locations and ages of exited particles for Scenario C - backwards tracking from cell [12,19]")
+  ggtitle("Locations and ages of exited particles for Scenario A - backwards tracking from cell [38,17]")
 
 exit_pts
 
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=scen,col = scen)) +
-#pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
-  #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
-  #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf)) +
   scale_x_log10(name="Age (years)",limits = c(50,600), breaks = c(50,100,200,400,500,600),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of all exited particles - backward tracking from cell [38,17]") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.05,0.01), limits = c(0,0.05)) + 
-  scale_color_manual(values = c("firebrick", "dodgerblue","darkgreen"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig1
 
-hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 1000, color = "red", fill = "red") + ggtitle("Histogram of all particles exiting the domain for Scenario A (forward tracking)") + 
+hist_fig <- ggplot(exited_particles, aes(age)) + geom_histogram(binwidth = 5, color = "red", fill = "red") + ggtitle("Histogram of all particles exiting the domain for Scenario A (backward tracking)") + 
   scale_y_continuous(name="Particle Count",labels = scales::comma, expand=c(0,0),breaks = seq(0,30,2), limits = c(0,30)) + 
-  scale_x_continuous(name="Age (days)", expand=c(0,0),breaks = seq(0,220000,20000), limits = c(0,220000),labels = scales::comma) +
+  scale_x_continuous(name="Age (days)", expand=c(0,0),breaks = seq(0,600,50), limits = c(0,600),labels = scales::comma) +
   expand_limits(x = 0, y = 0)
 hist_fig
 
