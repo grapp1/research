@@ -9,20 +9,23 @@ pulse_start <- matrix(0, nrow = nx*ny*nz)
 
 
 # layer numbers for indicator file (from bottom to top)
-x_cell <- 29
-y_cell <- 23
+#x_cell <- 29
+#y_cell <- 23
 
-rownum <- (nx*ny*(nz-1)) + x_cell + (nx*(y_cell-1))
-pulse_start[rownum] <- 3e-04
+#rownum <- (nx*ny*(nz-1)) + x_cell + (nx*(y_cell-1))
+#pulse_start[rownum] <- 3e-04
 
 
 # for generating pulse file over whole domain
 load("~/research/domain/watershed_mask.Rda")
+count <- 0
 for(j in 1:nx){
   for(k in 1:ny){
     if(watershed_mask$flowpath[watershed_mask$X_cell == j & watershed_mask$Y_cell == k] == 1){
-      rownum <- (nx*ny*(nz-1)) + x_cell + (nx*(y_cell-1))
+      count <- count + 1
+      rownum <- (nx*ny*(nz-1)) + j + (nx*(k-1))
       pulse_start[rownum] <- 3e-04
+      print(count)
     } 
   }
 }
@@ -34,6 +37,6 @@ for(j in 1:nx){
 
 pulse_start = rbind(c("91 70 20"), pulse_start)
 
-write.table(pulse_start, file = "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/A_v6_bw3.sa",
+write.table(pulse_start, file = "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/A_v6_fw.sa",
             row.names = FALSE, col.names = FALSE, quote = FALSE)
 
