@@ -102,6 +102,11 @@ image.plot(stream_dist)
 stream_xind <- as.matrix(read.table("~/research/domain/slope_processing_outputs/stream_xind.txt",header=TRUE))
 image.plot(stream_yind)
 stream_yind <- as.matrix(read.table("~/research/domain/slope_processing_outputs/stream_yind.txt",header=TRUE))
+stream_yind.df <- melt(as.data.frame(stream_yind))
+stream_yind.df$X <- rep(1:91)
+stream_yind.df$Y <- rep(1:70,each=91)
+stream_yind.df <- stream_yind.df[,2:4]
+colnames(stream_yind.df) <- c("stream_yind","X","Y")
 
 
 outlet_wtrshed <- DelinWatershed(c(64,7), direction_grid, d4 = c(1, 2, 3, 4), printflag = F)
@@ -116,4 +121,25 @@ river_mask_df_cln$river[river_mask_df_cln$X < 33 & river_mask_df_cln$Y < 9] <- 0
 river_mask_df_cln$river[river_mask_df_cln$X > 89] <- 0
 save(river_mask_df_cln, file="~/research/domain/river_mask_df_cln.Rda")
 
+save(stream_xind.df, file="~/research/domain/stream_xind_df.Rda")
+save(stream_soil.df, file="~/research/domain/stream_soil_df.Rda")
+
+
+load(file="~/research/domain/area_df.Rda")
+area.df <- inner_join(area.df,river_mask_df_cln, by = c("X" = "X", "Y" = "Y"))
+ggplot() + geom_tile(data = river_trib.df, aes(x = X,y = Y, fill = numtrib), color="gray")
+river_trib.df <- subset(area.df,river == 1)
+river_trib.df$numtrib_bin <- cut(river_trib.df$numtrib, c(50,500,1000,2000,4000), include.lowest = TRUE)
+
+ggplot() + geom_tile(data = river_trib.df, aes(x = X,y = Y, fill = factor(numtrib_bin)), color="gray")
+
+stream_dist.df <- melt(as.data.frame(stream_dist))
+stream_dist.df$X <- rep(1:91)
+stream_dist.df$Y <- rep(1:70,each=91)
+stream_dist.df <- stream_dist.df[,2:4]
+colnames(stream_dist.df) <- c("stream_dist","X","Y")
+ggplot() + geom_tile(data = stream_dist.df, aes(x = X,y = Y, fill = stream_dist), color="gray")
+
+
+stream_soil.df <- inner_join(stream_soil.df,area.df, by = c("X" = "X", "Y" = "Y"))
 

@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/B_v1_outputs/B_v1.out.press.01037.pfb"
-satur_file <- "/Users/grapp/Desktop/working/B_v1_outputs/B_v1.out.satur.01037.pfb"
+press_file <- "/Users/grapp/Desktop/working/C_v3_outputs/C_v3.out.press.00036.pfb"
+satur_file <- "/Users/grapp/Desktop/working/C_v3_outputs/C_v3.out.satur.00036.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -83,10 +83,10 @@ wt_dtw_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fact
 #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","wheat","gray50"),
 #                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100","Outside of Main Basin")) +
   scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","black","gray50"),
-                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400","> 400","Outside of Main Basin")) +
+                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400",">400","Outside of Main Basin")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Depth to Water for Scenario B_v1")) + theme_bw() +
+  ggtitle(paste("Depth to Water for Scenario C_v3")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_binplot
 
@@ -104,7 +104,7 @@ wt_elev_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fac
                     labels=c("1,200-1,400","1,400-1,500","1,500-1,600","1,600-1,700","1,700-1,800","1,800-1,900","1,900-2,000","2,000-2,100","2,100-2,200","2,200-2,300","2,300-2,400","2,400-2,500","Outside of Main Basin")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Water Table Elevation for Scenario B_v1")) + theme_bw() +
+  ggtitle(paste("Water Table Elevation for Scenario C_v3")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_elev_binplot
 
