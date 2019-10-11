@@ -14,13 +14,13 @@ library(plotrix)
 library(plyr)
 library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
-source("~/research/scripts/EcoSLIM_read_fxn.R")
+source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/working/A_v6_outputs/bw_20191002/bw3/SLIM_A_v6_bw3_particle_restart.bin"
+restart_file_1 <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_A_v6_bwtest_particle_restart.bin"
 restart_particles_1 <- ES_read(restart_file_1, type = "restart")
 
 
-exit_file <- "/Users/grapp/Desktop/working/A_v6_outputs/bw_20191002/bw3/SLIM_A_v6_bw3_exited_particles.bin"
+exit_file <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_A_v6_bwtest_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 paste("Maximum particle age is", sprintf("%02f",max(exited_particles$age)/(24*365)), "years")
 
