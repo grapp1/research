@@ -16,11 +16,14 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_A_v6_bwtest_particle_restart.bin"
+restart_file_1 <- "/Users/grapp/Desktop/EcoSLIM_test_20191011/newcode_test/SLIM_A_v6_bwtest4_particle_restart.bin"
 restart_particles_1 <- ES_read(restart_file_1, type = "restart")
 
+#restart_particles_1 <- restart_particles_1[32768:32867,]
+#restart_particles_1$str_dist <- ((restart_particles_1$X - restart_particles_1$init_X)**2+(restart_particles_1$Y - restart_particles_1$init_Y)**2+(restart_particles_1$Z - restart_particles_1$init_Z)**2)**0.5
 
-exit_file <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_A_v6_bwtest_exited_particles.bin"
+
+exit_file <- "/Users/grapp/Desktop/EcoSLIM_test_20191011/newcode_test/SLIM_A_v6_bwtest3_exited_particles.bin"
 exited_particles <- ES_read(exit_file, type = "exited")
 paste("Maximum particle age is", sprintf("%02f",max(exited_particles$age)/(24*365)), "years")
 
