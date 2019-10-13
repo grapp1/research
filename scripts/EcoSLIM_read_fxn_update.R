@@ -5,7 +5,9 @@ ES_read <- function(filename, type = "exited"){
   if(type == "restart"){
     to.read = file(filename,"rb")
     npart=readBin(to.read, integer(), endian="little",size=4,n=1)
-    print(npart)
+    pid=readBin(to.read, integer(), endian="little",size=4,n=1)
+    message(paste(npart,"particles in file"))
+    message(paste(pid,"max particle ID"))
     
     #NOTE: These are written out transposed from the exited particles file see below
     data = matrix(0,ncol=17,nrow=npart,byrow=F)
