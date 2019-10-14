@@ -126,10 +126,13 @@ save(stream_soil.df, file="~/research/domain/stream_soil_df.Rda")
 
 
 load(file="~/research/domain/area_df.Rda")
+load(file="~/research/domain/river_mask_df_cln.Rda")
+load(file="~/research/domain/stream_soil_df.Rda")
 area.df <- inner_join(area.df,river_mask_df_cln, by = c("X" = "X", "Y" = "Y"))
 ggplot() + geom_tile(data = river_trib.df, aes(x = X,y = Y, fill = numtrib), color="gray")
 river_trib.df <- subset(area.df,river == 1)
 river_trib.df$numtrib_bin <- cut(river_trib.df$numtrib, c(50,500,1000,2000,4000), include.lowest = TRUE)
+river_trib.df$riv_cat <- factor(river_trib.df$numtrib_bin)
 
 ggplot() + geom_tile(data = river_trib.df, aes(x = X,y = Y, fill = factor(numtrib_bin)), color="gray")
 
@@ -138,7 +141,7 @@ stream_dist.df$X <- rep(1:91)
 stream_dist.df$Y <- rep(1:70,each=91)
 stream_dist.df <- stream_dist.df[,2:4]
 colnames(stream_dist.df) <- c("stream_dist","X","Y")
-ggplot() + geom_tile(data = stream_dist.df, aes(x = X,y = Y, fill = stream_dist), color="gray")
+ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = stream_dist), color="gray")
 
 
 stream_soil.df <- inner_join(stream_soil.df,area.df, by = c("X" = "X", "Y" = "Y"))
