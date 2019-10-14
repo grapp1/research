@@ -13,8 +13,8 @@ ny <- ncol(dem_pr_grid)
 
 
 # part 1 - for quickly printing individual maps
-x <- 13
-y <- 28
+x <- 23
+y <- 23
 
 # dir_grid <- as.matrix(read.table(file="~/research/domain/slope_processing_outputs/direction_grid.txt", header=TRUE, sep=" "))
 # delin_watershed <- DelinWatershed(c(x,y), dir_grid)
@@ -113,36 +113,108 @@ outlet_wtrshed <- DelinWatershed(c(64,7), direction_grid, d4 = c(1, 2, 3, 4), pr
 image.plot(outlet_wtrshed$watershed)
 
 
-load(file="~/research/domain/river_mask_df.Rda")
-river_mask_df_cln <- river_mask_df
-river_mask_df_cln$river[river_mask_df_cln$X > 54 & river_mask_df_cln$Y > 52] <- 0
-river_mask_df_cln$river[river_mask_df_cln$X < 8 & river_mask_df_cln$Y > 35] <- 0
-river_mask_df_cln$river[river_mask_df_cln$X < 33 & river_mask_df_cln$Y < 9] <- 0
-river_mask_df_cln$river[river_mask_df_cln$X > 89] <- 0
-save(river_mask_df_cln, file="~/research/domain/river_mask_df_cln.Rda")
+# load(file="~/research/domain/river_mask_df.Rda")
+# river_mask_df_cln <- river_mask_df
+# river_mask_df_cln$river[river_mask_df_cln$X > 54 & river_mask_df_cln$Y > 52] <- 0
+# river_mask_df_cln$river[river_mask_df_cln$X < 8 & river_mask_df_cln$Y > 35] <- 0
+# river_mask_df_cln$river[river_mask_df_cln$X < 33 & river_mask_df_cln$Y < 9] <- 0
+# river_mask_df_cln$river[river_mask_df_cln$X > 89] <- 0
+# save(river_mask_df_cln, file="~/research/domain/river_mask_df_cln.Rda")
 
-save(stream_xind.df, file="~/research/domain/stream_xind_df.Rda")
+# save(stream_xind.df, file="~/research/domain/stream_xind_df.Rda")
 save(stream_soil.df, file="~/research/domain/stream_soil_df.Rda")
 
 
 load(file="~/research/domain/area_df.Rda")
 load(file="~/research/domain/river_mask_df_cln.Rda")
 load(file="~/research/domain/stream_soil_df.Rda")
-area.df <- inner_join(area.df,river_mask_df_cln, by = c("X" = "X", "Y" = "Y"))
-ggplot() + geom_tile(data = river_trib.df, aes(x = X,y = Y, fill = numtrib), color="gray")
+#area.df <- inner_join(area.df,river_mask_df_cln, by = c("X" = "X", "Y" = "Y"))
+ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = numtrib), color="gray")
 river_trib.df <- subset(area.df,river == 1)
-river_trib.df$numtrib_bin <- cut(river_trib.df$numtrib, c(50,500,1000,2000,4000), include.lowest = TRUE)
-river_trib.df$riv_cat <- factor(river_trib.df$numtrib_bin)
+river_trib.df$numtrib_bin <- cut(river_trib.df$numtrib, c(50,500,1000,2000,4000), include.lowest = TRUE,labels=c(1,2,3,4))
+#river_trib.df$riv_cat <- factor(river_trib.df$numtrib_bin)
 
 ggplot() + geom_tile(data = river_trib.df, aes(x = X,y = Y, fill = factor(numtrib_bin)), color="gray")
 
-stream_dist.df <- melt(as.data.frame(stream_dist))
-stream_dist.df$X <- rep(1:91)
-stream_dist.df$Y <- rep(1:70,each=91)
-stream_dist.df <- stream_dist.df[,2:4]
-colnames(stream_dist.df) <- c("stream_dist","X","Y")
+# stream_dist.df <- melt(as.data.frame(stream_dist))
+# stream_dist.df$X <- rep(1:91)
+# stream_dist.df$Y <- rep(1:70,each=91)
+# stream_dist.df <- stream_dist.df[,2:4]
+# colnames(stream_dist.df) <- c("stream_dist","X","Y")
 ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = stream_dist), color="gray")
 
+ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(numtrib_bin)), color="gray")
 
-stream_soil.df <- inner_join(stream_soil.df,area.df, by = c("X" = "X", "Y" = "Y"))
+
+# stream_soil.df <- full_join(stream_soil.df,river_trib.df, by = c("X" = "X", "Y" = "Y"))
+# stream_soil.df <- stream_soil.df[c(1,2,3,4,5,10)]
+# stream_soil.df <- full_join(stream_soil.df,watershed_mask, by = c("X" = "X_cell", "Y" = "Y_cell"))
+# stream_soil.df <- stream_soil.df[c(1,2,3,4,5,6,8)]
+stream_soil.df[is.na(stream_soil.df)] <- -999
+
+stream_soil.df$numtrib_bin <- as.numeric(levels(stream_soil.df$numtrib_bin))[stream_soil.df$numtrib_bin]
+soil_depths <- matrix(c(0.1,0.4,1.0,2.0,4.0))
+stream_soil.df$soil_depth <- 0.1
+
+
+for(i in 1:nx){
+  for(j in 1:ny){
+    #if(stream_soil.df$flowpath[stream_soil.df$X == i & stream_soil.df$Y == j] == 1){
+    #  bin <- stream_soil.df$numtrib_bin[stream_soil.df$X == i & stream_soil.df$Y == j]
+    #  stream_soil.df$numtrib_bin[stream_soil.df$stream_xind == i & stream_soil.df$stream_yind == j] <- bin
+    #}
+    if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
+      soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- soil_depths[soil_index + 1]
+    } else if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 1){
+      soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- soil_depths[soil_index]
+    } else if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 2){
+      soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- max(0.1, soil_depths[soil_index-1])
+    } else if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 3){
+      soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+      if(soil_index < 4){
+        stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
+      } else {
+        stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- soil_depths[soil_index-2]
+      }
+    }
+    if(stream_soil.df$flowpath[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- -999
+    }
+  }
+}
+
+stream_soil.df$Y_cell <- as.integer(stream_soil.df$Y)
+stream_soil.df$X_cell <- as.integer(stream_soil.df$X)
+stream_soil.df$Y <- as.integer(stream_soil.df$Y) * 90 - 45
+stream_soil.df$X <- as.integer(stream_soil.df$X) * 90 - 45
+
+ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(soil_depth)), color="gray")
+
+soil_fig <- ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(soil_depth)), color="gray") + 
+  scale_fill_manual(values=c("white","bisque4","orange","red","blue","black"),
+                    labels = c("Outside of Main Basin","0.1","0.4","1.0","2.0","4.0")) +
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  ggtitle("Soil depth map for Scenario F") + labs(fill = "Soil depth (m)") + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1))
+soil_fig
+
+stream_soil.df$numtrib_bin[stream_soil.df$X_cell == 22 & stream_soil.df$Y_cell ==26]
+soil_depths[stream_soil.df$numtrib_bin[stream_soil.df$X_cell == 22 & stream_soil.df$Y_cell ==26]-1]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
