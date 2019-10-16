@@ -159,8 +159,11 @@ stream_soil.df$soil_depth <- 0.4
 
 for(i in 1:nx){
   for(j in 1:ny){
-    if(stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 1){
-      stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 2
+    #if(stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 1){
+    #  stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 2
+    #}
+    if(stream_soil.df$flowpath[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
+      stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- -999
     }
     if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
       soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
@@ -180,16 +183,24 @@ for(i in 1:nx){
       }
     }
     if(stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0.4 & stream_soil.df$numtrib[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] < 2){
+      paste(i,j)
       stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
+    }
+    # need to add section to update the soil depths on either side of the stream
+    if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
+      soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+1) & stream_soil.df$Y_cell == j] <- 
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+1) & stream_soil.df$Y_cell == j])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-1) & stream_soil.df$Y_cell == j] <- 
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-1) & stream_soil.df$Y_cell == j])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+1)] <- 
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+1)])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-1)] <- 
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-1)])
     }
     if(stream_soil.df$flowpath[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
       stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- -999
     }
-    # need to add section to update the soil depths on either side of the stream
-    #if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
-    #  soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
-    #  stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- soil_depths[soil_index + 1]
-    #}
   }
 }
 
@@ -199,7 +210,7 @@ stream_soil.df$Y <- as.integer(stream_soil.df$Y) * 90 - 45
 stream_soil.df$X <- as.integer(stream_soil.df$X) * 90 - 45
 stream_soil.df <- inner_join(stream_soil.df,area.df, by = c("X_cell" = "X", "Y_cell" = "Y"))
 
-ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(soil_depth)), color="gray")
+ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(flowpath)), color="gray")
 
 soil_fig <- ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(soil_depth)), color="gray") + 
   scale_fill_manual(values=c("white","bisque4","orange","red","blue","black"),
