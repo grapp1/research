@@ -250,6 +250,12 @@ soil_fig <- ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1))
 soil_fig
 
+ggsave("~/research/domain/soil_depth_ScenF_20191016_v4.tiff",plot = soil_fig, width = (1150/300), height = (802/300), units = "in",dpi = 300)
+
+ggsave("~/research/domain/soil_depth_ScenF_20191016_v4.png",plot = soil_fig)
+save_plot(filename = "~/research/domain/soil_depth_ScenF_20191016_v4.png",plot = soil_fig, base_height = 3.833, base_width = 2.6733)
+
+
 stream_soil.df$numtrib_bin[stream_soil.df$X_cell == 22 & stream_soil.df$Y_cell ==26]
 soil_depths[stream_soil.df$numtrib_bin[stream_soil.df$X_cell == 22 & stream_soil.df$Y_cell ==26]-1]
 
