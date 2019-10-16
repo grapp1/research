@@ -193,23 +193,45 @@ for(i in 1:nx){
       count <- count + 1
       stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
     }
-    # need to add section to update the soil depths on either side of the stream
-    # if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
-    #   soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
-    #   stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+1) & stream_soil.df$Y_cell == j] <- 
-    #     max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+1) & stream_soil.df$Y_cell == j])
-    #   stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-1) & stream_soil.df$Y_cell == j] <- 
-    #     max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-1) & stream_soil.df$Y_cell == j])
-    #   stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+1)] <- 
-    #     max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+1)])
-    #   stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-1)] <- 
-    #     max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-1)])
-    # }
+  }
+}
+
+
+for(i in 1:nx){
+  for(j in 1:ny){
+    #need to add section to update the soil depths on either side of the stream
+    if(stream_soil.df$stream_dist[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
+      soil_index <- stream_soil.df$numtrib_bin[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+1) & stream_soil.df$Y_cell == j] <-
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+1) & stream_soil.df$Y_cell == j])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-1) & stream_soil.df$Y_cell == j] <-
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-1) & stream_soil.df$Y_cell == j])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+1)] <-
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+1)])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-1)] <-
+        max(soil_depths[soil_index], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-1)])
+      # knowing that there's probably a better way to do this
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+2) & stream_soil.df$Y_cell == j] <-
+        max(soil_depths[soil_index-1], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i+2) & stream_soil.df$Y_cell == j])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-2) & stream_soil.df$Y_cell == j] <-
+        max(soil_depths[soil_index-1], stream_soil.df$soil_depth[stream_soil.df$X_cell == (i-2) & stream_soil.df$Y_cell == j])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+2)] <-
+        max(soil_depths[soil_index-1], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+2)])
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-2)] <-
+        max(soil_depths[soil_index-1], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-2)])
+    }
+  }
+}
+
+for(i in 1:nx){
+  for(j in 1:ny){
     if(stream_soil.df$flowpath[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
       stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- -999
     }
   }
 }
+
+
 
 stream_soil.df$Y_cell <- as.integer(stream_soil.df$Y)
 stream_soil.df$X_cell <- as.integer(stream_soil.df$X)
