@@ -223,6 +223,7 @@ ggplot() + geom_tile(data = stream_soil_clip.df, aes(x = X,y = Y, fill = factor(
 # connecting patch
 for(i in 62:64){
   for(j in 26:30){
+    #print(stream_soil.df$subbasins_10[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j])
     stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
   }
 }
