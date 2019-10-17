@@ -84,7 +84,7 @@ stream_soil.df$numtrib_bin <- as.numeric(levels(stream_soil.df$numtrib_bin))[str
 soil_depths <- matrix(c(0.1,0.4,1.0,2.0,4.0))
 stream_soil.df$soil_depth <- 0.4
 
-nrow(stream_soil.df[stream_soil.df$soil_depth == 0,])
+nrow(stream_soil.df[stream_soil.df$soil_depth == 0.1,])
 
 count <- 0
 for(i in 1:nx){
@@ -119,6 +119,16 @@ for(i in 1:nx){
   }
 }
 
+for(i in 1:nx){
+  for(j in 1:ny){
+    subbasin_no <- stream_soil.df$subbasins_10[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+    if(stream_soil.df$avg_elev[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] > 2400 & max(stream_soil.df$river[stream_soil.df$subbasins_10 == subbasin_no]) < 1){
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
+    } else {
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- max(0.4, stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j])
+    }
+  }
+}
 
 for(i in 1:nx){
   for(j in 1:ny){
@@ -142,17 +152,6 @@ for(i in 1:nx){
         max(soil_depths[soil_index-1], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j+2)])
       stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-2)] <-
         max(soil_depths[soil_index-1], stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == (j-2)])
-    }
-  }
-}
-
-for(i in 1:nx){
-  for(j in 1:ny){
-    subbasin_no <- stream_soil.df$subbasins_10[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
-    if(stream_soil.df$avg_elev[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] > 2400 & max(stream_soil.df$river[stream_soil.df$subbasins_10 == subbasin_no]) < 1){
-      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
-    } else {
-      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- max(0.4, stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j])
     }
   }
 }
@@ -221,8 +220,12 @@ stream_soil_clip.df$numtrib_bin_cat <- factor(stream_soil_clip.df$numtrib_bin)
 ggplot() + geom_tile(data = stream_soil_clip.df, aes(x = X,y = Y, fill = factor(numtrib_bin)), color="gray")
 
 
-
-
+# connecting patch
+for(i in 62:64){
+  for(j in 26:30){
+    stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
+  }
+}
 
 
 
