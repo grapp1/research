@@ -31,6 +31,8 @@ for (i in 1:nz) {
   geo_ind[((i-1)*nx*ny+1):((i)*nx*ny)] = layers[i]
 }
 
+
+# adding soil layer based on stream soil mapping (see soil_depth_mapping.R for generation of soil depth figure)
 for(i in 1:nx){
   for(j in 1:ny){
     if(stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 4.0){
