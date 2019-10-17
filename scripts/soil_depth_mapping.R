@@ -5,6 +5,7 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 library(fields)
+library(tidyverse)
 source("~/research/scripts/flowpath_fxn.R")
 
 load(file="~/research/domain/dem_pr_grid.Rda")
@@ -68,7 +69,7 @@ ggplot() + geom_tile(data = river_trib.df, aes(x = X,y = Y, fill = factor(numtri
 # stream_dist.df$Y <- rep(1:70,each=91)
 # stream_dist.df <- stream_dist.df[,2:4]
 # colnames(stream_dist.df) <- c("stream_dist","X","Y")
-ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = stream_dist), color="gray")
+ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = numtrib_bin), color="gray")
 
 ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(numtrib_bin)), color="gray")
 
@@ -147,6 +148,18 @@ for(i in 1:nx){
 
 for(i in 1:nx){
   for(j in 1:ny){
+    subbasin_no <- stream_soil.df$subbasins_10[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j]
+    if(stream_soil.df$avg_elev[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] > 2400 & max(stream_soil.df$river[stream_soil.df$subbasins_10 == subbasin_no]) < 1){
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- 0.1
+    } else {
+      stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- max(0.4, stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j])
+    }
+  }
+}
+
+
+for(i in 1:nx){
+  for(j in 1:ny){
     if(stream_soil.df$flowpath[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
       stream_soil.df$soil_depth[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] <- -999
     }
@@ -161,7 +174,28 @@ stream_soil.df$Y <- as.integer(stream_soil.df$Y) * 90 - 45
 stream_soil.df$X <- as.integer(stream_soil.df$X) * 90 - 45
 stream_soil.df <- inner_join(stream_soil.df,area.df, by = c("X_cell" = "X", "Y_cell" = "Y"))
 
-ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(flowpath)), color="gray")
+
+## adding subbasin IDs from using 10 cells as a threshold
+# subbasins_10 <- as.matrix(read.table("/Users/grapp/Desktop/working/garrett/garrett_soil.subbasins.out.txt",header=FALSE))
+# subbasins_10.df <- melt(as.data.frame(subbasins_10))
+# subbasins_10.df$Y <- rep(1:70)
+# subbasins_10.df$X <- rep(1:91,each=70)
+# subbasins_10.df <- subbasins_10.df[,2:4]
+# colnames(subbasins_10.df) <- c("subbasins_10","Y","X")
+# stream_soil.df <- inner_join(stream_soil.df,subbasins_10.df, by = c("X_cell" = "X", "Y_cell" = "Y"))
+#load(file="~/research/domain/domain_pr_df.Rda")
+#stream_soil.df <- inner_join(stream_soil.df,slopes, by = c("X_cell" = "X_cell", "Y_cell" = "Y_cell"))
+#stream_soil.df <- stream_soil.df[ -c(14:17,19) ]
+
+
+mean_elev_subbasin <- stream_soil.df %>% 
+  group_by(subbasins_10) %>% 
+  summarize(avg_elev = mean(elev))
+
+stream_soil.df <- inner_join(stream_soil.df,mean_elev_subbasin, by = c("subbasins_10" = "subbasins_10"))
+colnames(stream_soil.df)[3] <- "Y"
+
+ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = avg_elev), color="gray")
 
 soil_fig <- ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(soil_depth)), color="gray") + 
   scale_fill_manual(values=c("white","bisque4","orange","red","blue","black"),

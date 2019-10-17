@@ -50,7 +50,7 @@ scale=0.001 #The maximum ratio of secondary to primary flow directions (set to -
 
 #River and subbasin size for slope calculations
 sub_th=10 #area threshold (number of grid cells) to use for subbasin delineation
-riv_th=60 #optional additional area threshold (number of grid cells) to use for the river mask for slope processing. See notes below if you want to change this to be different from the subbasin threshold
+riv_th=10 #optional additional area threshold (number of grid cells) to use for the river mask for slope processing. See notes below if you want to change this to be different from the subbasin threshold
 riv_method=3 #method for processing river cellls (0=treat river cells the same as the rest of the domain, 1=set secondary slopes along the river to zero, 2=apply subbasin average slopes to river cells, 3=apply subbasin average river slopes of the river cells)
 mrg_th=10	#Threshold number of grid cells for merging small subbasins in the subbasin analysis
 
@@ -184,7 +184,7 @@ write.table(slopeUWy, fout, append=T, row.names=F, col.names=F)
 write.table( t(slopesUW$direction[,ny:1]) ,paste(runname, ".direction.out.txt", sep=""), row.names=F, col.names=F)
 write.table( t(travHS$dem[,ny:1]) ,paste(runname, ".dem.out.txt", sep=""), row.names=F, col.names=F)
 write.table( t(area[,ny:1]) , paste(runname, ".area.out.txt", sep=""), row.names=F, col.names=F)
-write.table( t(subbasin$subbasins[,ny:1]) , paste(runname, ".subbasins.out.txt", sep=""), row.names=F, col.names=F)
+write.table( t(subbasin$subbasins) , paste(runname, ".subbasins.out.txt", sep=""), row.names=F, col.names=F)
 write.table( t(subbasin$segments[,ny:1]) , paste(runname, ".subbasin_streams.out.txt", sep=""), row.names=F, col.names=F)
 write.table( t(rivers[,ny:1]) , paste(runname,"rivermask.out.", runname,".txt", sep=""), row.names=F, col.names=F)
 
