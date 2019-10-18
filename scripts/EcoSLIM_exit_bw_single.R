@@ -16,8 +16,8 @@ library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update2.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/EcoSLIM_test_20191011/newcode_test/SLIM_A_v6_fwtest4_particle_restart.bin"
-restart_particles_1 <- ES_read(restart_file_1, type = "restart", nind=3)
+restart_file_1 <- "/Users/grapp/Desktop/EcoSLIM_test_20191011/newcode_test/SLIM_A_v6_fw1_particle_restart.bin"
+restart_particles_1 <- ES_read(restart_file_1, type = "restart", nind=0)
 
 #restart_particles_1 <- restart_particles_1[32768:32867,]
 #restart_particles_1$str_dist <- ((restart_particles_1$X - restart_particles_1$init_X)**2+(restart_particles_1$Y - restart_particles_1$init_Y)**2+(restart_particles_1$Z - restart_particles_1$init_Z)**2)**0.5

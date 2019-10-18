@@ -7,13 +7,12 @@ nz <- 20
 
 pulse_start <- matrix(0, nrow = nx*ny*nz)
 
+## single cell generation
+x_cell <- 10
+y_cell <- 28
 
-# layer numbers for indicator file (from bottom to top)
-#x_cell <- 29
-#y_cell <- 23
-
-#rownum <- (nx*ny*(nz-1)) + x_cell + (nx*(y_cell-1))
-#pulse_start[rownum] <- 3e-04
+rownum <- (nx*ny*(nz-1)) + x_cell + (nx*(y_cell-1))
+pulse_start[rownum] <- 3e-04
 
 
 # for generating pulse file over whole domain
@@ -37,6 +36,6 @@ for(j in 1:nx){
 
 pulse_start = rbind(c("91 70 20"), pulse_start)
 
-write.table(pulse_start, file = "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/A_v6_fw.sa",
+write.table(pulse_start, file = "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/A_v6_bw3.sa",
             row.names = FALSE, col.names = FALSE, quote = FALSE)
 

@@ -5,7 +5,7 @@ nx <- 91
 ny <- 70
 nz <- 20
 
-geo_ind <- matrix(, nrow = nx*ny*nz)
+geo_ind <- matrix(1, nrow = nx*ny*nz)
 
 
 load(file="~/research/domain/stream_soil_df.Rda")
@@ -14,7 +14,7 @@ load(file="~/research/domain/stream_soil_df.Rda")
 # layer numbers for indicator file (from bottom to top)
 k_1 <- {1:12}
 k_2 <- {13:20}
-layers <- matrix(, nrow = nz)
+layers <- matrix(1, nrow = nz)
 
 # combining layer numbers into one matrix (maybe a better way to do this??)
 for (i in 1:nz) {
@@ -62,10 +62,31 @@ for(i in 1:nx){
   }
 }
 
+
+geo_ind2 <- read.table("/Users/grapp/Desktop/working/workflow/F_indicator.sa", header = TRUE,sep = "\t")
+
+
+
+
+for(i in 1:nx){
+  for(j in 1:ny){
+    if(stream_soil.df$flowpath[stream_soil.df$X_cell == i & stream_soil.df$Y_cell == j] == 0){
+      xy_row <- (j-1)*nx + i
+      for(k in 1:20){
+        geo_ind2[nx*ny*(k-1)+xy_row,1] <- 4
+      }
+    } 
+  }
+}
+
+
+
+
+
 # plot to check whether the loop is working correctly (optional) - this should look like a step function
-plot(geo_ind)
+#plot(geo_ind)
 
-geo_ind = rbind(c("91 70 20"), geo_ind)
+geo_ind2 = rbind(c("91 70 20"), geo_ind2)
 
-write.table(geo_ind, file = "/Users/grapp/Desktop/working/workflow/F_indicator.sa", row.names = FALSE, col.names = FALSE, quote = FALSE)
+write.table(geo_ind2, file = "/Users/grapp/Desktop/working/workflow/F_indicator_ES.sa", row.names = FALSE, col.names = FALSE, quote = FALSE)
 
