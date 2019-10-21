@@ -16,7 +16,7 @@ source("~/research/scripts/PFB-ReadFcn.R")
 source("~/research/scripts/storagecalc.R")
 source("~/research/scripts/heatmap_function.R")
 source("~/research/scripts/water_table_elev_function.R")
-setwd("/Users/grapp/Desktop/working/D_v3_outputs/")
+setwd("/Users/grapp/Desktop/working/F_v0_outputs/")
 
 nx <- 91
 ny <- 70
@@ -28,7 +28,7 @@ active_cells <- 3948         # number of active cells in the domain with the mas
 
 mask <- readpfb("/Users/grapp/Desktop/working/A_v4_outputs/A_v4.out.mask.pfb", verbose = F)
 
-press_files <- list.files(pattern="D_v3.out.press.*.pfb")
+press_files <- list.files(pattern="F_v0.out.press.*.pfb")
 limit <- length(press_files)
 storage <- matrix(,limit,1)
 rate_storage <- matrix(,limit-1,1)
@@ -75,10 +75,10 @@ for(i in 2:limit){
 }
 
 
-plot(storage,type="l",col="blue", main="Storage for Scenario A Spinup Run", tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
+plot(storage,type="l",col="blue", main="Storage for Scenario F Spinup Run", tck =1, tcl = 0.5, ylab="storage (m^3)", xlab="time (x 10,000 hours)")
 
 plot(rate_storage,type="l",col="green",log="y",ylab="Storage change divided by inflow (percent)",xlab="Time (x10,000 hours)",
-     main=paste("Percentage storage change for Scenario A Spinup Run"), tck =1, tcl = 0.5)
+     main=paste("Percentage storage change for Scenario F Spinup Run"), tck =1, tcl = 0.5)
 
 
 

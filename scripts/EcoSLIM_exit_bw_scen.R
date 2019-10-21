@@ -14,17 +14,17 @@ library(plotrix)
 library(plyr)
 library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
-source("~/research/scripts/EcoSLIM_read_fxn.R")
+source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 
 restart_file_1 <- "/Users/grapp/Desktop/working/A_v3/bw6/second_run/SLIM_A_v3_bw6_particle_restart.bin"
-restart_particles_1 <- ES_read(restart_file_1, type = "restart")
+restart_particles_1 <- ES_read(restart_file_1, type = "restart", nind = 2)
 
 
-exit_file_A1 <- "/Users/grapp/Desktop/working/A_v3/bw_20190903/20190906_dl/SLIM_A_v3_bw4_exited_particles.bin"
-exited_particles_A1 <- ES_read(exit_file_A1, type = "exited")
+exit_file_A1 <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191018/SLIM_A_v6_fw1_exited_particles_200.bin"
+exited_particles_A1 <- ES_read(exit_file_A1, type = "exited", nind = 2)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_A1$age)/(24*365)), "years")
-exit_file_A2 <- "/Users/grapp/Desktop/working/A_v3/bw_20190903/20190908_dl/SLIM_A_v3_bw4_exited_particles.bin"
-exited_particles_A2 <- ES_read(exit_file_A2, type = "exited")
+exit_file_A2 <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191018/SLIM_A_v6_fw1_exited_particles.bin"
+exited_particles_A2 <- ES_read(exit_file_A2, type = "exited", nind = 2)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_A2$age)/(24*365)), "years")
 exit_file_A3 <- "/Users/grapp/Desktop/working/A_v3/bw6/SLIM_A_v3_bw6_exited_particles.bin"
 exited_particles_A3 <- ES_read(exit_file_A3, type = "exited")
@@ -64,12 +64,12 @@ exited_particles_C$age <- exited_particles_C$age_hr/(24*365)
 exited_particles_C <- exited_particles_C[exited_particles_C$age > 1,] 
 
 # generating pdf
-pdf_exit_A_bw4 <- pdfxn(exited_particles_A, max(exited_particles_A$age), 1)
+pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), 1)
 pdf_exit_B_bw3 <- pdfxn(exited_particles_B, max(exited_particles_B$age), 1)
 pdf_exit_C_bw3 <- pdfxn(exited_particles_C, max(exited_particles_C$age), 1)
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = exited_particles_C, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = exited_particles_A, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(50,600),breaks=c(50,100,200,300,400,500,600), 
                         labels=c("≤50","100","200","300","400","500","600")) +
   #guides(color = guide_legend(override.aes = list(size = 5))) +
@@ -101,7 +101,7 @@ load(file="~/research/EcoSLIM/pdf_exit_c3817_ABC.Rda")
 
 mult <- 100
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=scen,col = scen)) +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exit_A_fw1, aes(x = age,y = Density_pdf)) + #, group=scen,col = scen)) +
 #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
   #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
   #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
