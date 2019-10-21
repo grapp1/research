@@ -14,17 +14,17 @@ library(plotrix)
 library(plyr)
 library(spatstat)
 source("~/research/scripts/prob_dens_fxn.R")
-source("~/research/scripts/EcoSLIM_read_fxn_update2.R")
+source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/EcoSLIM_test_20191011/newcode_test/SLIM_A_v6_fw1_particle_restart.bin"
-restart_particles_1 <- ES_read(restart_file_1, type = "restart", nind=0)
+restart_file_1 <- "/Users/garrettrapp/Downloads/SLIM_A_v6_bw3_particle_restart_200.bin"
+restart_particles_1 <- ES_read(restart_file_1, type = "restart", nind=2)
 
 #restart_particles_1 <- restart_particles_1[32768:32867,]
 #restart_particles_1$str_dist <- ((restart_particles_1$X - restart_particles_1$init_X)**2+(restart_particles_1$Y - restart_particles_1$init_Y)**2+(restart_particles_1$Z - restart_particles_1$init_Z)**2)**0.5
 
 
-exit_file <- "/Users/grapp/Desktop/EcoSLIM_test_20191011/newcode_test/SLIM_A_v6_fwtest4_exited_particles.bin"
-exited_particles <- ES_read(exit_file, type = "exited", nind=3)
+exit_file <- "/Users/garrettrapp/Desktop/A_v6_fw1/SLIM_A_v6_fw1_exited_particles.bin"
+exited_particles <- ES_read(exit_file, type = "exited", nind=2)
 paste("Maximum particle age is", sprintf("%02f",max(exited_particles$age)/(24*365)), "years")
 
 
@@ -49,8 +49,8 @@ exit_pts <- flowpath_fig + geom_point(data = restart_particles_1, aes(x=X, y=Y, 
 exit_pts
 
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf)) +
-  scale_x_log10(name="Age (years)",limits = c(50,600), breaks = c(50,100,200,400,500,600),labels = scales::comma,expand=c(0,0)) +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_update, aes(x = age,y = Density_pdf)) +
+  scale_x_log10(name="Age (years)",limits = c(1,600), breaks = c(50,100,200,400,500,600),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of all exited particles - backward tracking from cell [38,17]") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.05,0.01), limits = c(0,0.05)) + 
   expand_limits(x = 100, y = 0) + theme_bw() + 
