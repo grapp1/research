@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/E_v0_outputs/E_v0.out.press.00042.pfb"
-satur_file <- "/Users/grapp/Desktop/working/E_v0_outputs/E_v0.out.satur.00042.pfb"
+press_file <- "/Users/grapp/Desktop/working/F_v0_outputs/F_v0.out.press.00067.pfb"
+satur_file <- "/Users/grapp/Desktop/working/F_v0_outputs/F_v0.out.satur.00067.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
