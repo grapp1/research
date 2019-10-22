@@ -26,10 +26,14 @@ area <- cell_length**2
 rech_rate <- 0.000030        # recharge rate in model (in m/hr)
 active_cells <- 3948         # number of active cells in the domain with the mask
 
+# reading in mask file for domain
 mask <- readpfb("/Users/grapp/Desktop/working/A_v4_outputs/A_v4.out.mask.pfb", verbose = F)
 
+# reading entire time series of pressure files
 press_files <- list.files(pattern="F_v0.out.press.*.pfb")
 limit <- length(press_files)
+
+# initializing matrices
 storage <- matrix(,limit,1)
 rate_storage <- matrix(,limit-1,1)
 storage_cell <- array(,dim=c(nx,ny,limit))
@@ -43,13 +47,16 @@ cell_change_pctile <- data.frame(
   maximum = c(1:limit-1)
 )
 
-# reading all of the pressure files - this usually takes the longest
+# reading all of the pressure files - this usually takes a while
 for(i in 1:limit){
   all_press[,,,i] = readpfb(press_files[i], verbose = F)
 }
 
+# loading data frame of mask to determine storage calculation over domain
 load("~/research/domain/watershed_mask.Rda")
 bot_press.df <- watershed_mask
+
+# 
 for(i in 1:limit){
   print(paste("t = ",i,"/",limit,sep=""))
   for(j in 1:nx){
