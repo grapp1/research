@@ -35,12 +35,13 @@ exited_particles_A <- rbind(exited_particles_A1,exited_particles_A2,exited_parti
 exited_particles_A <- exited_particles_A[!duplicated(exited_particles_A),]
 
 #exit_file_B1 <- "/Users/grapp/Desktop/working/B_v2_ES_local/first_run/SLIM_B_v2_bw3_exited_particles.bin"
-exit_file_B1 <- "/Users/grapp/Desktop/working/B_v2_ES_local/first_run/SLIM_B_v2_bw3_exited_particles.bin"
-exited_particles_B1 <- ES_read(exit_file_B1, type = "exited")
+exit_file_B1 <- "/Users/grapp/Desktop/working/B_v5_outputs/fw_20191022/fw1/SLIM_B_v5_fw1_exited_particles_200.bin"
+exited_particles_B1 <- ES_read(exit_file_B1, type = "exited", nind = 3)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_B1$age)/(24*365)), "years")
 exit_file_B2 <- "/Users/grapp/Desktop/working/B_v2_ES_local/bw3/SLIM_B_v2_bw3_exited_particles.bin"
 exited_particles_B2 <- ES_read(exit_file_B2, type = "exited")
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_B2$age)/(24*365)), "years")
+exited_particles_B <- exited_particles_B1
 exited_particles_B <- rbind(exited_particles_B1,exited_particles_B2)
 exited_particles_B <- exited_particles_B[!duplicated(exited_particles_B),]
 
@@ -66,8 +67,8 @@ exited_particles_C$age <- exited_particles_C$age_hr/(24*365)
 exited_particles_C <- exited_particles_C[exited_particles_C$age > 1,] 
 
 # generating pdf
-pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), 3)
-pdf_exit_B_bw3 <- pdfxn(exited_particles_B, max(exited_particles_B$age), 1)
+pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), 1)
+pdf_exit_B_fw1 <- pdfxn(exited_particles_B, max(exited_particles_B$age), 1)
 pdf_exit_C_bw3 <- pdfxn(exited_particles_C, max(exited_particles_C$age), 1)
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
@@ -79,37 +80,24 @@ exit_pts <- flowpath_fig + geom_point(data = exited_particles_A, aes(x=X, y=Y, c
 
 exit_pts
 
-pdf_exit_C_bw3 <- pdf_exited_all
-
-exited_particles_B_bw3 <- exited_particles
-save(pdf_exit_B_bw2,file="~/research/Scenario_B/B_v2/pdf_exit_B_bw2.Rda")
-
-load(file="~/research/Scenario_A/A_v3/pdf_exit_bw4.Rda")
-load(file="~/research/Scenario_B/B_v2/pdf_exit_B_bw3.Rda")
-load(file="~/research/Scenario_C/C_v2/pdf_exit_C_bw3.Rda")
 pdf_exit_bw1$st_cell <- "[4,22]"
 pdf_exit_bw2$st_cell <- "[15,32]"
 pdf_exit_bw4$st_cell <- "[38,17]"
 pdf_exited_all <- rbind(pdf_exit_bw1,pdf_exit_bw2,pdf_exit_bw4)
 
-pdf_exit_A_bw4$scen <- "A"
-pdf_exit_B_bw3$scen <- "B"
+pdf_exit_A_fw1$scen <- "A"
+pdf_exit_B_fw1$scen <- "B"
 pdf_exit_C_bw3$scen <- "C"
+pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1)
 pdf_exited_all <- rbind(pdf_exit_A_bw4,pdf_exit_B_bw3,pdf_exit_C_bw3)
 
-pdf_exit_c2022 <- pdf_exited_all
-save(pdf_exit_c2022,file="~/research/EcoSLIM/pdf_exit_c2022_ABC.Rda")
-load(file="~/research/EcoSLIM/pdf_exit_c3817_ABC.Rda")
-
-mult <- 100
-
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exit_A_fw1, aes(x = age,y = Density_pdf)) + #, group=scen,col = scen)) +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=scen,col = scen)) +
 #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
   #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
   #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
-  scale_x_log10(name="Age (years)",limits = c(1,1000), breaks = c(50,100,200,400,500,600),labels = scales::comma,expand=c(0,0)) +
+  scale_x_log10(name="Age (years)",limits = c(50,1000), breaks = c(50,100,200,400,500,600),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of all exited particles - backward tracking from cell [38,17]") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.05,0.01), limits = c(0,0.01)) + 
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.05,0.01), limits = c(0,0.02)) + 
   scale_color_manual(values = c("firebrick", "dodgerblue","darkgreen"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
