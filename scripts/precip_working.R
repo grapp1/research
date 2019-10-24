@@ -1,4 +1,9 @@
 # CLM read file 20190716 - reading CLM data, taking subset to generate forcings on my domain
+# updated 20191007 to look at precipitation data statistics
+
+library(fitdistrplus)
+
+
 
 filename <- "~/research/CLM/Forcing1D_gr.txt"
 
