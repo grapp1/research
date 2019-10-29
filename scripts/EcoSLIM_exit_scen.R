@@ -63,22 +63,33 @@ paste("Maximum particle age is", sprintf("%02g",max(exited_particles_D2$age)/(24
 exited_particles_D <- rbind(exited_particles_D1,exited_particles_D2)
 exited_particles_D <- exited_particles_D[!duplicated(exited_particles_D),]
 
+exit_file_E1 <- "/Users/grapp/Desktop/working/E_v2_outputs/fw_20191028/fw1/SLIM_E_v2_fw1_exited_particles.bin"
+exited_particles_E1 <- ES_read(exit_file_E1, type = "exited", nind = 21)
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_E1$age)/(24*365)), "years")
+exited_particles_E <- exited_particles_E1
+
+
 # converting ages and removing particles with age < 1 yr
 exited_particles_A$age_hr <- exited_particles_A$age  
 exited_particles_A$age <- exited_particles_A$age_hr/(24*365)
-exited_particles_A <- exited_particles_A[exited_particles_A$age > 1,] 
+exited_particles_A <- exited_particles_A[exited_particles_A$age > 1,]
+exited_particles_A <- exited_particles_A[exited_particles_A$IndAge2 == 0,] 
 exited_particles_B$age_hr <- exited_particles_B$age  
 exited_particles_B$age <- exited_particles_B$age_hr/(24*365)
-exited_particles_B <- exited_particles_B[exited_particles_B$age > 1,] 
+exited_particles_B <- exited_particles_B[exited_particles_B$age > 1,]
+exited_particles_B <- exited_particles_B[exited_particles_B$IndAge3 == 0,] 
 exited_particles_C$age_hr <- exited_particles_C$age  
 exited_particles_C$age <- exited_particles_C$age_hr/(24*365)
 exited_particles_C <- exited_particles_C[exited_particles_C$age > 1,] 
+exited_particles_C <- exited_particles_C[exited_particles_C$IndAge4 == 0,] 
 exited_particles_D$age_hr <- exited_particles_D$age  
 exited_particles_D$age <- exited_particles_D$age_hr/(24*365)
 exited_particles_D <- exited_particles_D[exited_particles_D$age > 1,] 
-#exited_particles_E$age_hr <- exited_particles_E$age  
-#exited_particles_E$age <- exited_particles_E$age_hr/(24*365)
-#exited_particles_E <- exited_particles_E[exited_particles_E$age > 1,] 
+exited_particles_D <- exited_particles_D[exited_particles_D$IndAge21 == 0,] 
+exited_particles_E$age_hr <- exited_particles_E$age  
+exited_particles_E$age <- exited_particles_E$age_hr/(24*365)
+exited_particles_E <- exited_particles_E[exited_particles_E$age > 1,] 
+exited_particles_E <- exited_particles_E[exited_particles_E$IndAge21 == 0,] 
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
 exit_pts <- flowpath_fig + geom_point(data = exited_particles_A, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
@@ -96,35 +107,41 @@ pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), bin_siz
 pdf_exit_B_fw1 <- pdfxn(exited_particles_B, max(exited_particles_B$age), bin_size_age,column = "age")
 pdf_exit_C_fw1 <- pdfxn(exited_particles_C, max(exited_particles_C$age), bin_size_age,column = "age")
 pdf_exit_D_fw1 <- pdfxn(exited_particles_D, max(exited_particles_D$age), bin_size_age,column = "age")
+pdf_exit_E_fw1 <- pdfxn(exited_particles_E, max(exited_particles_E$age), bin_size_age,column = "age")
 
 pdf_exit_A_fw1$scen <- "A"
 pdf_exit_B_fw1$scen <- "B"
 pdf_exit_C_fw1$scen <- "C"
 pdf_exit_D_fw1$scen <- "D"
-pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_D_fw1)
+pdf_exit_E_fw1$scen <- "E"
+pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1) #,pdf_exit_D_fw1) #,pdf_exit_E_fw1)
 
 bin_size_path <- 200
 pdf_exit_A_fw1_path <- pdfxn(exited_particles_A, max(exited_particles_A$path_len), bin_size_path, column = "path_len")
 pdf_exit_B_fw1_path <- pdfxn(exited_particles_B, max(exited_particles_B$path_len), bin_size_path, column = "path_len")
 pdf_exit_C_fw1_path <- pdfxn(exited_particles_C, max(exited_particles_C$path_len), bin_size_path, column = "path_len")
 pdf_exit_D_fw1_path <- pdfxn(exited_particles_D, max(exited_particles_D$path_len), bin_size_path, column = "path_len")
+pdf_exit_E_fw1_path <- pdfxn(exited_particles_E, max(exited_particles_E$path_len), bin_size_path, column = "path_len")
 
 pdf_exit_A_fw1_path$scen <- "A"
 pdf_exit_B_fw1_path$scen <- "B"
 pdf_exit_C_fw1_path$scen <- "C"
 pdf_exit_D_fw1_path$scen <- "D"
-pdf_exited_all_path <- rbind(pdf_exit_A_fw1_path,pdf_exit_B_fw1_path,pdf_exit_C_fw1_path,pdf_exit_D_fw1_path)
+pdf_exit_E_fw1_path$scen <- "E"
+pdf_exited_all_path <- rbind(pdf_exit_A_fw1_path,pdf_exit_B_fw1_path,pdf_exit_C_fw1_path) #,pdf_exit_D_fw1_path) #,pdf_exit_E_fw1_path)
 
 pdf_exit_A_fw1_spath <- pdfxn(exited_particles_A, max(exited_particles_A$spath_len), bin_size_path, column = "spath_len")
 pdf_exit_B_fw1_spath <- pdfxn(exited_particles_B, max(exited_particles_B$spath_len), bin_size_path, column = "spath_len")
 pdf_exit_C_fw1_spath <- pdfxn(exited_particles_C, max(exited_particles_C$spath_len), bin_size_path, column = "spath_len")
 pdf_exit_D_fw1_spath <- pdfxn(exited_particles_D, max(exited_particles_D$spath_len), bin_size_path, column = "spath_len")
+pdf_exit_E_fw1_spath <- pdfxn(exited_particles_E, max(exited_particles_E$spath_len), bin_size_path, column = "spath_len")
 
 pdf_exit_A_fw1_spath$scen <- "A"
 pdf_exit_B_fw1_spath$scen <- "B"
 pdf_exit_C_fw1_spath$scen <- "C"
 pdf_exit_D_fw1_spath$scen <- "D"
-pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_B_fw1_spath,pdf_exit_C_fw1_spath,pdf_exit_D_fw1_spath)
+pdf_exit_E_fw1_spath$scen <- "E"
+pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_B_fw1_spath,pdf_exit_C_fw1_spath) #,pdf_exit_D_fw1_spath) #,pdf_exit_E_fw1_spath)
 
 pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=scen,col = scen)) +
 #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
@@ -133,7 +150,7 @@ pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_
   scale_x_log10(name="Age (years)",limits = c(3,600), breaks = c(3,25,50,100,200,400,500,600),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of age of all exited particles - forward tracking") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.02,0.002), limits = c(0,0.02)) + 
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen"))  + labs(color = "Scenario") +
+  scale_color_manual(values = c("black","firebrick", "dodgerblue"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig1
@@ -146,7 +163,7 @@ pdf_fig2 <- ggplot() + geom_line(data = pdf_exited_all_path, aes(x = path_len,y 
   scale_x_log10(name="Particle Path Length (m)",limits = c(200,60000), breaks = c(200,1000,5000,10000,20000,40000,60000),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of path lengths for all exited particles - forward tracking") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.02,0.002), limits = c(0,0.02)) + 
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen"))  + labs(color = "Scenario") +
+  scale_color_manual(values = c("black","firebrick", "dodgerblue"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig2
@@ -158,7 +175,7 @@ pdf_fig3 <- ggplot() + geom_line(data = pdf_exited_all_spath, aes(x = spath_len,
   scale_x_log10(name="Particle Saturated Zone Path Length (m)",limits = c(200,60000), breaks = c(200,1000,5000,10000,20000,40000,60000),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of saturated path lengths for all exited particles - forward tracking") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.02,0.002), limits = c(0,0.02)) + 
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen"))  + labs(color = "Scenario") +
+  scale_color_manual(values = c("black","firebrick", "dodgerblue"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig3
@@ -173,9 +190,10 @@ ggsave(filename, plot = last_plot(), device = NULL, path = NULL,
 
 
 
-
-
-
+age_exit_test <- exited_particles_C
+age_exit_test$ageadd <- age_exit_test$IndAge1 + age_exit_test$IndAge2 + age_exit_test$IndAge3 - age_exit_test$age_hr
+summary(age_exit_test$ageadd)
+summary(age_exit_test$IndAge3)
 
 
 
