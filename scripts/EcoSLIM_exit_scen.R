@@ -230,7 +230,7 @@ df_comb$path_len_plot <- df_comb$path_len/3000000
 
 stat_plot1 <- ggplot() + geom_boxplot(data = df_comb, aes(x = bin,y = path_len,fill=scen)) + 
   scale_x_discrete(name="Age range of exited particles (yr)", labels = c("< 100","100 - 200","200 - 300","300 - 400","400 - 500","500 - 600")) +
-  ggtitle("Particle path lengths for all exited particles - forward tracking") + 
+  ggtitle("Total path lengths") + 
   scale_y_continuous(name="Particle Path Length (m)", expand=c(0,0), breaks = seq(0,60000,10000), limits = c(0,60000),labels = scales::comma) + 
   scale_fill_manual(values = c("firebrick", "dodgerblue","darkgreen"))  + labs(fill = "Scenario") +
   expand_limits(x = 0, y = 0) + theme_bw() +
@@ -239,7 +239,7 @@ stat_plot1
 
 stat_plot2 <- ggplot() + geom_boxplot(data = df_comb, aes(x = bin,y = spath_len,fill=scen)) + 
   scale_x_discrete(name="Age range of exited particles (yr)", labels = c("< 100","100 - 200","200 - 300","300 - 400","400 - 500","500 - 600")) +
-  ggtitle("Saturated path lengths for all exited particles - forward tracking") + 
+  ggtitle("Saturated zone path lengths") + 
   scale_y_continuous(name="Saturated Zone Path Length (m)", expand=c(0,0), breaks = seq(0,60000,10000), limits = c(0,60000),labels = scales::comma) + 
   scale_fill_manual(values = c("firebrick", "dodgerblue","darkgreen"))  + labs(fill = "Scenario") +
   expand_limits(x = 0, y = 0) + theme_bw() +
@@ -248,12 +248,14 @@ stat_plot2
 
 stat_plot3 <- ggplot() + geom_boxplot(data = df_comb, aes(x = bin,y = unsat_len,fill=scen)) + 
   scale_x_discrete(name="Age range of exited particles (yr)", labels = c("< 100","100 - 200","200 - 300","300 - 400","400 - 500","500 - 600")) +
-  ggtitle("Unsaturated path lengths for all exited particles - forward tracking") + 
+  ggtitle("Unsaturated zone path lengths") + 
   scale_y_continuous(name="Unsaturated Zone Path Length (m)", expand=c(0,0), breaks = seq(0,60000,10000), limits = c(0,60000),labels = scales::comma) + 
   scale_fill_manual(values = c("firebrick", "dodgerblue","darkgreen"))  + labs(fill = "Scenario") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 stat_plot3
+
+grid.arrange(stat_plot1, stat_plot2,stat_plot3, nrow = 3,top = "Box plots of particle path lengths for Scenarios A, B, and C - forward tracking")
 
 scen <- "A"
 sum(df_comb$bin == '[0,100]' & df_comb$scen == scen)
