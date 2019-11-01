@@ -14,10 +14,11 @@ library(zoo)
 library(plotrix)
 library(plyr)
 library(spatstat)
+library(gridExtra)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191018/SLIM_A_v6_fw1_particle_restart_600.bin"
+restart_file_1 <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_A_v6_fw1_particle_restart_INITIAL.bin"
 restart_particles_1 <- ES_read(restart_file_1, type = "restart", nind = 2)
 
 paste(nrow(restart_particles_1[restart_particles_1$IndAge2 > 0,]), "particles in the restart file outside the domain")
@@ -92,7 +93,7 @@ exited_particles_E$age <- exited_particles_E$age_hr/(24*365)
 exited_particles_E <- exited_particles_E[exited_particles_E$IndAge21 == 0,] 
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = exited_particles_A, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = exited_particles_A_exc, aes(x=init_X, y=init_Y, colour = ratio)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(50,600),breaks=c(50,100,200,300,400,500,600), 
                         labels=c("≤50","100","200","300","400","500","600")) +
   #guides(color = guide_legend(override.aes = list(size = 5))) +
@@ -288,7 +289,22 @@ scatter_3 <- ggplot() + geom_point(data = exited_particles_C_exc, aes(x = path_l
 
 grid.arrange(scatter_1, scatter_2,scatter_3, nrow = 1,top = "Path lengths vs. proportion in the saturated zone (only exited particles with saturated paths less than 1,000m)")
 
+ggplot() + geom_point(data = exited_particles_C_exc, aes(x = init_Y,y = ratio, color = age))
 
+init_pts_1 <- flowpath_fig + geom_point(data = exited_particles_A_exc, aes(x=init_X, y=init_Y, colour = ratio)) + labs(color = "Proportion of time spent in the saturated zone") +
+  scale_colour_gradient(low = "white", high="midnightblue",limits=c(0,1)) +
+  #guides(color = guide_legend(override.aes = list(size = 5))) +
+  ggtitle("Scenario A")
+init_pts_2 <- flowpath_fig + geom_point(data = exited_particles_B_exc, aes(x=init_X, y=init_Y, colour = ratio)) + labs(color = "Proportion of time spent in the saturated zone") +
+  scale_colour_gradient(low = "white", high="midnightblue",limits=c(0,1)) +
+  #guides(color = guide_legend(override.aes = list(size = 5))) +
+  ggtitle("Scenario B")
+init_pts_3 <- flowpath_fig + geom_point(data = exited_particles_C_exc, aes(x=init_X, y=init_Y, colour = ratio)) + labs(color = "Proportion of time spent in the saturated zone") +
+  scale_colour_gradient(low = "white", high="midnightblue",limits=c(0,1)) +
+  #guides(color = guide_legend(override.aes = list(size = 5))) +
+  ggtitle("Scenario C")
+
+grid.arrange(init_pts_1, init_pts_2,init_pts_3, nrow = 3,top = "Path lengths vs. proportion in the saturated zone (only exited particles with saturated paths less than 1,000m)")
 
 
 
