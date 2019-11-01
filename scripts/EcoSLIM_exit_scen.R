@@ -304,7 +304,7 @@ init_pts_3 <- flowpath_fig + geom_point(data = exited_particles_C_exc, aes(x=ini
   #guides(color = guide_legend(override.aes = list(size = 5))) +
   ggtitle("Scenario C")
 
-grid.arrange(init_pts_1, init_pts_2,init_pts_3, nrow = 3,top = "Path lengths vs. proportion in the saturated zone (only exited particles with saturated paths less than 1,000m)")
+grid.arrange(init_pts_1, init_pts_2,init_pts_3, nrow = 3,top = "Initial particle location and proportion of time in the saturated zone (only exited particles with saturated paths less than 1,000m)")
 
 
 
