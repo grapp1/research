@@ -26,11 +26,22 @@ y <- 22
 
 flowpath_fig <- flowpath_fxn(x,y,nx,ny,dem_grid,riverflag = 1)
 flowpath_fig
+
+
+flowpath_fig_blank <- flowpath_fxn(x,y,nx,ny,dem_grid,riverflag = 2)
+
+
+
+
+
+
 ggsave(filename = paste("~/Desktop/flowpath_maps/fp_c",sprintf("%02d",i),sprintf("%02d", j),".png",sep=""), plot = flowpath_fig)
 
 for(i in 79:85){
   print(slopes$xslope[slopes$X_cell == i & slopes$Y_cell == 25])
 }
+
+
 
 
 
