@@ -19,17 +19,21 @@ source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 source("~/research/scripts/cell_agg_fxn.R")
 
-restart_file_1 <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_D_v5_fw1_particle_restart.bin"
-restart_particles_1 <- ES_read(restart_file_1, type = "restart", nind = 21)
+restart_file <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191106/fw3/SLIM_A_v6_fw3_particle_restart_INITIAL.bin"
+indicator <- 21
+restart_particles_1 <- ES_read(restart_file, type = "restart", nind = indicator)
+exit_file_count <- exited_particles_B
+number_exited <- nrow(exit_file_count)
+total_number <- number_exited + nrow(restart_particles_1)
+number_outside <- nrow(restart_particles_1[restart_particles_1$IndAge3 > 0,])
+pct_exit <- number_exited*100/(total_number-number_outside)
 
-restart_file_2 <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_A_v6_fw1_particle_restart.bin"
-restart_particles_2 <- ES_read(restart_file_2, type = "restart", nind = 2)
-
-paste(nrow(restart_particles_1[restart_particles_1$IndAge21 > 0,]), "particles in the restart file outside the domain")
+paste(nrow(restart_particles_1[restart_particles_1$IndAge4 > 0,]), "particles in the restart file outside the domain")
+paste(format(pct_exit,digits=4),"% of particles have exited the domain",sep="")
 
 
-exit_file_A1 <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191018/SLIM_A_v6_fw1_exited_particles_200.bin"
-exited_particles_A1 <- ES_read(exit_file_A1, type = "exited", nind = 2)
+exit_file_A1 <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191106/fw3/SLIM_A_v6_fw3_exited_particles_200.bin"
+exited_particles_A1 <- ES_read(exit_file_A1, type = "exited", nind = 21)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_A1$age)/(24*365)), "years")
 exit_file_A2 <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191018/SLIM_A_v6_fw1_exited_particles_400.bin"
 exited_particles_A2 <- ES_read(exit_file_A2, type = "exited", nind = 2)
@@ -39,6 +43,7 @@ exited_particles_A3 <- ES_read(exit_file_A3, type = "exited", nind = 2)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_A3$age)/(24*365)), "years")
 exited_particles_A <- rbind(exited_particles_A1,exited_particles_A2,exited_particles_A3)
 exited_particles_A <- exited_particles_A[!duplicated(exited_particles_A),]
+exited_particles_A <- exited_particles_A1
 exited_particles_A$ratio_age <- exited_particles_A$sat_age/exited_particles_A$age
 exited_particles_A$ratio_len <- exited_particles_A$spath_len/exited_particles_A$path_len
 
@@ -98,7 +103,7 @@ exited_particles_E$ratio_len <- exited_particles_E$spath_len/exited_particles_E$
 exited_particles_A$age_hr <- exited_particles_A$age  
 exited_particles_A$age <- exited_particles_A$age_hr/(24*365)
 #exited_particles_A <- exited_particles_A[exited_particles_A$age > 1,]
-exited_particles_A <- exited_particles_A[exited_particles_A$IndAge2 == 0,] 
+exited_particles_A <- exited_particles_A[exited_particles_A$IndAge21 == 0,] 
 exited_particles_B$age_hr <- exited_particles_B$age  
 exited_particles_B$age <- exited_particles_B$age_hr/(24*365)
 #exited_particles_B <- exited_particles_B[exited_particles_B$age > 1,]
@@ -117,8 +122,8 @@ exited_particles_E$age <- exited_particles_E$age_hr/(24*365)
 exited_particles_E <- exited_particles_E[exited_particles_E$IndAge21 == 0,] 
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = exited_particles_A_exc, aes(x=init_X, y=init_Y, colour = ratio)) + labs(color = "Age (years)") +
-  scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(50,600),breaks=c(50,100,200,300,400,500,600), 
+exit_pts <- flowpath_fig + geom_point(data = exited_particles_A, aes(x=init_X, y=init_Y, colour = soil_len)) + labs(color = "Age (years)") +
+  scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(1,1000),breaks=c(50,100,200,300,400,500,600), 
                         labels=c("≤50","100","200","300","400","500","600")) +
   #guides(color = guide_legend(override.aes = list(size = 5))) +
   ggtitle("Locations and ages of exited particles for Scenario C - backwards tracking from cell [12,19]")
@@ -128,7 +133,7 @@ exit_pts
 
 # generating pdf
 bin_size_age <- 3
-pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), bin_size_age,column = "sat_age")
+pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), bin_size_age,column = "age")
 pdf_exit_B_fw1 <- pdfxn(exited_particles_B, max(exited_particles_B$age), bin_size_age,column = "age")
 pdf_exit_C_fw1 <- pdfxn(exited_particles_C, max(exited_particles_C$age), bin_size_age,column = "age")
 pdf_exit_D_fw1 <- pdfxn(exited_particles_D, max(exited_particles_D$age), bin_size_age,column = "age")
@@ -366,5 +371,70 @@ spath_len_plot
 
 agg_colname <- "spath_len"
 spath_avg_A[,agg_colname][spath_avg_A$X_cell == 90 & spath_avg_A$Y_cell == 68]
+
+
+### calculating statistics for time spent in the top 2m (comparing A/B/C)
+exited_particles_A$soil_len <- exited_particles_A$IndLen17 + exited_particles_A$IndLen18 + exited_particles_A$IndLen19 + exited_particles_A$IndLen20
+exited_particles_A$soil_len_ratio <- exited_particles_A$soil_len/exited_particles_A$path_len
+exited_particles_A$soil_age <- exited_particles_A$IndAge17 + exited_particles_A$IndAge18 + exited_particles_A$IndAge19 + exited_particles_A$IndAge20
+soil_len_avg_A <- cell_agg_fxn(exited_particles_A, agg_colname = "soil_len")
+#soil_len_avg_A$soil_len_cuts <- cut(soil_len_avg_A$soil_len, c(-2.5,-1.5,0,1000,2000,3000,4000,Inf), include.lowest = TRUE)
+summary(soil_len_avg_A$soil_len_cuts)
+
+exited_particles_B$soil_len <- exited_particles_B$IndLen2
+exited_particles_B$soil_age <- exited_particles_B$IndAge2/8760 ## age in years
+exited_particles_B$soil_len_ratio <- exited_particles_B$soil_len/exited_particles_B$path_len
+soil_len_avg_B <- cell_agg_fxn(exited_particles_B, agg_colname = "soil_len_ratio")
+#soil_len_avg_B$soil_len_cuts <- cut(soil_len_avg_B$soil_len, c(-2.5,-1.5,0,1000,2000,3000,4000,Inf), include.lowest = TRUE)
+soil_len_avg_B$soil_len_cuts <- cut(soil_len_avg_B$soil_len_ratio, c(-2.5,-1.5,0,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)
+summary(soil_len_avg_B$soil_len_cuts)
+
+#age
+soil_age_avg_B <- cell_agg_fxn(exited_particles_B, agg_colname = "soil_age")
+soil_age_avg_B$soil_age_cuts <- cut(soil_age_avg_B$soil_age, c(-2.5,-1.5,0,2,5,10,20,50,100,Inf), include.lowest = TRUE)
+summary(soil_age_avg_B$soil_age_cuts)
+
+exited_particles_C$soil_len <- exited_particles_C$IndLen3
+exited_particles_C$soil_age <- exited_particles_C$IndAge3/8760 ## age in years
+exited_particles_C$soil_len_ratio <- exited_particles_C$soil_len/exited_particles_C$path_len
+soil_len_avg_C <- cell_agg_fxn(exited_particles_C, agg_colname = "soil_len_ratio")
+#soil_len_avg_B$soil_len_cuts <- cut(soil_len_avg_B$soil_len, c(-2.5,-1.5,0,1000,2000,3000,4000,Inf), include.lowest = TRUE)
+soil_len_avg_C$soil_len_cuts <- cut(soil_len_avg_C$soil_len_ratio, c(-2.5,-1.5,0,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)
+summary(soil_len_avg_C$soil_len_cuts)
+
+#age
+soil_age_avg_C <- cell_agg_fxn(exited_particles_C, agg_colname = "soil_age")
+soil_age_avg_C$soil_age_cuts <- cut(soil_age_avg_C$soil_age, c(-2.5,-1.5,0,2,5,10,20,50,100,Inf), include.lowest = TRUE)
+summary(soil_age_avg_C$soil_age_cuts)
+
+
+exited_particles_D$soil_age <- exited_particles_D$IndAge17 + exited_particles_D$IndAge18 + exited_particles_D$IndAge19 + exited_particles_D$IndAge20
+exited_particles_D$soil_age <- exited_particles_D$soil_age/8760 ## age in years
+soil_age_avg_D <- cell_agg_fxn(exited_particles_D, agg_colname = "soil_age")
+soil_age_avg_D$soil_age_cuts <- cut(soil_age_avg_D$soil_age, c(-2.5,-1.5,0,2,5,10,20,50,100,Inf), include.lowest = TRUE)
+summary(soil_age_avg_D$soil_age_cuts)
+
+
+soil_len_plot <- ggplot() + geom_tile(data = soil_len_avg_B, aes(x = X,y = Y, fill = factor(soil_len_cuts)), color="gray") + 
+  scale_fill_manual(values=c("black","white","navy","cyan4", "chartreuse","yellow","orange"),
+  #                  labels=c("NA","Outside of Basin","< 1,000","1,000-2,000","2,000-3,000","3,000-4,000","> 4,000")) +
+                    labels=c("NA","Outside of Basin","< 0.1","0.1-0.2","0.2-0.3","0.3-0.4","> 0.4")) +
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  labs(fill = "Ratio of total flowpath length\nspent in top 2m (m)") + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="gray", size=0.1)) + 
+  ggtitle("Scenario B - ratio of flowpath length spent in top two meters of domain")
+soil_len_plot
+
+soil_age_plot <- ggplot() + geom_tile(data = soil_age_avg_D, aes(x = X,y = Y, fill = factor(soil_age_cuts)), color="gray") + 
+  scale_fill_manual(values=c("black","white","navy","cyan4", "chartreuse","yellow","orange","red","darkred"),
+                    #                  labels=c("NA","Outside of Basin","< 1,000","1,000-2,000","2,000-3,000","3,000-4,000","> 4,000")) +
+                    labels=c("NA","Outside of Basin","< 2","2-5","5-10","10-20","20-50","50-100",">100")) +
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  labs(fill = "Average total time\nspent in top 2m (year)") + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="gray", size=0.1)) + 
+  ggtitle("Scenario D - average time spent in top two meters of domain")
+soil_age_plot
 
 
