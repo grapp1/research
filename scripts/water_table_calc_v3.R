@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Downloads/F_v2_download/F_v2.out.press.08759.pfb"
-satur_file <- "/Users/grapp/Downloads/F_v2_download/F_v2.out.satur.08759.pfb"
+press_file <- "/Users/grapp/Desktop/working/A_v5_outputs/A_v5.out.press.00991.pfb"
+satur_file <- "/Users/grapp/Desktop/working/A_v5_outputs/A_v5.out.satur.00991.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -40,22 +40,29 @@ subset_particles <- subset(press_sat.df, z == 20))
 # water table elevation function - takes a while, but you only need to do it once 
 wt_elev.df <- data.frame(x=rep(1:nx),y=rep(1:ny,each=nx),wt_elev=0)
 
+load("~/research/domain/watershed_mask.Rda")
+
+
 system.time(
   for(i in 1:nx){
     print(paste("x =",i))
     for(j in 1:ny){
-      for(k in 1:nz){
-        subset.df <- subset(press_sat.df, z == k)
-        if(subset.df$satur[subset.df$x == i & subset.df$y == j] < 1){
-          wt_elev.df$wt_elev[wt_elev.df$x == i & wt_elev.df$y == j] <-
-            press_sat.df$press[press_sat.df$x == i & press_sat.df$y == j & press_sat.df$z == k] +
-            layers$depth_bot[layers$layer == k]
-          break
-        } else if(subset.df$satur[subset.df$x == i & subset.df$y == j] == 1 & k ==20){
-          wt_elev.df$wt_elev[wt_elev.df$x == i & wt_elev.df$y == j] <-
-            press_sat.df$press[press_sat.df$x == i & press_sat.df$y == j & press_sat.df$z == k] +
-            layers$depth_top[layers$layer == k]
-        } 
+      if(watershed_mask$flowpath[watershed_mask$X_cell == i & watershed_mask$Y_cell == j] == 0){
+        wt_elev.df$wt_elev[wt_elev.df$x == i & wt_elev.df$y == j] <- 9999
+      } else {
+        for(k in 1:nz){
+          subset.df <- subset(press_sat.df, z == k)
+          if(subset.df$satur[subset.df$x == i & subset.df$y == j] < 1){
+            wt_elev.df$wt_elev[wt_elev.df$x == i & wt_elev.df$y == j] <-
+              press_sat.df$press[press_sat.df$x == i & press_sat.df$y == j & press_sat.df$z == (k-1)] +
+              (layers$depth_bot[layers$layer == (k-1)]+layers$depth_top[layers$layer == (k-1)])/2
+            break
+          } else if(subset.df$satur[subset.df$x == i & subset.df$y == j] == 1 & k ==20){
+            wt_elev.df$wt_elev[wt_elev.df$x == i & wt_elev.df$y == j] <-
+              press_sat.df$press[press_sat.df$x == i & press_sat.df$y == j & press_sat.df$z == k] +
+              layers$depth_top[layers$layer == k]
+          } 
+        }
       }
     }
   })
@@ -70,6 +77,12 @@ wt_elev.df2$dtw <- wt_elev.df2$elev - wt_elev.df2$wt_elev
 load("~/research/domain/watershed_mask.Rda")
 wt_elev.df3 <- inner_join(wt_elev.df2, watershed_mask, by = c("x" = "X_cell","y" = "Y_cell"))
 wt_elev.df3$dtw[wt_elev.df3$flowpath == 0] <- 9999
+
+
+### saving water table file
+wt_A_v5_991.df <- wt_elev.df3
+save(wt_A_v5_991.df, file="~/research/Scenario_A/A_v5/wt_A_v5_991.df.Rda")
+#load(file="~/research/Scenario_A/A_v5/wt_A_v5_991.df.Rda")
 
 
 #########################################################################################################################################################
