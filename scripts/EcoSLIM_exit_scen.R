@@ -397,7 +397,7 @@ spath_avg_A[,agg_colname][spath_avg_A$X_cell == 90 & spath_avg_A$Y_cell == 68]
 ### calculating statistics for time spent in the top 2m (comparing A/B/C)
 exited_particles_A$soil_len <- exited_particles_A$IndLen17 + exited_particles_A$IndLen18 + exited_particles_A$IndLen19 + exited_particles_A$IndLen20
 exited_particles_A$soil_len_ratio <- exited_particles_A$soil_len/exited_particles_A$path_len
-exited_particles_A$soil_age <- exited_particles_A$IndAge17 + exited_particles_A$IndAge18 + exited_particles_A$IndAge19 + exited_particles_A$IndAge20
+exited_particles_A$soil_age <- (exited_particles_A$IndAge17 + exited_particles_A$IndAge18 + exited_particles_A$IndAge19 + exited_particles_A$IndAge20)/8760
 soil_len_avg_A <- cell_agg_fxn(exited_particles_A, agg_colname = "soil_len_ratio")
 soil_len_avg_A$soil_len_cuts <- cut(soil_len_avg_A$soil_len, c(-2.5,-1.5,0,500,1000,2000,3000,4000,Inf), include.lowest = TRUE)
 #soil_len_avg_A$soil_len_cuts <- cut(soil_len_avg_A$soil_len_ratio, c(-2.5,-1.5,0,0.01,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)
@@ -428,6 +428,11 @@ summary(soil_len_avg_C$soil_len_cuts)
 soil_age_avg_C <- cell_agg_fxn(exited_particles_C, agg_colname = "soil_age")
 soil_age_avg_C$soil_age_cuts <- cut(soil_age_avg_C$soil_age, c(-2.5,-1.5,0,2,5,10,20,50,100,Inf), include.lowest = TRUE)
 summary(soil_age_avg_C$soil_age_cuts)
+
+#saving dfs for ABC
+#save(exited_particles_A, file="~/research/Scenario_A/A_v6/exited_particles_A.Rda")
+#save(exited_particles_B, file="~/research/Scenario_B/B_v5/exited_particles_B.Rda")
+#save(exited_particles_C, file="~/research/Scenario_C/C_v5/exited_particles_C.Rda")
 
 
 exited_particles_D$soil_age <- exited_particles_D$IndAge17 + exited_particles_D$IndAge18 + exited_particles_D$IndAge19 + exited_particles_D$IndAge20
