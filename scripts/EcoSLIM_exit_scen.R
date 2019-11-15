@@ -19,10 +19,10 @@ source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 source("~/research/scripts/cell_agg_fxn.R")
 
-restart_file <- "/Users/grapp/Desktop/working/EcoSLIM_pulse/pulse_files/SLIM_F_v2_fw1_particle_restart.bin"
-indicator <- 4
+restart_file <- "/Users/grapp/Desktop/working/D_v5_outputs/fw_20191101/fw1/SLIM_D_v5_fw1_particle_restart_500.bin"
+indicator <- 21
 restart_particles_1 <- ES_read(restart_file, type = "restart", nind = indicator)
-exit_file_count <- exited_particles_E
+exit_file_count <- exited_particles_D
 number_exited <- nrow(exit_file_count)
 total_number <- number_exited + nrow(restart_particles_1)
 number_outside <- nrow(restart_particles_1[restart_particles_1$IndAge21 > 0,])
@@ -49,6 +49,12 @@ exited_particles_A <- exited_particles_A[!duplicated(exited_particles_A),]
 #exited_particles_A <- exited_particles_A1
 exited_particles_A$ratio_age <- exited_particles_A$sat_age/exited_particles_A$age
 exited_particles_A$ratio_len <- exited_particles_A$spath_len/exited_particles_A$path_len
+exited_particles_A$soil_len <- exited_particles_A$IndLen17 + exited_particles_A$IndLen18 + exited_particles_A$IndLen19 + exited_particles_A$IndLen20
+exited_particles_A$soil_len_ratio <- exited_particles_A$soil_len/exited_particles_A$path_len
+exited_particles_A$soil_age <- (exited_particles_A$IndAge17 + exited_particles_A$IndAge18 + exited_particles_A$IndAge19 + exited_particles_A$IndAge20)/8760
+exited_particles_A$sap_len <- exited_particles_A$IndLen13 + exited_particles_A$IndLen14 + exited_particles_A$IndLen15 + exited_particles_A$IndLen16
+exited_particles_A$sap_len_ratio <- exited_particles_A$sap_len/exited_particles_A$path_len
+exited_particles_A$sap_age <- (exited_particles_A$IndAge13 + exited_particles_A$IndAge14 + exited_particles_A$IndAge15 + exited_particles_A$IndAge16)/8760
 
 exit_file_B1 <- "/Users/grapp/Desktop/working/B_v5_outputs/fw_20191022/fw1/SLIM_B_v5_fw1_exited_particles_200.bin"
 exited_particles_B1 <- ES_read(exit_file_B1, type = "exited", nind = 3)
@@ -66,6 +72,9 @@ exited_particles_B <- rbind(exited_particles_B1,exited_particles_B2,exited_parti
 exited_particles_B <- exited_particles_B[!duplicated(exited_particles_B),]
 exited_particles_B$ratio_age <- exited_particles_B$sat_age/exited_particles_B$age
 exited_particles_B$ratio_len <- exited_particles_B$spath_len/exited_particles_B$path_len
+exited_particles_B$soil_len <- exited_particles_B$IndLen2
+exited_particles_B$soil_age <- exited_particles_B$IndAge2/8760 ## age in years
+exited_particles_B$soil_len_ratio <- exited_particles_B$soil_len/exited_particles_B$path_len
 
 exit_file_C1 <- "/Users/grapp/Desktop/working/C_v5_outputs/fw_20191023/fw1/SLIM_C_v5_fw1_exited_particles_200.bin"
 exited_particles_C1 <- ES_read(exit_file_C1, type = "exited", nind = 4)
@@ -83,6 +92,12 @@ exited_particles_C <- rbind(exited_particles_C1,exited_particles_C2,exited_parti
 exited_particles_C <- exited_particles_C[!duplicated(exited_particles_C),]
 exited_particles_C$ratio_age <- exited_particles_C$sat_age/exited_particles_C$age
 exited_particles_C$ratio_len <- exited_particles_C$spath_len/exited_particles_C$path_len
+exited_particles_C$soil_len <- exited_particles_C$IndLen3
+exited_particles_C$soil_age <- exited_particles_C$IndAge3/8760 ## age in years
+exited_particles_C$soil_len_ratio <- exited_particles_C$soil_len/exited_particles_C$path_len
+exited_particles_C$sap_len <- exited_particles_C$IndLen2
+exited_particles_C$sap_age <- exited_particles_C$IndAge2/8760 ## age in years
+exited_particles_C$sap_len_ratio <- exited_particles_C$sap_len/exited_particles_C$path_len
 
 
 exit_file_D1 <- "/Users/grapp/Desktop/working/D_v5_outputs/fw_20191101/fw1/SLIM_D_v5_fw1_exited_particles_200.bin"
@@ -91,10 +106,22 @@ paste("Maximum particle age is", sprintf("%02g",max(exited_particles_D1$age)/(24
 exit_file_D2 <- "/Users/grapp/Desktop/working/D_v5_outputs/fw_20191101/fw1/SLIM_D_v5_fw1_exited_particles_400.bin"
 exited_particles_D2 <- ES_read(exit_file_D2, type = "exited", nind = 21)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_D2$age)/(24*365)), "years")
-exited_particles_D <- rbind(exited_particles_D1,exited_particles_D2)
+exit_file_D3 <- "/Users/grapp/Desktop/working/D_v5_outputs/fw_20191101/fw1/SLIM_D_v5_fw1_exited_particles_500.bin"
+exited_particles_D3 <- ES_read(exit_file_D3, type = "exited", nind = 21)
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_D3$age)/(24*365)), "years")
+#exit_file_D4 <- "/Users/grapp/Desktop/working/D_v5_outputs/fw_20191101/fw1/SLIM_D_v5_fw1_exited_particles_600.bin"
+#exited_particles_D4 <- ES_read(exit_file_D4, type = "exited", nind = 21)
+#paste("Maximum particle age is", sprintf("%02g",max(exited_particles_D4$age)/(24*365)), "years")
+exited_particles_D <- rbind(exited_particles_D1,exited_particles_D2,exited_particles_D3)
 exited_particles_D <- exited_particles_D[!duplicated(exited_particles_D),]
 exited_particles_D$ratio_age <- exited_particles_D$sat_age/exited_particles_D$age
 exited_particles_D$ratio_len <- exited_particles_D$spath_len/exited_particles_D$path_len
+exited_particles_D$soil_len <- exited_particles_D$IndLen17 + exited_particles_D$IndLen18 + exited_particles_D$IndLen19 + exited_particles_D$IndLen20
+exited_particles_D$soil_len_ratio <- exited_particles_D$soil_len/exited_particles_D$path_len
+exited_particles_D$soil_age <- (exited_particles_D$IndAge17 + exited_particles_D$IndAge18 + exited_particles_D$IndAge19 + exited_particles_D$IndAge20)/8760
+exited_particles_D$sap_len <- exited_particles_D$IndLen13 + exited_particles_D$IndLen14 + exited_particles_D$IndLen15 + exited_particles_D$IndLen16
+exited_particles_D$sap_len_ratio <- exited_particles_D$sap_len/exited_particles_D$path_len
+exited_particles_D$sap_age <- (exited_particles_D$IndAge13 + exited_particles_D$IndAge14 + exited_particles_D$IndAge15 + exited_particles_D$IndAge16)/8760
 
 exit_file_E1 <- "/Users/grapp/Desktop/working/E_v2_outputs/fw_20191028/fw1/SLIM_E_v2_fw1_exited_particles_140.bin"
 exited_particles_E1 <- ES_read(exit_file_E1, type = "exited", nind = 21)
@@ -102,46 +129,83 @@ paste("Maximum particle age is", sprintf("%02g",max(exited_particles_E1$age)/(24
 exit_file_E2 <- "/Users/grapp/Desktop/working/E_v2_outputs/fw_20191028/fw1/SLIM_E_v2_fw1_exited_particles_400.bin"
 exited_particles_E2 <- ES_read(exit_file_E2, type = "exited", nind = 21)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_E2$age)/(24*365)), "years")
-exited_particles_E <- rbind(exited_particles_E1,exited_particles_E2)
+exit_file_E3 <- "/Users/grapp/Desktop/working/E_v2_outputs/fw_20191028/fw1/SLIM_E_v2_fw1_exited_particles_600.bin"
+exited_particles_E3 <- ES_read(exit_file_E3, type = "exited", nind = 21)
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_E3$age)/(24*365)), "years")
+exited_particles_E <- rbind(exited_particles_E1,exited_particles_E2,exited_particles_E3)
 exited_particles_E <- exited_particles_E[!duplicated(exited_particles_E),]
 exited_particles_E$ratio_age <- exited_particles_E$sat_age/exited_particles_E$age
 exited_particles_E$ratio_len <- exited_particles_E$spath_len/exited_particles_E$path_len
+exited_particles_E$soil_len <- exited_particles_E$IndLen3
+exited_particles_E$soil_len <- exited_particles_E$IndLen17 + exited_particles_E$IndLen18 + exited_particles_E$IndLen19 + exited_particles_E$IndLen20
+exited_particles_E$soil_len_ratio <- exited_particles_E$soil_len/exited_particles_E$path_len
+exited_particles_E$soil_age <- (exited_particles_E$IndAge17 + exited_particles_E$IndAge18 + exited_particles_E$IndAge19 + exited_particles_E$IndAge20)/8760
+exited_particles_E$sap_len <- exited_particles_E$IndLen13 + exited_particles_E$IndLen14 + exited_particles_E$IndLen15 + exited_particles_E$IndLen16
+exited_particles_E$sap_len_ratio <- exited_particles_E$sap_len/exited_particles_E$path_len
+exited_particles_E$sap_age <- (exited_particles_E$IndAge13 + exited_particles_E$IndAge14 + exited_particles_E$IndAge15 + exited_particles_E$IndAge16)/8760
+
+exit_file_F1 <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_exited_particles_200.bin"
+exited_particles_F1 <- ES_read(exit_file_F1, type = "exited", nind = 4)
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F1$age)/(24*365)), "years")
+#exit_file_F2 <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_exited_particles_400.bin"
+#exited_particles_F2 <- ES_read(exit_file_F2, type = "exited", nind = 4)
+#paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F2$age)/(24*365)), "years")
+exited_particles_F <- exited_particles_F1
+exited_particles_F <- exited_particles_F[!duplicated(exited_particles_F),]
+exited_particles_F$ratio_age <- exited_particles_F$sat_age/exited_particles_F$age
+exited_particles_F$ratio_len <- exited_particles_F$spath_len/exited_particles_F$path_len
+exited_particles_F$soil_len <- exited_particles_F$IndLen3
+exited_particles_F$soil_age <- exited_particles_F$IndAge3/8760 ## age in years
+exited_particles_F$soil_len_ratio <- exited_particles_F$soil_len/exited_particles_F$path_len
+exited_particles_F$sap_len <- exited_particles_F$IndLen2
+exited_particles_F$sap_age <- exited_particles_F$IndAge2/8760 ## age in years
+exited_particles_F$sap_len_ratio <- exited_particles_F$sap_len/exited_particles_F$path_len
 
 
 # converting ages and removing particles with age < 1 yr
 exited_particles_A$age_hr <- exited_particles_A$age  
 exited_particles_A$age <- exited_particles_A$age_hr/(24*365)
 exited_particles_A <- exited_particles_A[exited_particles_A$age > 1,]
-exited_particles_A <- exited_particles_A[exited_particles_A$IndAge21 == 0,] 
+exited_particles_A <- exited_particles_A[exited_particles_A$IndAge21 == 0,]
+exited_particles_A$sat_age_hr <- exited_particles_A$sat_age  
+exited_particles_A$sat_age <- exited_particles_A$sat_age_hr/(24*365)
+
 exited_particles_B$age_hr <- exited_particles_B$age  
 exited_particles_B$age <- exited_particles_B$age_hr/(24*365)
 exited_particles_B <- exited_particles_B[exited_particles_B$age > 1,]
 exited_particles_B <- exited_particles_B[exited_particles_B$IndAge3 == 0,] 
+exited_particles_B$sat_age_hr <- exited_particles_B$sat_age  
+exited_particles_B$sat_age <- exited_particles_B$sat_age_hr/(24*365)
+
 exited_particles_C$age_hr <- exited_particles_C$age  
 exited_particles_C$age <- exited_particles_C$age_hr/(24*365)
 exited_particles_C <- exited_particles_C[exited_particles_C$age > 1,] 
 exited_particles_C <- exited_particles_C[exited_particles_C$IndAge4 == 0,] 
-exited_particles_D$age_hr <- exited_particles_D$age  
-exited_particles_D$age <- exited_particles_D$age_hr/(24*365)
-exited_particles_D <- exited_particles_D[exited_particles_D$age > 1,] 
-exited_particles_D <- exited_particles_D[exited_particles_D$IndAge21 == 0,] 
-exited_particles_E$age_hr <- exited_particles_E$age  
-exited_particles_E$age <- exited_particles_E$age_hr/(24*365)
-exited_particles_E <- exited_particles_E[exited_particles_E$age > 1,] 
-exited_particles_E <- exited_particles_E[exited_particles_E$IndAge21 == 0,] 
-
-
-
-exited_particles_A$sat_age_hr <- exited_particles_A$sat_age  
-exited_particles_A$sat_age <- exited_particles_A$sat_age_hr/(24*365)
-exited_particles_B$sat_age_hr <- exited_particles_B$sat_age  
-exited_particles_B$sat_age <- exited_particles_B$sat_age_hr/(24*365)
 exited_particles_C$sat_age_hr <- exited_particles_C$sat_age  
 exited_particles_C$sat_age <- exited_particles_C$sat_age_hr/(24*365)
 
+exited_particles_D$age_hr <- exited_particles_D$age  
+exited_particles_D$age <- exited_particles_D$age_hr/(24*365)
+exited_particles_D <- exited_particles_D[exited_particles_D$age > 1,] 
+exited_particles_D <- exited_particles_D[exited_particles_D$IndAge21 == 0,]
+exited_particles_D$sat_age_hr <- exited_particles_D$sat_age  
+exited_particles_D$sat_age <- exited_particles_D$sat_age_hr/(24*365)
+
+exited_particles_E$age_hr <- exited_particles_E$age  
+exited_particles_E$age <- exited_particles_E$age_hr/(24*365)
+exited_particles_E <- exited_particles_E[exited_particles_E$age > 1,] 
+exited_particles_E <- exited_particles_E[exited_particles_E$IndAge21 == 0,]
+exited_particles_E$sat_age_hr <- exited_particles_E$sat_age  
+exited_particles_E$sat_age <- exited_particles_E$sat_age_hr/(24*365)
+
+exited_particles_F$age_hr <- exited_particles_F$age  
+exited_particles_F$age <- exited_particles_F$age_hr/(24*365)
+exited_particles_F <- exited_particles_F[exited_particles_F$age > 1,] 
+exited_particles_F <- exited_particles_F[exited_particles_F$IndAge4 == 0,] 
+
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = exited_particles_A[which(exited_particles_A$spath_len < 1000), ], aes(x=init_X, y=init_Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = exited_particles_E, aes(x=init_X, y=init_Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(1,1000),breaks=c(50,100,200,300,400,500,600), 
                         labels=c("≤50","100","200","300","400","500","600")) +
   #guides(color = guide_legend(override.aes = list(size = 5))) +
@@ -152,9 +216,9 @@ exit_pts
 
 # generating pdf
 bin_size_age <- 3
-pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), bin_size_age,column = "sat_age")
-pdf_exit_B_fw1 <- pdfxn(exited_particles_B, max(exited_particles_B$age), bin_size_age,column = "sat_age")
-pdf_exit_C_fw1 <- pdfxn(exited_particles_C, max(exited_particles_C$age), bin_size_age,column = "sat_age")
+pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), bin_size_age,column = "age")
+pdf_exit_B_fw1 <- pdfxn(exited_particles_B, max(exited_particles_B$age), bin_size_age,column = "age")
+pdf_exit_C_fw1 <- pdfxn(exited_particles_C, max(exited_particles_C$age), bin_size_age,column = "age")
 pdf_exit_D_fw1 <- pdfxn(exited_particles_D, max(exited_particles_D$age), bin_size_age,column = "age")
 pdf_exit_E_fw1 <- pdfxn(exited_particles_E, max(exited_particles_E$age), bin_size_age,column = "age")
 
@@ -164,7 +228,7 @@ pdf_exit_C_fw1$scen <- "C"
 pdf_exit_D_fw1$scen <- "D"
 pdf_exit_E_fw1$scen <- "E"
 #pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1)
-pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1)
+pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1)
 
 bin_size_path <- 200
 pdf_exit_A_fw1_path <- pdfxn(exited_particles_A, max(exited_particles_A$path_len), bin_size_path, column = "path_len")
@@ -209,14 +273,14 @@ pdf_exit_D_fw1_arat$scen <- "D"
 pdf_exit_E_fw1_arat$scen <- "E"
 pdf_exited_all_arat <- rbind(pdf_exit_A_fw1_arat,pdf_exit_B_fw1_arat,pdf_exit_C_fw1_arat,pdf_exit_D_fw1_arat,pdf_exit_E_fw1_arat)
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen)) +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=scen,col = scen)) +
   #geom_boxplot(data = exited_particles_A, aes(x = bin_yr,y = path_len_plot,group=bin),fill="coral", color="black") +
 #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
   #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
   #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
   scale_x_log10(name="Age (years)",limits = c(3,800), breaks = c(3,25,50,100,200,400,500,600,800),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of saturated age of all exited particles - forward tracking") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.002), limits = c(0,0.03)) + #, sec.axis = sec_axis(~.*3000000, name = "Total particle path length (m)",labels = scales::comma)) + 
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.05)) + #, sec.axis = sec_axis(~.*3000000, name = "Total particle path length (m)",labels = scales::comma)) + 
   scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen","orange"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
@@ -395,20 +459,11 @@ spath_avg_A[,agg_colname][spath_avg_A$X_cell == 90 & spath_avg_A$Y_cell == 68]
 
 
 ### calculating statistics for time spent in the top 2m (comparing A/B/C)
-exited_particles_A$soil_len <- exited_particles_A$IndLen17 + exited_particles_A$IndLen18 + exited_particles_A$IndLen19 + exited_particles_A$IndLen20
-exited_particles_A$soil_len_ratio <- exited_particles_A$soil_len/exited_particles_A$path_len
-exited_particles_A$soil_age <- (exited_particles_A$IndAge17 + exited_particles_A$IndAge18 + exited_particles_A$IndAge19 + exited_particles_A$IndAge20)/8760
-exited_particles_A$sap_len <- exited_particles_A$IndLen13 + exited_particles_A$IndLen14 + exited_particles_A$IndLen15 + exited_particles_A$IndLen16
-exited_particles_A$sap_len_ratio <- exited_particles_A$sap_len/exited_particles_A$path_len
-exited_particles_A$sap_age <- (exited_particles_A$IndAge13 + exited_particles_A$IndAge14 + exited_particles_A$IndAge15 + exited_particles_A$IndAge16)/8760
 soil_len_avg_A <- cell_agg_fxn(exited_particles_A, agg_colname = "soil_len_ratio")
 soil_len_avg_A$soil_len_cuts <- cut(soil_len_avg_A$soil_len, c(-2.5,-1.5,0,500,1000,2000,3000,4000,Inf), include.lowest = TRUE)
 #soil_len_avg_A$soil_len_cuts <- cut(soil_len_avg_A$soil_len_ratio, c(-2.5,-1.5,0,0.01,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)
 summary(soil_len_avg_A$soil_len_cuts)
 
-exited_particles_B$soil_len <- exited_particles_B$IndLen2
-exited_particles_B$soil_age <- exited_particles_B$IndAge2/8760 ## age in years
-exited_particles_B$soil_len_ratio <- exited_particles_B$soil_len/exited_particles_B$path_len
 soil_len_avg_B <- cell_agg_fxn(exited_particles_B, agg_colname = "soil_len_ratio")
 soil_len_avg_B$soil_len_cuts <- cut(soil_len_avg_B$soil_len, c(-2.5,-1.5,0,500,1000,2000,3000,4000,Inf), include.lowest = TRUE)
 #soil_len_avg_B$soil_len_cuts <- cut(soil_len_avg_B$soil_len_ratio, c(-2.5,-1.5,0,0.01,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)
@@ -419,12 +474,7 @@ soil_age_avg_B <- cell_agg_fxn(exited_particles_B, agg_colname = "soil_age")
 soil_age_avg_B$soil_age_cuts <- cut(soil_age_avg_B$soil_age, c(-2.5,-1.5,0,2,5,10,20,50,100,Inf), include.lowest = TRUE)
 summary(soil_age_avg_B$soil_age_cuts)
 
-exited_particles_C$soil_len <- exited_particles_C$IndLen3
-exited_particles_C$soil_age <- exited_particles_C$IndAge3/8760 ## age in years
-exited_particles_C$soil_len_ratio <- exited_particles_C$soil_len/exited_particles_C$path_len
-exited_particles_C$sap_len <- exited_particles_C$IndLen2
-exited_particles_C$sap_age <- exited_particles_C$IndAge2/8760 ## age in years
-exited_particles_C$sap_len_ratio <- exited_particles_C$sap_len/exited_particles_C$path_len
+
 soil_len_avg_C <- cell_agg_fxn(exited_particles_C, agg_colname = "soil_len_ratio")
 soil_len_avg_C$soil_len_cuts <- cut(soil_len_avg_C$soil_len, c(-2.5,-1.5,0,500,1000,2000,3000,4000,Inf), include.lowest = TRUE)
 #soil_len_avg_C$soil_len_cuts <- cut(soil_len_avg_C$soil_len_ratio, c(-2.5,-1.5,0,0.01,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)

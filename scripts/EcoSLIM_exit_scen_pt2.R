@@ -1,6 +1,7 @@
 # EcoSLIM output analysis script - 20190520 grapp
 # designed for comparing the same run between different scenarios
 # continuation of EcoSLIM_exit_scen.R (you need to run that first)
+# mostly focusing on plotting relationships between A, B, and C
 
 library(ggplot2)
 library(ggnewscale)
@@ -89,6 +90,24 @@ load(file="~/research/Scenario_C/C_v4/wt_C_v4_1036.df.Rda")
 cell_avg_C <- left_join(x = cell_avg_C, y = wt_C_v4_1036.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
 #cell_avg_C <- cell_avg_C[which(cell_avg_C$soil_len_ratio < 0.01), ]
 
+soil_len_rat_F <- cell_agg_fxn(exited_particles_F, agg_colname = "soil_len_ratio")
+soil_len_avg_F <- cell_agg_fxn(exited_particles_F, agg_colname = "soil_len")
+age_avg_F <- cell_agg_fxn(exited_particles_F, agg_colname = "age")
+len_avg_F <- cell_agg_fxn(exited_particles_F, agg_colname = "path_len")
+sat_age_avg_F <- cell_agg_fxn(exited_particles_F, agg_colname = "sat_age")
+slen_avg_F <- cell_agg_fxn(exited_particles_F, agg_colname = "spath_len")
+cell_avg_F <- soil_len_avg_F
+cell_avg_F$soil_len_ratio <- soil_len_rat_F$soil_len_ratio
+cell_avg_F$path_len <- len_avg_F$path_len
+cell_avg_F$age <- age_avg_F$age
+cell_avg_F$spath_len <- slen_avg_F$spath_len
+cell_avg_F$sat_age <- sat_age_avg_F$sat_age
+cell_avg_F$upath_len <- cell_avg_F$path_len - cell_avg_F$spath_len
+cell_avg_F$usat_age <- cell_avg_F$age - cell_avg_F$sat_age
+cell_avg_F <- cell_avg_F[which(cell_avg_F$age > 0), ]
+load(file="~/research/Scenario_F/F_v1/wt_F_v1_997.df.Rda")
+cell_avg_F <- left_join(x = cell_avg_F, y = wt_F_v1_997.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
+
 cell_avg_A$scen <- "A"
 cell_avg_B$scen <- "B"
 cell_avg_C$scen <- "C"
@@ -96,10 +115,12 @@ cell_avg_ABC <- rbind(cell_avg_A, cell_avg_B, cell_avg_C)
 
 sap_len_rat_A <- cell_agg_fxn(exited_particles_A, agg_colname = "sap_len_ratio")
 sap_len_rat_C <- cell_agg_fxn(exited_particles_C, agg_colname = "sap_len_ratio")
+sap_len_rat_F <- cell_agg_fxn(exited_particles_F, agg_colname = "sap_len_ratio")
 cell_avg_A <- left_join(x = cell_avg_A, y = sap_len_rat_A[ , c("X_cell", "Y_cell","sap_len_ratio")], by = c("X_cell","Y_cell"))
 cell_avg_C <- left_join(x = cell_avg_C, y = sap_len_rat_C[ , c("X_cell", "Y_cell","sap_len_ratio")], by = c("X_cell","Y_cell"))
+cell_avg_F <- left_join(x = cell_avg_F, y = sap_len_rat_F[ , c("X_cell", "Y_cell","sap_len_ratio")], by = c("X_cell","Y_cell"))
 
-cell_sap_AC <- rbind(cell_avg_A, cell_avg_C)
+cell_sap_ACF <- rbind(cell_avg_A, cell_avg_C)
 
 
 
@@ -127,10 +148,10 @@ cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = age,y = pa
   geom_abline(slope = 62, intercept = 0, col="black") + geom_abline(slope = 81, intercept = 0, col="darkred", linetype = "dashed") + geom_abline(slope = 102, intercept = 0, col="darkgreen",linetype = "dotdash")
 cell_avg_scatterB
 
-cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = age,y = path_len,color=soil_len_ratio),alpha = 0.5) + 
-  scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
+cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C[which(cell_avg_C$age < 200), ], aes(x = age,y = path_len,color=soil_len_ratio),alpha = 0.5) + 
+  scale_x_continuous(name="Particle age (yr)",limits = c(0,200), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario C") + 
-  scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
+  scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,25000),labels = scales::comma) +  
   #scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
   scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
@@ -138,6 +159,18 @@ cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = age,y = pa
   geom_abline(slope = 62, intercept = 0, col="black") + geom_abline(slope = 81, intercept = 0, col="darkred", linetype = "dashed") + 
   geom_abline(slope = 102, intercept = 0, col="darkgreen",linetype = "dotdash") + geom_abline(slope = 100, intercept = 0, col="purple",linetype = "twodash")
 cell_avg_scatterC
+
+cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = age,y = path_len,color=soil_len_ratio),alpha = 0.5) + 
+  scale_x_continuous(name="Particle age (yr)",limits = c(0,200), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
+  ggtitle("Scenario F") + 
+  scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,25000),labels = scales::comma) +  
+  #scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
+  scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
+  expand_limits(x = 0, y = 0) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
+  geom_abline(slope = 62, intercept = 0, col="black") + geom_abline(slope = 81, intercept = 0, col="darkred", linetype = "dashed") + 
+  geom_abline(slope = 102, intercept = 0, col="darkgreen",linetype = "dotdash") + geom_abline(slope = 100, intercept = 0, col="purple",linetype = "twodash")
+cell_avg_scatterF
 
 grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC, nrow = 1,top = "Scatter plots of cell-averaged particle path lengths and ages for Scenarios A, B, and C - forward tracking")
 

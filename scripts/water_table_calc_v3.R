@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/C_v4_outputs/C_v4.out.press.01036.pfb"
-satur_file <- "/Users/grapp/Desktop/working/C_v4_outputs/C_v4.out.satur.01036.pfb"
+press_file <- "/Users/grapp/Desktop/working/D_v4_outputs/D_v4.out.press.00993.pfb"
+satur_file <- "/Users/grapp/Desktop/working/D_v4_outputs/D_v4.out.satur.00993.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -74,14 +74,17 @@ wt_elev.df2 <- inner_join(wt_elev.df, slopes, by = c("x" = "X_cell","y" = "Y_cel
 wt_elev.df2$wt_elev <- wt_elev.df2$wt_elev + wt_elev.df2$elev - 1000
 wt_elev.df2$dtw <- wt_elev.df2$elev - wt_elev.df2$wt_elev
 
-load("~/research/domain/watershed_mask.Rda")
+#load("~/research/domain/watershed_mask.Rda")
 wt_elev.df3 <- inner_join(wt_elev.df2, watershed_mask, by = c("x" = "X_cell","y" = "Y_cell"))
 wt_elev.df3$dtw[wt_elev.df3$flowpath == 0] <- 9999
 
+#subset.df <- subset(press_sat.df, z == 20)
+#ggplot() + geom_tile(data = subset.df[which(subset.df$satur > 0),], aes(x,y,fill = satur))
+
 
 ### saving water table file
-wt_C_v4_1036.df <- wt_elev.df3
-save(wt_C_v4_1036.df, file="~/research/Scenario_C/C_v4/wt_C_v4_1036.df.Rda")
+#wt_D_v4_993.df <- wt_elev.df3
+#save(wt_D_v4_993.df, file="~/research/Scenario_D/wt_D_v4_993.df.Rda")
 #load(file="~/research/Scenario_A/A_v5/wt_A_v5_991.df.Rda")
 
 
@@ -95,11 +98,11 @@ levels(wt_elev.df3$dtw_cuts)
 wt_dtw_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = factor(dtw_cuts)), colour = "black") + labs(fill = "Depth to Water (m)") +
 #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","wheat","gray50"),
 #                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100","Outside of Main Basin")) +
-  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","black","gray50"),
-                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400",">400","Outside of Main Basin")) +
+  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","gray50"),
+                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400","Outside of Main Basin")) +   #,">400"
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Depth to Water for Scenario C_v4")) + theme_bw() +
+  ggtitle(paste("Depth to Water for Scenario D_v4")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_dtw_binplot
 
@@ -117,7 +120,7 @@ wt_elev_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fac
                     labels=c("1,200-1,400","1,400-1,500","1,500-1,600","1,600-1,700","1,700-1,800","1,800-1,900","1,900-2,000","2,000-2,100","2,100-2,200","2,200-2,300","2,300-2,400","2,400-2,500","Outside of Main Basin")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle(paste("Water Table Elevation for Scenario C_v4")) + theme_bw() +
+  ggtitle(paste("Water Table Elevation for Scenario D_v4")) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_elev_binplot
 
