@@ -141,7 +141,7 @@ exited_particles_C$sat_age <- exited_particles_C$sat_age_hr/(24*365)
 
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = restart_particles_1, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = exited_particles_A[which(exited_particles_A$spath_len < 1000), ], aes(x=init_X, y=init_Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(1,1000),breaks=c(50,100,200,300,400,500,600), 
                         labels=c("≤50","100","200","300","400","500","600")) +
   #guides(color = guide_legend(override.aes = list(size = 5))) +
@@ -398,6 +398,9 @@ spath_avg_A[,agg_colname][spath_avg_A$X_cell == 90 & spath_avg_A$Y_cell == 68]
 exited_particles_A$soil_len <- exited_particles_A$IndLen17 + exited_particles_A$IndLen18 + exited_particles_A$IndLen19 + exited_particles_A$IndLen20
 exited_particles_A$soil_len_ratio <- exited_particles_A$soil_len/exited_particles_A$path_len
 exited_particles_A$soil_age <- (exited_particles_A$IndAge17 + exited_particles_A$IndAge18 + exited_particles_A$IndAge19 + exited_particles_A$IndAge20)/8760
+exited_particles_A$sap_len <- exited_particles_A$IndLen13 + exited_particles_A$IndLen14 + exited_particles_A$IndLen15 + exited_particles_A$IndLen16
+exited_particles_A$sap_len_ratio <- exited_particles_A$sap_len/exited_particles_A$path_len
+exited_particles_A$sap_age <- (exited_particles_A$IndAge13 + exited_particles_A$IndAge14 + exited_particles_A$IndAge15 + exited_particles_A$IndAge16)/8760
 soil_len_avg_A <- cell_agg_fxn(exited_particles_A, agg_colname = "soil_len_ratio")
 soil_len_avg_A$soil_len_cuts <- cut(soil_len_avg_A$soil_len, c(-2.5,-1.5,0,500,1000,2000,3000,4000,Inf), include.lowest = TRUE)
 #soil_len_avg_A$soil_len_cuts <- cut(soil_len_avg_A$soil_len_ratio, c(-2.5,-1.5,0,0.01,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)
@@ -419,6 +422,9 @@ summary(soil_age_avg_B$soil_age_cuts)
 exited_particles_C$soil_len <- exited_particles_C$IndLen3
 exited_particles_C$soil_age <- exited_particles_C$IndAge3/8760 ## age in years
 exited_particles_C$soil_len_ratio <- exited_particles_C$soil_len/exited_particles_C$path_len
+exited_particles_C$sap_len <- exited_particles_C$IndLen2
+exited_particles_C$sap_age <- exited_particles_C$IndAge2/8760 ## age in years
+exited_particles_C$sap_len_ratio <- exited_particles_C$sap_len/exited_particles_C$path_len
 soil_len_avg_C <- cell_agg_fxn(exited_particles_C, agg_colname = "soil_len_ratio")
 soil_len_avg_C$soil_len_cuts <- cut(soil_len_avg_C$soil_len, c(-2.5,-1.5,0,500,1000,2000,3000,4000,Inf), include.lowest = TRUE)
 #soil_len_avg_C$soil_len_cuts <- cut(soil_len_avg_C$soil_len_ratio, c(-2.5,-1.5,0,0.01,0.1,0.2,0.3,0.4,Inf), include.lowest = TRUE)
