@@ -23,6 +23,8 @@ load("~/research/Scenario_A/A_v6/exited_particles_A.Rda")
 load("~/research/Scenario_B/B_v5/exited_particles_B.Rda")
 load("~/research/Scenario_C/C_v5/exited_particles_C.Rda")
 
+bl_slope <- 62.5  # baseline relationship between age and length (length = bl_slope*age)
+
 ## calcs to figure out tail of spath_len pdf
 nrow(exited_particles_A[which(exited_particles_A$spath_len < 1000), ])
 nrow(exited_particles_B[which(exited_particles_B$spath_len < 1000), ])
@@ -49,6 +51,12 @@ cell_avg_A$usat_age <- cell_avg_A$age - cell_avg_A$sat_age
 cell_avg_A <- cell_avg_A[which(cell_avg_A$age > 0), ]
 load(file="~/research/Scenario_A/A_v5/wt_A_v5_991.df.Rda")
 cell_avg_A <- left_join(x = cell_avg_A, y = wt_A_v5_991.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
+cell_avg_A$residual <- cell_avg_A$path_len - bl_slope*cell_avg_A$age
+rm(lmres_A)
+lmres_A <- lm(residual ~ age, data=cell_avg_A[which(cell_avg_A$residual > 1000),])
+res_max_A <- as.integer(lmres_A$coefficients[1] + lmres_A$coefficients[2]*max(cell_avg_A$age))
+ggplot() + geom_point(data = cell_avg_A, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="purple",linetype = "twodash")
 #cell_avg_A <- cell_avg_A[which(cell_avg_A$soil_len_ratio < 0.01), ]
 
 soil_len_rat_D <- cell_agg_fxn(exited_particles_D, agg_colname = "soil_len_ratio")
@@ -68,6 +76,12 @@ cell_avg_D$usat_age <- cell_avg_D$age - cell_avg_D$sat_age
 cell_avg_D <- cell_avg_D[which(cell_avg_D$age > 0), ]
 load(file="~/research/Scenario_D/wt_D_v4_993.df.Rda")
 cell_avg_D <- left_join(x = cell_avg_D, y = wt_D_v4_993.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
+cell_avg_D$residual <- cell_avg_D$path_len - bl_slope*cell_avg_D$age
+rm(lmres_D)
+lmres_D <- lm(residual ~ age, data=cell_avg_D[which(cell_avg_D$residual > 1000 & (cell_avg_D$spath_len/cell_avg_D$path_len) > 0.9),])
+res_max_D <- as.integer(lmres_D$coefficients[1] + lmres_D$coefficients[2]*max(cell_avg_D$age))
+ggplot() + geom_point(data = cell_avg_D[which(cell_avg_D$residual > 2000),], aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
+  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="purple",linetype = "twodash")
 
 
 soil_len_rat_E <- cell_agg_fxn(exited_particles_E, agg_colname = "soil_len_ratio")
@@ -87,6 +101,12 @@ cell_avg_E$usat_age <- cell_avg_E$age - cell_avg_E$sat_age
 cell_avg_E <- cell_avg_E[which(cell_avg_E$age > 0), ]
 load(file="~/research/Scenario_E/E_v1/wt_E_v1_1552.df.Rda")
 cell_avg_E <- left_join(x = cell_avg_E, y = wt_E_v1_1552.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
+cell_avg_E$residual <- cell_avg_E$path_len - bl_slope*cell_avg_E$age
+rm(lmres_E)
+lmres_E <- lm(residual ~ age, data=cell_avg_E[which(cell_avg_E$residual > 1000 & (cell_avg_E$spath_len/cell_avg_E$path_len) > 0.9),])
+res_max_E <- as.integer(lmres_E$coefficients[1] + lmres_E$coefficients[2]*max(cell_avg_E$age))
+ggplot() + geom_point(data = cell_avg_E[which(cell_avg_E$residual > 2000),], aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
+  geom_abline(slope = lmres_E$coefficients[2], intercept = lmres_E$coefficients[1], col="purple",linetype = "twodash")
 
 
 sap_len_rat_A <- cell_agg_fxn(exited_particles_A, agg_colname = "sap_len_ratio")
@@ -109,7 +129,7 @@ exited_particles_A[,layer_colnames[1]][df_agg$X_cell == i & df_agg$Y_cell == j]
 
 for(i in 1:20){
   
-  
+  # calculating deepest layer that particle reaches
 }
 
 
@@ -123,7 +143,9 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = pa
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
-  geom_abline(slope = 62, intercept = 0, col="black") + geom_abline(slope = 81, intercept = 0, col="darkred", linetype = "dashed")
+  geom_abline(slope = bl_slope, intercept = 0, col="black") +
+  geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
+                   y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
 cell_avg_scatterA
 
 cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
@@ -134,7 +156,11 @@ cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = age,y = pa
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
-  geom_abline(slope = 62, intercept = 0, col="black") + geom_abline(slope = 81, intercept = 0, col="darkred", linetype = "dashed") #+ geom_abline(slope = 102, intercept = 0, col="darkgreen",linetype = "dotdash")
+  geom_abline(slope = bl_slope, intercept = 0, col="black") +
+  geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
+                   y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
+  geom_segment(aes(x = max(0,(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), xend = max(cell_avg_D$age), 
+                   y = max(lmres_D$coefficients[1],bl_slope*(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), yend = (bl_slope*max(cell_avg_D$age)+res_max_D)), col="blue", linetype = "dashed")
 cell_avg_scatterD
 
 cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
@@ -145,7 +171,15 @@ cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = age,y = pa
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
-  geom_abline(slope = 62, intercept = 0, col="black") + geom_abline(slope = 81, intercept = 0, col="darkred", linetype = "dashed") #+ geom_abline(slope = 102, intercept = 0, col="darkgreen",linetype = "dotdash")
+  geom_abline(slope = bl_slope, intercept = 0, col="black") +
+  geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
+                   y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
+  geom_segment(aes(x = max(0,(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), xend = max(cell_avg_D$age), 
+                   y = max(lmres_D$coefficients[1],bl_slope*(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), yend = (bl_slope*max(cell_avg_D$age)+res_max_D)), col="blue", linetype = "dashed") + 
+  geom_segment(aes(x = max(0,(-lmres_E$coefficients[1]/lmres_E$coefficients[2])), xend = (((70000-max(cell_avg_E$age)*bl_slope)-lmres_E$coefficients[1])/lmres_E$coefficients[2]), 
+                   y = max(lmres_E$coefficients[1],bl_slope*(-lmres_E$coefficients[1]/lmres_E$coefficients[2])), yend = 70000), col="green", linetype = "twodash")
+  #geom_segment(aes(x = max(0,(-lmres_E$coefficients[1]/lmres_E$coefficients[2])), xend = (((70000-max(cell_avg_D$age)*bl_slope)-lmres_E$coefficients[1])/lmres_E$coefficients[2]), 
+  #                 y = max(lmres_E$coefficients[1],bl_slope*(-lmres_E$coefficients[1]/lmres_E$coefficients[2])), yend = 70000), col="green", linetype = "twodash")
 cell_avg_scatterE
 
 
