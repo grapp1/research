@@ -19,16 +19,16 @@ source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 source("~/research/scripts/cell_agg_fxn.R")
 
-restart_file <- "/Users/grapp/Desktop/working/E_v2_outputs/fw_20191028/fw1/SLIM_E_v2_fw1_particle_restart_800.bin"
-indicator <- 21
+restart_file <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_particle_restart_600.bin"
+indicator <- 4
 restart_particles_1 <- ES_read(restart_file, type = "restart", nind = indicator)
-exit_file_count <- exited_particles_E
+exit_file_count <- exited_particles_F
 number_exited <- nrow(exit_file_count)
 total_number <- number_exited + nrow(restart_particles_1)
-number_outside <- nrow(restart_particles_1[restart_particles_1$IndAge21 > 0,])
+number_outside <- nrow(restart_particles_1[restart_particles_1$IndAge4 > 0,])
 pct_exit <- number_exited*100/(total_number-number_outside)
 
-paste(nrow(restart_particles_1[restart_particles_1$IndAge21 > 0,]), "particles in the restart file outside the domain")
+paste(nrow(restart_particles_1[restart_particles_1$IndAge4 > 0,]), "particles in the restart file outside the domain")
 paste(format(pct_exit,digits=4),"% of particles have exited the domain",sep="")
 
 
@@ -153,7 +153,7 @@ paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F1$age)/(24
 exit_file_F2 <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_exited_particles_400.bin"
 exited_particles_F2 <- ES_read(exit_file_F2, type = "exited", nind = 4)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F2$age)/(24*365)), "years")
-exit_file_F3 <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_exited_particles_600_int.bin"
+exit_file_F3 <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_exited_particles_600.bin"
 exited_particles_F3 <- ES_read(exit_file_F3, type = "exited", nind = 4)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F3$age)/(24*365)), "years")
 exited_particles_F <- rbind(exited_particles_F1,exited_particles_F2,exited_particles_F3)
@@ -213,7 +213,7 @@ exited_particles_F$sat_age <- exited_particles_F$sat_age_hr/(24*365)
 
 
 # updated exit_pts chart - need to run surf_flow_domain.R before this to generate dem_fig
-exit_pts <- flowpath_fig + geom_point(data = restart_particles_1[which(restart_particles_1$IndAge21 == 0),], aes(x=X, y=Z, colour = age)) + labs(color = "Age (years)") +
+exit_pts <- flowpath_fig + geom_point(data = restart_particles_1, aes(x=X, y=Y, colour = age)) + labs(color = "Age (years)") +
   scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(1,1000),breaks=c(50,100,200,300,400,500,600), 
                         labels=c("≤50","100","200","300","400","500","600")) +
   #guides(color = guide_legend(override.aes = list(size = 5))) +
@@ -237,8 +237,8 @@ pdf_exit_C_fw1$scen <- "C"
 pdf_exit_D_fw1$scen <- "D"
 pdf_exit_E_fw1$scen <- "E"
 pdf_exit_F_fw1$scen <- "F"
-#pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1)
-pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_F_fw1)
+pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1)
+#pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_F_fw1)
 
 bin_size_path <- 200
 pdf_exit_A_fw1_path <- pdfxn(exited_particles_A, max(exited_particles_A$path_len), bin_size_path, column = "path_len")
@@ -254,8 +254,8 @@ pdf_exit_C_fw1_path$scen <- "C"
 pdf_exit_D_fw1_path$scen <- "D"
 pdf_exit_E_fw1_path$scen <- "E"
 pdf_exit_F_fw1_path$scen <- "F"
-#pdf_exited_all_path <- rbind(pdf_exit_A_fw1_path,pdf_exit_B_fw1_path,pdf_exit_C_fw1_path,pdf_exit_D_fw1_path,pdf_exit_E_fw1_path)
-pdf_exited_all_path <- rbind(pdf_exit_A_fw1_path,pdf_exit_B_fw1_path,pdf_exit_C_fw1_path,pdf_exit_F_fw1_path)
+pdf_exited_all_path <- rbind(pdf_exit_A_fw1_path,pdf_exit_D_fw1_path,pdf_exit_E_fw1_path)
+#pdf_exited_all_path <- rbind(pdf_exit_A_fw1_path,pdf_exit_B_fw1_path,pdf_exit_C_fw1_path,pdf_exit_F_fw1_path)
 
 pdf_exit_A_fw1_spath <- pdfxn(exited_particles_A, max(exited_particles_A$spath_len), bin_size_path, column = "spath_len")
 pdf_exit_B_fw1_spath <- pdfxn(exited_particles_B, max(exited_particles_B$spath_len), bin_size_path, column = "spath_len")
@@ -270,8 +270,8 @@ pdf_exit_C_fw1_spath$scen <- "C"
 pdf_exit_D_fw1_spath$scen <- "D"
 pdf_exit_E_fw1_spath$scen <- "E"
 pdf_exit_F_fw1_spath$scen <- "F"
-#pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_B_fw1_spath,pdf_exit_C_fw1_spath,pdf_exit_D_fw1_spath,pdf_exit_E_fw1_spath)
-pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_B_fw1_spath,pdf_exit_C_fw1_spath,pdf_exit_F_fw1_spath)
+pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_D_fw1_spath,pdf_exit_E_fw1_spath)
+#pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_B_fw1_spath,pdf_exit_C_fw1_spath,pdf_exit_F_fw1_spath)
 
 bin_size_rat <- 0.02
 pdf_exit_A_fw1_arat <- pdfxn(exited_particles_A, 1, bin_size_rat,column = "ratio_age")
@@ -293,8 +293,8 @@ pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_
   #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
   #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
   scale_x_log10(name="Age (years)",limits = c(3,800), breaks = c(3,25,50,100,200,400,500,600,800),labels = scales::comma,expand=c(0,0)) +
-  ggtitle("PDF of saturated age of all exited particles - forward tracking") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.02)) + #, sec.axis = sec_axis(~.*3000000, name = "Total particle path length (m)",labels = scales::comma)) + 
+  ggtitle("PDF of age of all exited particles - forward tracking") + 
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.05)) + #, sec.axis = sec_axis(~.*3000000, name = "Total particle path length (m)",labels = scales::comma)) + 
   scale_color_manual(values = c("black","firebrick", "dodgerblue","orange"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
@@ -307,7 +307,7 @@ pdf_fig2 <- ggplot() + geom_line(data = pdf_exited_all_path, aes(x = path_len,y 
   #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
   scale_x_log10(name="Particle Path Length (m)",limits = c(200,80000), breaks = c(200,1000,5000,10000,20000,40000,60000,80000),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of path lengths for all exited particles - forward tracking") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.002), limits = c(0,0.02)) + 
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.002), limits = c(0,0.03)) + 
   scale_color_manual(values = c("black","firebrick", "dodgerblue","orange"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
@@ -321,7 +321,7 @@ pdf_fig3 <- ggplot() + geom_line(data = pdf_exited_all_spath, aes(x = spath_len,
   #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
   scale_x_log10(name="Particle Saturated Zone Path Length (m)",limits = c(200,80000), breaks = c(200,1000,5000,10000,20000,40000,60000,80000),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of saturated path lengths for all exited particles - forward tracking") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,1,0.002), limits = c(0,0.02)) + #, sec.axis = sec_axis(~.*100000, name = "Relative humidity [%]")) + 
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,1,0.002), limits = c(0,0.03)) + #, sec.axis = sec_axis(~.*100000, name = "Relative humidity [%]")) + 
   scale_color_manual(values = c("black","firebrick", "dodgerblue","orange"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
@@ -513,7 +513,7 @@ summary(soil_age_avg_D$soil_age_cuts)
 
 soil_len_rat_plot <- ggplot() + geom_tile(data = soil_len_avg_A, aes(x = X,y = Y, fill = factor(soil_len_cuts)), color="gray") + 
   scale_fill_manual(values=c("gray50","white","navy","cyan4", "chartreuse","yellow","orange","red"),
-                    #                  labels=c("NA","Outside of Basin","< 1,000","1,000-2,000","2,000-3,000","3,000-4,000","> 4,000")) +
+                    # labels=c("NA","Outside of Basin","< 1,000","1,000-2,000","2,000-3,000","3,000-4,000","> 4,000")) +
                     labels=c("NA","Outside of Basin","< 0.01","0.01-0.1","0.01-0.2","0.2-0.3","0.3-0.4","> 0.4")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +

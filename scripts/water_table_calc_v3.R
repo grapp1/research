@@ -124,8 +124,25 @@ wt_elev_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fac
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 wt_elev_binplot
 
+## generating and plotting water table difference map between D and E
+wt_DE_diff.df <- wt_D_v4_993.df
+wt_DE_diff.df$E_dtw <- wt_E_v1_1552.df$dtw
+wt_DE_diff.df$DE_diff <- wt_DE_diff.df$dtw - wt_DE_diff.df$E_dtw
+summary(wt_DE_diff.df$DE_diff)
+wt_DE_diff.df$DE_diff[wt_DE_diff.df$flowpath == 0] <- 9999
+wt_DE_diff.df$DE_diff_cuts <- cut(wt_DE_diff.df$DE_diff, c(-40,-30,-20,-10,0,10,20,30,40,50,100,Inf), include.lowest = TRUE)
+levels(wt_DE_diff.df$DE_diff_cuts)
 
-
+wt_DEdiff_binplot <- ggplot(wt_DE_diff.df, aes(X.x, Y.x)) + geom_tile(aes(fill = factor(DE_diff_cuts)), colour = "black") + labs(fill = "Scenario E water table minus\nScenario D water table (m)") +
+  #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","wheat","gray50"),
+  #                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100","Outside of Main Basin")) +
+  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","gray50"),
+                    labels=c("-40 to -30","-30 to -20","-20 to -10","-10 to 0","0 to +10","+10 to +20","+20 to +30","+30 to +40","+40 to +50","> +50","Outside of Main Basin")) +   #,">400"
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  ggtitle(paste("Water table difference between Scenarios D and E")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+wt_DEdiff_binplot
 
 
 

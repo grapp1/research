@@ -147,19 +147,23 @@ sap_len_rat_F <- cell_agg_fxn(exited_particles_F, agg_colname = "sap_len_ratio")
 cell_avg_A <- left_join(x = cell_avg_A, y = sap_len_rat_A[ , c("X_cell", "Y_cell","sap_len_ratio")], by = c("X_cell","Y_cell"))
 cell_avg_C <- left_join(x = cell_avg_C, y = sap_len_rat_C[ , c("X_cell", "Y_cell","sap_len_ratio")], by = c("X_cell","Y_cell"))
 cell_avg_F <- left_join(x = cell_avg_F, y = sap_len_rat_F[ , c("X_cell", "Y_cell","sap_len_ratio")], by = c("X_cell","Y_cell"))
+cell_avg_A$tenm_ratio <- cell_avg_A$sap_len_ratio + cell_avg_A$soil_len_ratio
+cell_avg_C$tenm_ratio <- cell_avg_C$sap_len_ratio + cell_avg_C$soil_len_ratio
+cell_avg_F$tenm_ratio <- cell_avg_F$sap_len_ratio + cell_avg_F$soil_len_ratio
+
 
 cell_sap_ACF <- rbind(cell_avg_A, cell_avg_C, cell_avg_F)
 
 
 
 
-cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = path_len,color=(sat_age/age)),alpha = 0.5) + 
+cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario A") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
-  #scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") +
+  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") +
   #scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen","orange"))  + labs(color = "Scenario") +
-  scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
+  #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") +
@@ -167,12 +171,12 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = pa
                    y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
 cell_avg_scatterA
 
-cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = age,y = path_len,color=soil_len_ratio),alpha = 0.5) + 
+cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario B") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
-  #scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
-  scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
+  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
+  #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") + 
@@ -182,43 +186,43 @@ cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = age,y = pa
                    y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed")
 cell_avg_scatterB
 
-cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = age,y = path_len,color=soil_len_ratio),alpha = 0.5) + 
+cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario C") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
-  #scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
-  scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
+  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
+  #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") + 
   geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
                    y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
-  geom_segment(aes(x = (-lmres_B$coefficients[1]/lmres_B$coefficients[2]), xend = max(cell_avg_B$age), 
-                   y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed") + 
+  #geom_segment(aes(x = (-lmres_B$coefficients[1]/lmres_B$coefficients[2]), xend = max(cell_avg_B$age), 
+  #                 y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed") + 
   geom_segment(aes(x = (-lmres_C$coefficients[1]/lmres_C$coefficients[2]), xend = max(cell_avg_C$age), 
                    y = bl_slope*(-lmres_C$coefficients[1]/lmres_C$coefficients[2]), yend = (bl_slope*max(cell_avg_C$age)+res_max_C)), col="purple", linetype = "twodash")
 cell_avg_scatterC
 
-cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = age,y = path_len,color=soil_len_ratio),alpha = 0.5) + 
+cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario F") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
-  #scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
-  scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
+  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
+  #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") + 
   geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
                    y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
-  geom_segment(aes(x = (-lmres_B$coefficients[1]/lmres_B$coefficients[2]), xend = max(cell_avg_B$age), 
-                   y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed") + 
+  #geom_segment(aes(x = (-lmres_B$coefficients[1]/lmres_B$coefficients[2]), xend = max(cell_avg_B$age), 
+  #                 y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed") + 
   geom_segment(aes(x = (-lmres_C$coefficients[1]/lmres_C$coefficients[2]), xend = max(cell_avg_C$age), 
                    y = bl_slope*(-lmres_C$coefficients[1]/lmres_C$coefficients[2]), yend = (bl_slope*max(cell_avg_C$age)+res_max_C)), col="purple", linetype = "twodash") +
   geom_segment(aes(x = (-lmres_F$coefficients[1]/lmres_F$coefficients[2]), xend = max(cell_avg_F$age), 
                    y = bl_slope*(-lmres_F$coefficients[1]/lmres_F$coefficients[2]), yend = (bl_slope*max(cell_avg_F$age)+res_max_F)), col="orange", linetype = "twodash")
 cell_avg_scatterF
 
-grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC,cell_avg_scatterF, nrow = 2,top = "Scatter plots of cell-averaged particle path lengths and ages for Scenarios C, B, C, and F - forward tracking")
+grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC, nrow = 1,top = "Scatter plots of cell-averaged particle path lengths and ages for Scenarios A, B, and C - forward tracking")
 
 # age vs. dtw
 ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = dtw,color=path_len),alpha = 1)
@@ -258,11 +262,11 @@ stat_plot1 <- ggplot() + geom_boxplot(data = cell_avg_ABCF, aes(x = bin,y = soil
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 stat_plot1
 
-stat_plot2 <- ggplot() + geom_boxplot(data = cell_sap_ACF, aes(x = bin,y = sap_len_ratio,fill=scen)) + 
+stat_plot2 <- ggplot() + geom_boxplot(data = cell_sap_ACF, aes(x = bin,y = tenm_ratio,fill=scen)) + 
   scale_x_discrete(name="Depth to water range (m)", labels = c("< 50","50 - 150","150 - 250","250 - 350","350 - 450")) +
-  ggtitle("Ratio of length spent in saprolite region of the domain for Scenarios A, C, and F") + 
+  ggtitle("Ratio of length spent in the top 10m of the domain for Scenarios A, C, and F") + 
   #scale_y_log10(name="Ratio of length spent in saprolite region of the domain", expand=c(0,0), breaks = c(0.0001,0.001,0.01,0.1,1.0), limits = c(0.0001,1)) + 
-  scale_y_continuous(name="Ratio of length spent in top two meters of the domain", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
+  scale_y_continuous(name="Ratio of length spent in top 10m of the domain", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
   scale_fill_manual(values = c("darkgreen", "dodgerblue", "orange"))  + labs(fill = "Scenario") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")

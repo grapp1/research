@@ -122,19 +122,56 @@ cell_avg_E$scen <- "E"
 cell_avg_ADE <- rbind(cell_avg_A, cell_avg_D, cell_avg_E)
 cell_avg_ADE$tenm_ratio <- cell_avg_ADE$soil_len_ratio + cell_avg_ADE$sap_len_ratio
 
-#cell_sap_ACF <- rbind(cell_avg_A, cell_avg_C)
 layer_colnames <- c(names(exited_particles_A[17:37]))
 
-exited_particles_A[,layer_colnames[1]][df_agg$X_cell == i & df_agg$Y_cell == j]
-
-for(i in 1:20){
-  
-  # calculating deepest layer that particle reaches
+exited_particles_A$deeplyr <- 0
+# calculating deepest layer that particle reaches
+for(i in 1:nrow(exited_particles_A)){
+  print(i)
+  for(j in 1:20){
+    if(exited_particles_A[i,layer_colnames[j]] > 0){
+      exited_particles_A$deeplyr[i] <- j
+      break
+    }
+  }
 }
+summary(exited_particles_A$deeplyr)
+
+exited_particles_D$deeplyr <- 0
+for(i in 1:nrow(exited_particles_D)){
+  for(j in 1:20){
+    if(exited_particles_D[i,layer_colnames[j]] > 0){
+      exited_particles_D$deeplyr[i] <- j
+      break
+    }
+  }
+}
+summary(exited_particles_D$deeplyr)
+
+exited_particles_E$deeplyr <- 0
+for(i in 1:nrow(exited_particles_E)){
+  for(j in 1:20){
+    if(exited_particles_E[i,layer_colnames[j]] > 0){
+      exited_particles_E$deeplyr[i] <- j
+      break
+    }
+  }
+}
+summary(exited_particles_E$deeplyr)
+
+deeplyr_A <- cell_agg_fxn(exited_particles_A, agg_colname = "deeplyr", funct = max)
+deeplyr_D <- cell_agg_fxn(exited_particles_D, agg_colname = "deeplyr", funct = max)
+deeplyr_E <- cell_agg_fxn(exited_particles_E, agg_colname = "deeplyr", funct = max)
+cell_avg_A <- left_join(x = cell_avg_A, y = deeplyr_A[ , c("X_cell", "Y_cell","deeplyr")], by = c("X_cell","Y_cell"))
+cell_avg_D <- left_join(x = cell_avg_D, y = deeplyr_D[ , c("X_cell", "Y_cell","deeplyr")], by = c("X_cell","Y_cell"))
+cell_avg_E <- left_join(x = cell_avg_E, y = deeplyr_E[ , c("X_cell", "Y_cell","deeplyr")], by = c("X_cell","Y_cell"))
+cell_avg_A <- left_join(x = cell_avg_A, y = layers, by = c("deeplyr"="layer"))
+cell_avg_D <- left_join(x = cell_avg_D, y = layers, by = c("deeplyr"="layer"))
+cell_avg_E <- left_join(x = cell_avg_E, y = layers, by = c("deeplyr"="layer"))
 
 
 
-cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A[which(cell_avg_A$dtw < 10),], aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario A") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
@@ -148,7 +185,7 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = pa
                    y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
 cell_avg_scatterA
 
-cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D[which(cell_avg_D$dtw < 10),], aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario D") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
@@ -163,7 +200,7 @@ cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = age,y = pa
                    y = max(lmres_D$coefficients[1],bl_slope*(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), yend = (bl_slope*max(cell_avg_D$age)+res_max_D)), col="blue", linetype = "dashed")
 cell_avg_scatterD
 
-cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E[which(cell_avg_E$dtw < 50),], aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario E") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
@@ -196,7 +233,9 @@ ggplot() + geom_point(data = cell_avg_B, aes(x = dtw,y = (sat_age/age),color=pat
 #sat age ratio vs sat len ratio
 ggplot() + geom_point(data = cell_avg_A, aes(x = (sat_age/age),y = (spath_len/path_len),color=path_len),alpha = 1) + geom_abline(slope = 1, intercept = 0, col="green")
 #total length vs soil length
-ggplot() + geom_point(data = cell_avg_A, aes(x = path_len,y = soil_len,color=age),alpha = 1)
+ggplot() + geom_point(data = cell_avg_A, aes(x = path_len,y = soil_len,color=deeplyr),alpha = 1)
+#dtw vs deepest layer
+ggplot() + geom_point(data = cell_avg_E, aes(x = dtw,y = ((depth_top+depth_bot)/2),color=age),alpha = 1)
 
 linear_A <- lm(I(upath_len - 0) ~ 0 + usat_age, data=cell_avg_A)
 linear_B <- lm(I(upath_len - 0) ~ 0 + usat_age, data=cell_avg_B)
@@ -204,6 +243,25 @@ linear_C <- lm(I(upath_len - 0) ~ 0 + usat_age, data=cell_avg_C)
 linear_A2 <- lm(path_len ~ age, data=cell_avg_A) 
 abline(linear_A, col="green")
 summary(linear_A)
+
+
+deeplyr_bins <- matrix(c(-2.5,-1.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,9.5,11.5,12.5,16.5,20))
+col_num <- which(colnames(deeplyr_A)=="deeplyr")
+deeplyr_A$deeplyr_bins <- cut(deeplyr_A[,col_num], c(deeplyr_bins), include.lowest = TRUE)
+summary(deeplyr_A$deeplyr_bins)
+deeplyr_plotE <- ggplot() + geom_tile(data = deeplyr_E, aes(x = X,y = Y, fill = factor(deeplyr_bins)), color="gray") + 
+  scale_fill_manual(values=c("gray50","white","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
+                    labels=c("NA","Outside of Basin","600-800","400-600","300-400","200-300","150-200","100-150","60-100","20-60","10-20","2-10","0-2")) +
+  #scale_fill_manual(values=c("gray50","white","black","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
+  #                  labels=c("NA","Outside of Basin","> 800","600-800","400-600","300-400","200-300","150-200","100-150","60-100","20-60","10-20","2-10","0-2")) +
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  labs(fill = "Maximum flowpath\ndepth (m)") + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="gray", size=0.1), legend.position="none") + 
+  ggtitle("Scenario E - maximum depth of particle below ground surface")
+deeplyr_plotE
+
+grid.arrange(deeplyr_plotA, deeplyr_plotD,deeplyr_plotE, nrow = 1,top = "Maps of maximum depth of particle below ground surface for Scenarios A, D, and E - forward tracking")
 
 ## box plot preparation
 dtw_bins <- matrix(c(-1,20,100,200,300,450))
