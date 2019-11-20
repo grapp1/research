@@ -19,17 +19,18 @@ source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 source("~/research/scripts/cell_agg_fxn.R")
 
-restart_file <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_particle_restart_600.bin"
-indicator <- 4
+restart_file <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191106/fw3/SLIM_A_v6_fw3_particle_restart_800.bin"
+indicator <- 21
 restart_particles_1 <- ES_read(restart_file, type = "restart", nind = indicator)
-exit_file_count <- exited_particles_F
+exit_file_count <- exited_particles_A
 number_exited <- nrow(exit_file_count)
 total_number <- number_exited + nrow(restart_particles_1)
-number_outside <- nrow(restart_particles_1[restart_particles_1$IndAge4 > 0,])
+number_outside <- nrow(restart_particles_1[restart_particles_1$IndAge21 > 0,])
 pct_exit <- number_exited*100/(total_number-number_outside)
 
-paste(nrow(restart_particles_1[restart_particles_1$IndAge4 > 0,]), "particles in the restart file outside the domain")
+paste(nrow(restart_particles_1[restart_particles_1$IndAge21 > 0,]), "particles in the restart file outside the domain")
 paste(format(pct_exit,digits=4),"% of particles have exited the domain",sep="")
+# this percentage should be higher than 94%
 
 
 exit_file_A1 <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191106/fw3/SLIM_A_v6_fw3_exited_particles_200.bin"
@@ -135,7 +136,10 @@ paste("Maximum particle age is", sprintf("%02g",max(exited_particles_E3$age)/(24
 exit_file_E4 <- "/Users/grapp/Desktop/working/E_v2_outputs/fw_20191028/fw1/SLIM_E_v2_fw1_exited_particles_800.bin"
 exited_particles_E4 <- ES_read(exit_file_E4, type = "exited", nind = 21)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_E4$age)/(24*365)), "years")
-exited_particles_E <- rbind(exited_particles_E1,exited_particles_E2,exited_particles_E3,exited_particles_E4)
+exit_file_E5 <- "/Users/grapp/Desktop/working/E_v2_outputs/fw_20191028/fw1/SLIM_E_v2_fw1_exited_particles_1000.bin"
+exited_particles_E5 <- ES_read(exit_file_E5, type = "exited", nind = 21)
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_E5$age)/(24*365)), "years")
+exited_particles_E <- rbind(exited_particles_E1,exited_particles_E2,exited_particles_E3,exited_particles_E4,exited_particles_E5)
 exited_particles_E <- exited_particles_E[!duplicated(exited_particles_E),]
 exited_particles_E$ratio_age <- exited_particles_E$sat_age/exited_particles_E$age
 exited_particles_E$ratio_len <- exited_particles_E$spath_len/exited_particles_E$path_len
@@ -156,7 +160,10 @@ paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F2$age)/(24
 exit_file_F3 <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_exited_particles_600.bin"
 exited_particles_F3 <- ES_read(exit_file_F3, type = "exited", nind = 4)
 paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F3$age)/(24*365)), "years")
-exited_particles_F <- rbind(exited_particles_F1,exited_particles_F2,exited_particles_F3)
+exit_file_F4 <- "/Users/grapp/Desktop/working/F_v2_outputs/fw_20191113/SLIM_F_v2_fw1_exited_particles_800.bin"
+exited_particles_F4 <- ES_read(exit_file_F4, type = "exited", nind = 4)
+paste("Maximum particle age is", sprintf("%02g",max(exited_particles_F4$age)/(24*365)), "years")
+exited_particles_F <- rbind(exited_particles_F1,exited_particles_F2,exited_particles_F3,exited_particles_F4)
 exited_particles_F <- exited_particles_F[!duplicated(exited_particles_F),]
 exited_particles_F$ratio_age <- exited_particles_F$sat_age/exited_particles_F$age
 exited_particles_F$ratio_len <- exited_particles_F$spath_len/exited_particles_F$path_len
@@ -292,7 +299,7 @@ pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_
 #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
   #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
   #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
-  scale_x_log10(name="Age (years)",limits = c(3,800), breaks = c(3,25,50,100,200,400,500,600,800),labels = scales::comma,expand=c(0,0)) +
+  scale_x_log10(name="Age (years)",limits = c(3,1000), breaks = c(3,25,50,100,200,400,600,800,1000),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of age of all exited particles - forward tracking") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.05)) + #, sec.axis = sec_axis(~.*3000000, name = "Total particle path length (m)",labels = scales::comma)) + 
   scale_color_manual(values = c("black","firebrick", "dodgerblue","orange"))  + labs(color = "Scenario") +
