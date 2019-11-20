@@ -173,11 +173,11 @@ cell_avg_E <- left_join(x = cell_avg_E, y = layers, by = c("deeplyr"="layer"))
 
 
 
-cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.6) + 
   scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario A") + 
   scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) +  
-  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") +
+  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen","orange"))  + labs(color = "Scenario") +
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
@@ -188,11 +188,11 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y 
   geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed")
 cell_avg_scatterA
 
-cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.6) + 
   scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario D") + 
   scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) +  
-  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
+  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
@@ -207,11 +207,11 @@ cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y 
   geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="blue", linetype = "dashed")
 cell_avg_scatterD
 
-cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.6) + 
   scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario E") + 
   scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) +  
-  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
+  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
