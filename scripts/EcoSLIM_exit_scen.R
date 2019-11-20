@@ -18,6 +18,7 @@ library(gridExtra)
 source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 source("~/research/scripts/cell_agg_fxn.R")
+source("~/research/scripts/var_bin_fxn.R")
 
 restart_file <- "/Users/grapp/Desktop/working/A_v6_outputs/fw_20191106/fw3/SLIM_A_v6_fw3_particle_restart_800.bin"
 indicator <- 21
@@ -293,6 +294,34 @@ pdf_exit_C_fw1_arat$scen <- "C"
 pdf_exit_D_fw1_arat$scen <- "D"
 pdf_exit_E_fw1_arat$scen <- "E"
 pdf_exited_all_arat <- rbind(pdf_exit_A_fw1_arat,pdf_exit_B_fw1_arat,pdf_exit_C_fw1_arat,pdf_exit_D_fw1_arat,pdf_exit_E_fw1_arat)
+
+# calculating variance time series
+var_bin <- 10
+var_spath_A <- var_bin_fxn(exited_particles_A, max(exited_particles_A$age), var_bin,column1 = "sat_age",column2 = "spath_len")
+var_spath_B <- var_bin_fxn(exited_particles_B, max(exited_particles_B$age), var_bin,column1 = "sat_age",column2 = "spath_len")
+var_spath_C <- var_bin_fxn(exited_particles_C, max(exited_particles_C$age), var_bin,column1 = "sat_age",column2 = "spath_len")
+var_spath_D <- var_bin_fxn(exited_particles_D, max(exited_particles_D$age), var_bin,column1 = "sat_age",column2 = "spath_len")
+var_spath_E <- var_bin_fxn(exited_particles_E, max(exited_particles_E$age), var_bin,column1 = "sat_age",column2 = "spath_len")
+var_spath_F <- var_bin_fxn(exited_particles_F, max(exited_particles_F$age), var_bin,column1 = "sat_age",column2 = "spath_len")
+
+var_spath_A$scen <- "A"
+var_spath_B$scen <- "B"
+var_spath_C$scen <- "C"
+var_spath_D$scen <- "D"
+var_spath_E$scen <- "E"
+var_spath_F$scen <- "F"
+var_bin_all <- rbind(var_spath_A,var_spath_B,var_spath_C,var_spath_D,var_spath_E,var_spath_F)
+var_bin_all <- na.omit(var_bin_all)
+
+var_bin_fig <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line() + geom_point() + 
+  scale_x_continuous(name="Saturated age (years)",limits = c(0,900), breaks=c(0,100,200,300,400,500,600,700,800,900),labels = scales::comma,expand=c(0,0)) +
+  ggtitle("Variance of saturated lengths of all exited particles - forward tracking") + 
+  scale_y_log10(name="Variance (m^2)", expand=c(0,0), limits = c(10000,10000000000), breaks = c(10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
+  scale_color_manual(values = c("black","firebrick", "dodgerblue","orange","green","purple"))  + labs(color = "Scenario") +
+  expand_limits(x = 100, y = 0) + theme_bw() + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+var_bin_fig
+
 
 pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=scen,col = scen)) +
   #geom_boxplot(data = exited_particles_A, aes(x = bin_yr,y = path_len_plot,group=bin),fill="coral", color="black") +

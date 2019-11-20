@@ -9,8 +9,8 @@ library(dplyr)
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/D_v4_outputs/D_v4.out.press.00993.pfb"
-satur_file <- "/Users/grapp/Desktop/working/D_v4_outputs/D_v4.out.satur.00993.pfb"
+press_file <- "/Users/grapp/Desktop/working/A_v5_outputs/A_v5.out.press.00991.pfb"
+satur_file <- "/Users/grapp/Desktop/working/A_v5_outputs/A_v5.out.satur.00991.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -98,8 +98,9 @@ levels(wt_elev.df3$dtw_cuts)
 wt_dtw_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = factor(dtw_cuts)), colour = "black") + labs(fill = "Depth to Water (m)") +
 #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","wheat","gray50"),
 #                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100","Outside of Main Basin")) +
-  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","gray50"),
-                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400","Outside of Main Basin")) +   #,">400"
+#  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","gray50"),
+  scale_fill_manual(values=c(rainbow(11),"gray50"),
+                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","100-200","200-300","300-400","> 400","Outside of Main Basin")) +   #,">400"
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
   ggtitle(paste("Depth to Water for Scenario D_v4")) + theme_bw() +
