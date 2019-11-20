@@ -77,12 +77,13 @@ cell_avg_B$usat_age <- cell_avg_B$age - cell_avg_B$sat_age
 cell_avg_B <- cell_avg_B[which(cell_avg_B$age > 0), ]
 load(file="~/research/Scenario_B/B_v4/wt_B_v4_1037.df.Rda")
 cell_avg_B <- left_join(x = cell_avg_B, y = wt_B_v4_1037.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
-cell_avg_B$residual <- cell_avg_B$path_len - bl_slope*cell_avg_B$age
+#cell_avg_B$residual <- cell_avg_B$path_len - bl_slope*cell_avg_B$age
 rm(lmres_B)
-lmres_B <- lm(residual ~ age, data=cell_avg_B[which(cell_avg_B$residual > 1000),])
-res_max_B <- as.integer(lmres_B$coefficients[1] + lmres_B$coefficients[2]*max(cell_avg_B$age))
-ggplot() + geom_point(data = cell_avg_B, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
-  geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="purple",linetype = "twodash")
+lmres_B <- lm(spath_len ~ sat_age, data=cell_avg_B)
+#lmres_B <- lm(residual ~ age, data=cell_avg_B[which(cell_avg_B$residual > 1000),])
+#res_max_B <- as.integer(lmres_B$coefficients[1] + lmres_B$coefficients[2]*max(cell_avg_B$age))
+#ggplot() + geom_point(data = cell_avg_B, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
+#  geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="purple",linetype = "twodash")
 #cell_avg_B <- cell_avg_B[which(cell_avg_B$soil_len_ratio < 0.01), ]
 
 
@@ -103,12 +104,13 @@ cell_avg_C$usat_age <- cell_avg_C$age - cell_avg_C$sat_age
 cell_avg_C <- cell_avg_C[which(cell_avg_C$age > 0), ]
 load(file="~/research/Scenario_C/C_v4/wt_C_v4_1036.df.Rda")
 cell_avg_C <- left_join(x = cell_avg_C, y = wt_C_v4_1036.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
-cell_avg_C$residual <- cell_avg_C$path_len - bl_slope*cell_avg_C$age
+#cell_avg_C$residual <- cell_avg_C$path_len - bl_slope*cell_avg_C$age
 rm(lmres_C)
-lmres_C <- lm(residual ~ age, data=cell_avg_C[which(cell_avg_C$residual > 1000),])
-res_max_C <- as.integer(lmres_C$coefficients[1] + lmres_C$coefficients[2]*max(cell_avg_C$age))
-ggplot() + geom_point(data = cell_avg_C, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
-  geom_abline(slope = lmres_C$coefficients[2], intercept = lmres_C$coefficients[1], col="purple",linetype = "twodash")
+lmres_C <- lm(spath_len ~ sat_age, data=cell_avg_C)
+#lmres_C <- lm(residual ~ age, data=cell_avg_C[which(cell_avg_C$residual > 1000),])
+#res_max_C <- as.integer(lmres_C$coefficients[1] + lmres_C$coefficients[2]*max(cell_avg_C$age))
+#ggplot() + geom_point(data = cell_avg_C, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
+#  geom_abline(slope = lmres_C$coefficients[2], intercept = lmres_C$coefficients[1], col="purple",linetype = "twodash")
 #cell_avg_C <- cell_avg_C[which(cell_avg_C$soil_len_ratio < 0.01), ]
 
 soil_len_rat_F <- cell_agg_fxn(exited_particles_F, agg_colname = "soil_len_ratio")
@@ -157,7 +159,7 @@ cell_sap_ACF <- rbind(cell_avg_A, cell_avg_C, cell_avg_F)
 
 
 
-cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario A") + 
   scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
@@ -167,40 +169,38 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = pa
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") +
-  geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
-                   y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed")
+  #geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
+  #                 y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
 cell_avg_scatterA
 
-cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
-  scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
+cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.5) + 
+  scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario B") + 
-  scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
+  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) +  
   scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") + 
-  geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
-                   y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
-  geom_segment(aes(x = (-lmres_B$coefficients[1]/lmres_B$coefficients[2]), xend = max(cell_avg_B$age), 
-                   y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed")
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed") + 
+  geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="blue", linetype = "dashed")
+
 cell_avg_scatterB
 
-cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
-  scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
+cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.5) + 
+  scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario C") + 
-  scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
+  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) +  
   scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") + 
-  geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
-                   y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
-  #geom_segment(aes(x = (-lmres_B$coefficients[1]/lmres_B$coefficients[2]), xend = max(cell_avg_B$age), 
-  #                 y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed") + 
-  geom_segment(aes(x = (-lmres_C$coefficients[1]/lmres_C$coefficients[2]), xend = max(cell_avg_C$age), 
-                   y = bl_slope*(-lmres_C$coefficients[1]/lmres_C$coefficients[2]), yend = (bl_slope*max(cell_avg_C$age)+res_max_C)), col="purple", linetype = "twodash")
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed") + 
+  geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="blue", linetype = "dashed") +
+  geom_abline(slope = lmres_C$coefficients[2], intercept = lmres_C$coefficients[1], col="green", linetype = "dashed")
+
 cell_avg_scatterC
 
 cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
@@ -222,7 +222,7 @@ cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = age,y = pa
                    y = bl_slope*(-lmres_F$coefficients[1]/lmres_F$coefficients[2]), yend = (bl_slope*max(cell_avg_F$age)+res_max_F)), col="orange", linetype = "twodash")
 cell_avg_scatterF
 
-grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC, nrow = 1,top = "Scatter plots of cell-averaged particle path lengths and ages for Scenarios A, B, and C - forward tracking")
+grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC, nrow = 1,top = "Scatter plots of cell-averaged saturated particle path lengths and ages for Scenarios A, B, and C - forward tracking")
 
 # age vs. dtw
 ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = dtw,color=path_len),alpha = 1)
