@@ -53,7 +53,7 @@ load(file="~/research/Scenario_A/A_v5/wt_A_v5_991.df.Rda")
 cell_avg_A <- left_join(x = cell_avg_A, y = wt_A_v5_991.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
 #cell_avg_A$residual <- cell_avg_A$path_len - bl_slope*cell_avg_A$age
 rm(lmres_A)
-lmres_A <- lm(spath_len ~ sat_age, data=cell_avg_A)
+lmres_A <- lm(spath_len ~ sat_age, data=cell_avg_A)#[which(cell_avg_A$dtw > as.integer(quantile(cell_avg_A$dtw)[4])),])
 #lmres_A <- lm(residual ~ age, data=cell_avg_A[which(cell_avg_A$residual > 1000),])
 #res_max_A <- as.integer(lmres_A$coefficients[1] + lmres_A$coefficients[2]*max(cell_avg_A$age))
 ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y = spath_len,color=(spath_len/path_len)),alpha = 1) + 
@@ -79,10 +79,10 @@ load(file="~/research/Scenario_D/wt_D_v4_993.df.Rda")
 cell_avg_D <- left_join(x = cell_avg_D, y = wt_D_v4_993.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
 #cell_avg_D$residual <- cell_avg_D$path_len - bl_slope*cell_avg_D$age
 rm(lmres_D)
-lmres_D <- lm(spath_len ~ sat_age, data=cell_avg_D)
+lmres_D <- lm(spath_len ~ sat_age, data=cell_avg_D)#[which(cell_avg_D$dtw > as.integer(quantile(cell_avg_D$dtw)[4])),])
 #res_max_D <- as.integer(lmres_D$coefficients[1] + lmres_D$coefficients[2]*max(cell_avg_D$age))
-#ggplot() + geom_point(data = cell_avg_D[which(cell_avg_D$residual > 2000),], aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
-#  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="purple",linetype = "twodash")
+ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y = spath_len,color=dtw),alpha = 1) + 
+  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="purple",linetype = "twodash")
 
 
 soil_len_rat_E <- cell_agg_fxn(exited_particles_E, agg_colname = "soil_len_ratio")
@@ -104,11 +104,11 @@ load(file="~/research/Scenario_E/E_v1/wt_E_v1_1552.df.Rda")
 cell_avg_E <- left_join(x = cell_avg_E, y = wt_E_v1_1552.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
 #cell_avg_E$residual <- cell_avg_E$path_len - bl_slope*cell_avg_E$age
 rm(lmres_E)
-lmres_E <- lm(spath_len ~ sat_age, data=cell_avg_E)
+lmres_E <- lm(spath_len ~ sat_age, data=cell_avg_E)#[which(cell_avg_E$dtw > as.integer(quantile(cell_avg_E$dtw)[4])),])
 #lmres_E <- lm(residual ~ age, data=cell_avg_E[which(cell_avg_E$residual > 1000 & (cell_avg_E$spath_len/cell_avg_E$path_len) > 0.9),])
 #res_max_E <- as.integer(lmres_E$coefficients[1] + lmres_E$coefficients[2]*max(cell_avg_E$age))
-#ggplot() + geom_point(data = cell_avg_E[which(cell_avg_E$residual > 2000),], aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
-#  geom_abline(slope = lmres_E$coefficients[2], intercept = lmres_E$coefficients[1], col="purple",linetype = "twodash")
+ggplot() + geom_point(data = cell_avg_E, aes(x = sat_age,y = spath_len,color=dtw),alpha = 1) + 
+  geom_abline(slope = lmres_E$coefficients[2], intercept = lmres_E$coefficients[1], col="purple",linetype = "twodash")
 
 
 sap_len_rat_A <- cell_agg_fxn(exited_particles_A, agg_colname = "sap_len_ratio")

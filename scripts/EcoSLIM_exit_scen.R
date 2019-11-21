@@ -232,12 +232,12 @@ exit_pts
 
 # generating pdf
 bin_size_age <- 3
-pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), bin_size_age,column = "age")
-pdf_exit_B_fw1 <- pdfxn(exited_particles_B, max(exited_particles_B$age), bin_size_age,column = "age")
-pdf_exit_C_fw1 <- pdfxn(exited_particles_C, max(exited_particles_C$age), bin_size_age,column = "age")
-pdf_exit_D_fw1 <- pdfxn(exited_particles_D, max(exited_particles_D$age), bin_size_age,column = "age")
-pdf_exit_E_fw1 <- pdfxn(exited_particles_E, max(exited_particles_E$age), bin_size_age,column = "age")
-pdf_exit_F_fw1 <- pdfxn(exited_particles_F, max(exited_particles_F$age), bin_size_age,column = "age")
+pdf_exit_A_fw1 <- pdfxn(exited_particles_A, max(exited_particles_A$age), bin_size_age,column = "sat_age")
+pdf_exit_B_fw1 <- pdfxn(exited_particles_B, max(exited_particles_B$age), bin_size_age,column = "sat_age")
+pdf_exit_C_fw1 <- pdfxn(exited_particles_C, max(exited_particles_C$age), bin_size_age,column = "sat_age")
+pdf_exit_D_fw1 <- pdfxn(exited_particles_D, max(exited_particles_D$age), bin_size_age,column = "sat_age")
+pdf_exit_E_fw1 <- pdfxn(exited_particles_E, max(exited_particles_E$age), bin_size_age,column = "sat_age")
+pdf_exit_F_fw1 <- pdfxn(exited_particles_F, max(exited_particles_F$age), bin_size_age,column = "sat_age")
 
 pdf_exit_A_fw1$scen <- "A"
 pdf_exit_B_fw1$scen <- "B"
@@ -310,20 +310,22 @@ var_spath_C$scen <- "C"
 var_spath_D$scen <- "D"
 var_spath_E$scen <- "E"
 var_spath_F$scen <- "F"
-var_bin_all <- rbind(var_spath_A,var_spath_B,var_spath_C,var_spath_D,var_spath_E,var_spath_F)
-var_bin_all <- na.omit(var_bin_all)
+#var_bin_all <- rbind(var_spath_A,var_spath_B,var_spath_C)
+#var_bin_all <- rbind(var_spath_A,var_spath_C,var_spath_F)
+var_bin_all <- rbind(var_spath_A,var_spath_D,var_spath_E)
+var_bin_all <- var_bin_all[which(var_bin_all$count > 9),]
 
 var_bin_fig <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line() + geom_point() + 
-  scale_x_continuous(name="Saturated age (years)",limits = c(0,900), breaks=c(0,100,200,300,400,500,600,700,800,900),labels = scales::comma,expand=c(0,0)) +
+  scale_x_continuous(name="Saturated age (years)",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
   ggtitle("Variance of saturated lengths of all exited particles - forward tracking") + 
-  scale_y_log10(name="Variance (m^2)", expand=c(0,0), limits = c(10000,10000000000), breaks = c(10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
+  scale_y_log10(name=bquote('Variance of saturated path lengths ('*m^2*')'), expand=c(0,0), limits = c(10000,10000000000), breaks = c(10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
   scale_color_manual(values = c("black","firebrick", "dodgerblue","orange","green","purple"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 var_bin_fig
 
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_pdf, group=scen,col = scen)) +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen)) +
   #geom_boxplot(data = exited_particles_A, aes(x = bin_yr,y = path_len_plot,group=bin),fill="coral", color="black") +
 #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
   #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 

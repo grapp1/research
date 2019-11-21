@@ -52,11 +52,12 @@ cell_avg_A$usat_age <- cell_avg_A$age - cell_avg_A$sat_age
 cell_avg_A <- cell_avg_A[which(cell_avg_A$age > 0), ]
 load(file="~/research/Scenario_A/A_v5/wt_A_v5_991.df.Rda")
 cell_avg_A <- left_join(x = cell_avg_A, y = wt_A_v5_991.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
-cell_avg_A$residual <- cell_avg_A$path_len - bl_slope*cell_avg_A$age
+#cell_avg_A$residual <- cell_avg_A$path_len - bl_slope*cell_avg_A$age
 rm(lmres_A)
-lmres_A <- lm(residual ~ age, data=cell_avg_A[which(cell_avg_A$residual > 1000),])
-res_max_A <- as.integer(lmres_A$coefficients[1] + lmres_A$coefficients[2]*max(cell_avg_A$age))
-ggplot() + geom_point(data = cell_avg_A, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
+lmres_A <- lm(spath_len ~ sat_age, data=cell_avg_A)
+#lmres_A <- lm(residual ~ age, data=cell_avg_A[which(cell_avg_A$residual > 1000),])
+#res_max_A <- as.integer(lmres_A$coefficients[1] + lmres_A$coefficients[2]*max(cell_avg_A$age))
+ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y = spath_len,color=(spath_len/path_len)),alpha = 1) + 
   geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="purple",linetype = "twodash")
 #cell_avg_C <- cell_avg_C[which(cell_avg_C$soil_len_ratio < 0.01), ]
 
@@ -79,11 +80,11 @@ load(file="~/research/Scenario_B/B_v4/wt_B_v4_1037.df.Rda")
 cell_avg_B <- left_join(x = cell_avg_B, y = wt_B_v4_1037.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
 #cell_avg_B$residual <- cell_avg_B$path_len - bl_slope*cell_avg_B$age
 rm(lmres_B)
-lmres_B <- lm(spath_len ~ sat_age, data=cell_avg_B)
+lmres_B <- lm(spath_len ~ sat_age, data=cell_avg_B[which(cell_avg_B$dtw > 50),])
 #lmres_B <- lm(residual ~ age, data=cell_avg_B[which(cell_avg_B$residual > 1000),])
 #res_max_B <- as.integer(lmres_B$coefficients[1] + lmres_B$coefficients[2]*max(cell_avg_B$age))
-#ggplot() + geom_point(data = cell_avg_B, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
-#  geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="purple",linetype = "twodash")
+ggplot() + geom_point(data = cell_avg_B, aes(x = sat_age,y = spath_len,color=(spath_len/path_len)),alpha = 1) + 
+  geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="purple",linetype = "twodash")
 #cell_avg_B <- cell_avg_B[which(cell_avg_B$soil_len_ratio < 0.01), ]
 
 
