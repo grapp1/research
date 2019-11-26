@@ -131,11 +131,12 @@ cell_avg_F$usat_age <- cell_avg_F$age - cell_avg_F$sat_age
 cell_avg_F <- cell_avg_F[which(cell_avg_F$age > 0), ]
 load(file="~/research/Scenario_F/F_v1/wt_F_v1_997.df.Rda")
 cell_avg_F <- left_join(x = cell_avg_F, y = wt_F_v1_997.df[ , c("x", "y","dtw","elev","wt_elev")], by = c("X_cell" = "x","Y_cell" = "y"))
-cell_avg_F$residual <- cell_avg_F$path_len - bl_slope*cell_avg_F$age
+#cell_avg_F$residual <- cell_avg_F$path_len - bl_slope*cell_avg_F$age
 rm(lmres_F)
-lmres_F <- lm(residual ~ age, data=cell_avg_F[which(cell_avg_F$residual > 1000),])
-res_max_F <- as.integer(lmres_F$coefficients[1] + lmres_F$coefficients[2]*max(cell_avg_F$age))
-ggplot() + geom_point(data = cell_avg_F, aes(x = (age),y = residual,color=(spath_len/path_len)),alpha = 1) + 
+lmres_F <- lm(spath_len ~ sat_age, data=cell_avg_F)
+#lmres_F <- lm(residual ~ age, data=cell_avg_F[which(cell_avg_F$residual > 1000),])
+#res_max_F <- as.integer(lmres_F$coefficients[1] + lmres_F$coefficients[2]*max(cell_avg_F$age))
+ggplot() + geom_point(data = cell_avg_F, aes(x = sat_age,y = spath_len,color=(spath_len/path_len)),alpha = 1) + 
   geom_abline(slope = lmres_F$coefficients[2], intercept = lmres_F$coefficients[1], col="purple",linetype = "twodash")
 
 cell_avg_A$scen <- "A"
@@ -160,10 +161,11 @@ cell_sap_ACF <- rbind(cell_avg_A, cell_avg_C, cell_avg_F)
 
 
 
-cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y = path_len,color=dtw),alpha = 0.5) + 
+cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario A") + 
-  scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
+  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), 
+                     limits = c(0,60000),labels = scales::comma, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) + 
   scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen","orange"))  + labs(color = "Scenario") +
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
@@ -173,12 +175,15 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y 
   geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed")
   #geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
   #                 y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
+cell_avg_scatterA <- cell_avg_scatterA + geom_line(data = var_bin_all[which(var_bin_all$scen == "A"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="darkred") + 
+  geom_point(data = var_bin_all[which(var_bin_all$scen == "A"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="darkred",size =0.5)
 cell_avg_scatterA
 
 cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.6) + 
   scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario B") + 
-  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) +  
+  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), 
+                     limits = c(0,60000),labels = scales::comma, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) + 
   scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
@@ -187,12 +192,15 @@ cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = sat_age,y 
   geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed") + 
   geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="blue", linetype = "dashed")
 
+cell_avg_scatterB <- cell_avg_scatterB + geom_line(data = var_bin_all[which(var_bin_all$scen == "B"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="blue") + 
+  geom_point(data = var_bin_all[which(var_bin_all$scen == "B"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="blue",size =0.5)
 cell_avg_scatterB
 
 cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.6) + 
   scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario C") + 
-  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) +  
+  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), 
+                     limits = c(0,60000),labels = scales::comma, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) +
   scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
@@ -200,30 +208,30 @@ cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = sat_age,y 
   geom_abline(slope = bl_slope, intercept = 0, col="black") + 
   geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed") + 
   geom_abline(slope = lmres_B$coefficients[2], intercept = lmres_B$coefficients[1], col="blue", linetype = "dashed") +
-  geom_abline(slope = lmres_C$coefficients[2], intercept = lmres_C$coefficients[1], col="green", linetype = "dashed")
+  geom_abline(slope = lmres_C$coefficients[2], intercept = lmres_C$coefficients[1], col="chartreuse4", linetype = "dashed")
 
+cell_avg_scatterC <- cell_avg_scatterC + geom_line(data = var_bin_all[which(var_bin_all$scen == "C"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4") + 
+  geom_point(data = var_bin_all[which(var_bin_all$scen == "C"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4",size =0.5)
 cell_avg_scatterC
 
 cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = age,y = path_len,color=dtw),alpha = 0.5) + 
   scale_x_continuous(name="Particle age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("Scenario F") + 
-  scale_y_continuous(name="Particle path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,70000),labels = scales::comma) +  
-  scale_colour_gradient(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), low = "red", high = "blue") + 
+  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), 
+                     limits = c(0,60000),labels = scales::comma, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) +
+  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
   geom_abline(slope = bl_slope, intercept = 0, col="black") + 
-  geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
-                   y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
-  #geom_segment(aes(x = (-lmres_B$coefficients[1]/lmres_B$coefficients[2]), xend = max(cell_avg_B$age), 
-  #                 y = bl_slope*(-lmres_B$coefficients[1]/lmres_B$coefficients[2]), yend = (bl_slope*max(cell_avg_B$age)+res_max_B)), col="blue", linetype = "dashed") + 
-  geom_segment(aes(x = (-lmres_C$coefficients[1]/lmres_C$coefficients[2]), xend = max(cell_avg_C$age), 
-                   y = bl_slope*(-lmres_C$coefficients[1]/lmres_C$coefficients[2]), yend = (bl_slope*max(cell_avg_C$age)+res_max_C)), col="purple", linetype = "twodash") +
-  geom_segment(aes(x = (-lmres_F$coefficients[1]/lmres_F$coefficients[2]), xend = max(cell_avg_F$age), 
-                   y = bl_slope*(-lmres_F$coefficients[1]/lmres_F$coefficients[2]), yend = (bl_slope*max(cell_avg_F$age)+res_max_F)), col="orange", linetype = "twodash")
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed") + 
+  geom_abline(slope = lmres_C$coefficients[2], intercept = lmres_C$coefficients[1], col="chartreuse4", linetype = "dashed") +
+  geom_abline(slope = lmres_F$coefficients[2], intercept = lmres_F$coefficients[1], col="orange", linetype = "dashed")
+cell_avg_scatterF <- cell_avg_scatterF + geom_line(data = var_bin_all[which(var_bin_all$scen == "F"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="orange") + 
+  geom_point(data = var_bin_all[which(var_bin_all$scen == "F"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="orange",size =0.5)
 cell_avg_scatterF
 
-grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC, nrow = 1,top = "Scatter plots of cell-averaged saturated particle path lengths and ages for Scenarios A, B, and C - forward tracking")
+grid.arrange(cell_avg_scatterA, cell_avg_scatterC,cell_avg_scatterF, nrow = 1,top = "Scatter plots of cell-averaged saturated particle path lengths and ages for Scenarios A, C, and F - forward tracking")
 
 # age vs. dtw
 ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = dtw,color=path_len),alpha = 1)
@@ -237,6 +245,19 @@ ggplot() + geom_point(data = cell_avg_B, aes(x = dtw,y = (sat_age/age),color=pat
 ggplot() + geom_point(data = cell_avg_A, aes(x = (sat_age/age),y = (spath_len/path_len),color=path_len),alpha = 1) + geom_abline(slope = 1, intercept = 0, col="green")
 #total length vs soil length
 ggplot() + geom_point(data = cell_avg_A, aes(x = path_len,y = soil_len,color=age),alpha = 1)
+
+ggplot() + geom_point(data = cell_avg_B, aes(x = elev,y = spath_len,color=sat_age),alpha = 1)
+
+
+#trying multiple linear regression on elev and dtw 
+model  <- lm(path_len ~ dtw + elev, data = cell_avg_D)
+summary(model)
+model$coefficients[2]
+
+ggplot() + geom_point(data = cell_avg_D, aes(x = (model$coefficients[1]+model$coefficients[2]*dtw+model$coefficients[3]*elev),y = spath_len,color=sat_age),alpha = 1) +
+  geom_abline(slope = 1, intercept = 0, col="green")
+
+
 
 linear_A <- lm(I(upath_len - 0) ~ 0 + usat_age, data=cell_avg_A)
 linear_B <- lm(I(upath_len - 0) ~ 0 + usat_age, data=cell_avg_B)
