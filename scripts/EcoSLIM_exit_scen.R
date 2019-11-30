@@ -19,6 +19,7 @@ source("~/research/scripts/prob_dens_fxn.R")
 source("~/research/scripts/EcoSLIM_read_fxn_update.R")
 source("~/research/scripts/cell_agg_fxn.R")
 source("~/research/scripts/var_bin_fxn.R")
+source("~/research/scripts/particle_flowpath_fxn.R")
 
 restart_file <- "/Users/grapp/Downloads/SLIM_D_v5_fw2_particle_restart.bin"
 indicator <- 21
@@ -230,35 +231,17 @@ exit_pts <- flowpath_fig + geom_point(data = restart_particles_1, aes(x=X, y=Y, 
 exit_pts
 
 
-exit_A_loc <- exited_particles_A[,c(2,3,11,12)]
-exit_A_loc$X_cell_init <- as.integer(ceiling(exit_A_loc$init_X/90))
-exit_A_loc$Y_cell_init <- as.integer(ceiling(exit_A_loc$init_Y/90))
-exit_A_loc$X_cell_out <- as.integer(ceiling(exit_A_loc$X/90))
-exit_A_loc$Y_cell_out <- as.integer(ceiling(exit_A_loc$Y/90))
-subbasin_df_1 <- read.csv(file="~/research/domain/subbasin_df.csv", header=TRUE)
-exit_A_loc <- left_join(exit_A_loc, subbasin_df_1[,c(4:6)], by = c("X_cell_init" = "X_cell", "Y_cell_init" = "Y_cell"))
-names(exit_A_loc)[names(exit_A_loc) == "GR_new"] <- "basin_init"
-exit_A_loc <- left_join(exit_A_loc, subbasin_df_1[,c(4:6)], by = c("X_cell_out" = "X_cell", "Y_cell_out" = "Y_cell"))
-names(exit_A_loc)[names(exit_A_loc) == "GR_new"] <- "basin_out"
-exit_A_loc$basin_comb <- 10*exit_A_loc$basin_init+exit_A_loc$basin_out
-basin_comb_A <- as.matrix(unique(exit_A_loc$basin_comb))
-basin_comb_A <- cbind(basin_comb_A, 0)
-
-for(i in 1:nrow(basin_comb_A)){
-  basin_comb_A[i,2] <- nrow(exit_A_loc[exit_A_loc$basin_comb == basin_comb_A[i,1],])
-}
 
 
-
-
-exit_pts <- flowpath_fig + geom_point(data = exit_A_loc, aes(x=init_X, y=init_Y, colour = factor(basin_out))) + labs(color = "Age (years)") +
+exit_pts <- ggplot() + geom_tile(data = subbasin_df_1, aes(x=X_cell, y=Y_cell, fill = factor(GR_new))) + 
+  scale_fill_manual(values=c("gray50","white","navy","cyan4", "chartreuse","yellow","orange","red")) + 
   #scale_colour_gradient(low = "white", high="midnightblue", trans = "log",limits=c(1,1000),breaks=c(50,100,200,300,400,500,600), 
   #                      labels=c("≤50","100","200","300","400","500","600")) +
   ggtitle("Locations and ages of exited particles for Scenario C - backwards tracking from cell [12,19]")
 
 exit_pts
 
-
+ggplot() + geom_tile(data = subbasin_df_1, aes(x=X_cell, y=Y_cell, colour = GR_new))
 
 # generating pdf
 bin_size_age <- 3
@@ -347,12 +330,13 @@ var_bin_all <- rbind(var_spath_A,var_spath_D,var_spath_E)
 var_bin_all <- var_bin_all[which(var_bin_all$count > 9),]
 
 var_bin_fig <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line() + geom_point(size =0.5) + 
-  scale_x_continuous(name="Saturated age (years)",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
-  ggtitle("Variance of saturated lengths of all exited particles - forward tracking") + 
-  scale_y_log10(name=bquote('Variance of saturated path lengths ('*m^2*')'), expand=c(0,0), limits = c(1000,1000000000), breaks = c(10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","orange","green","purple"))  + labs(color = "Scenario") +
-  expand_limits(x = 100, y = 0) + theme_bw() + 
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  scale_x_continuous(name="Saturated age (yr)",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
+  ggtitle("Variance of saturated lengths of exited particles") + 
+  scale_y_log10(name=bquote('Variance of saturated path lengths ('*m^2*')'), expand=c(0,0), limits = c(1000,1000000000), breaks = c(1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
+  scale_color_manual(values = c("black","darkorange","purple","green","firebrick", "dodgerblue"))  + labs(color = "Scenario") +
+  expand_limits(x = 10, y = 0) + theme_bw() + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = c(0.85, 0.15),
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5))
 var_bin_fig
 
 

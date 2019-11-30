@@ -81,6 +81,28 @@ for(i in 1:nx){
 
 
 
+### 20191127 creation of domain for poster visualization
+domain_riv <- read.table("/Users/grapp/Desktop/working/workflow/A_indicator.sa", header = TRUE,sep = "\t")
+ind_riv <- read.table("/Users/grapp/Desktop/working/workflow/rivers.sa", header = TRUE,sep = "\t")
+
+count <- 0
+for(i in 1:nrow(domain_riv)){
+  if(ind_riv$X91.70.20[i] == 1){
+    domain_riv$X91.70.20[i] <- 0.5
+    count <- count + 1
+  }
+}
+print(count)
+unique(domain_riv$X91.70.20)
+
+write.table(domain_riv, file = "/Users/grapp/Desktop/working/workflow/domain_riv.sa", row.names = FALSE, col.names = FALSE, quote = FALSE)
+## add header, run file.conversion.tcl and then vtk_example.tcl
+
+
+
+
+
+
 
 
 # plot to check whether the loop is working correctly (optional) - this should look like a step function

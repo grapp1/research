@@ -183,11 +183,11 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y 
   #scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen","orange"))  + labs(color = "Scenario") +
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",plot.margin = margin(5,15,5,5)) + 
   #geom_abline(slope = bl_slope, intercept = 0, col="black") +
   #geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
   #                 y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
-  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed")
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="black", linetype = "dashed")
 #cell_avg_scatterA <- cell_avg_scatterA + geom_line(data = var_bin_all[which(var_bin_all$scen == "A"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="darkred") + 
 #  geom_point(data = var_bin_all[which(var_bin_all$scen == "A"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="darkred",size =0.5)
 cell_avg_scatterA
@@ -201,7 +201,7 @@ cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y 
   scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",plot.margin = margin(5,15,5,5)) + 
   #geom_abline(slope = bl_slope, intercept = 0, col="black") +
   #geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
   #                 y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
@@ -209,8 +209,8 @@ cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y 
   #                 y = max(lmres_D$coefficients[1],bl_slope*(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), yend = (bl_slope*max(cell_avg_D$age)+res_max_D)), col="blue", linetype = "dashed")
   #geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
   #                 y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
-  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed") + 
-  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="blue", linetype = "dashed")
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="black", linetype = "dashed") + 
+  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="darkorange", linetype = "dashed")
 #cell_avg_scatterD <- cell_avg_scatterD + 
 #  geom_line(data = var_bin_all[which(var_bin_all$scen == "D"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="blue") + 
 #  geom_point(data = var_bin_all[which(var_bin_all$scen == "D"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="blue",size = 0.5)
@@ -223,20 +223,20 @@ cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = sat_age,y 
                      #sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) +  
   scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   expand_limits(x = 0, y = 0) + theme_bw() + 
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none") + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",plot.margin = margin(5,15,5,5)) + 
   #geom_abline(slope = bl_slope, intercept = 0, col="black") +
-  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="darkred", linetype = "dashed") + 
-  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="blue", linetype = "dashed") +
-  geom_abline(slope = lmres_E$coefficients[2], intercept = lmres_E$coefficients[1], col="chartreuse4", linetype = "dashed")
+  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="black", linetype = "dashed") + 
+  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="darkorange", linetype = "dashed") +
+  geom_abline(slope = lmres_E$coefficients[2], intercept = lmres_E$coefficients[1], col="purple", linetype = "dashed")
 #cell_avg_scatterE <- cell_avg_scatterE + 
 #  geom_line(data = var_bin_all[which(var_bin_all$scen == "E"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4") +
 #  geom_point(data = var_bin_all[which(var_bin_all$scen == "E"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4",size = 0.5)
 cell_avg_scatterE
 
 
-grid.arrange(cell_avg_scatterA, cell_avg_scatterD,cell_avg_scatterE,var_bin_fig, nrow = 2,top = "Scatter plots of cell-averaged saturated particle path lengths and ages for Scenarios A, D, and E - forward tracking")
+grid.arrange(cell_avg_scatterA, cell_avg_scatterD,cell_avg_scatterE,var_bin_fig, nrow = 2,top = "Scatter plots of cell-averaged saturated particle path lengths and ages for Scenarios A, D, and E")
 
-# age vs. dtw
+### age vs. dtw
 ggplot() + geom_point(data = cell_avg_C, aes(x = age,y = dtw,color=path_len),alpha = 1)
 # soil_len_ratio vs. dtw
 ggplot() + geom_point(data = cell_avg_C, aes(x = dtw,y = soil_len_ratio,color=path_len),alpha = 1)
