@@ -24,10 +24,10 @@ cell_agg_fxn <- function(input_df,x_colname = "init_X",y_colname = "init_Y",agg_
   for(i in 1:nx){
     for(j in 1:ny){
       if(is.na(df_agg[,agg_colname][df_agg$X_cell == i & df_agg$Y_cell == j]) & df_agg$flowpath[df_agg$X_cell == i & df_agg$Y_cell == j] == 1){
-        df_agg[,agg_colname][df_agg$X_cell == i & df_agg$Y_cell == j] <- -2
+        df_agg[,agg_colname][df_agg$X_cell == i & df_agg$Y_cell == j] <- -2  # setting cells that are inside domain with no data to -2
       }
       if(is.na(df_agg[,agg_colname][df_agg$X_cell == i & df_agg$Y_cell == j]) & df_agg$flowpath[df_agg$X_cell == i & df_agg$Y_cell == j] == 0){
-        df_agg[,agg_colname][df_agg$X_cell == i & df_agg$Y_cell == j] <- -1
+        df_agg[,agg_colname][df_agg$X_cell == i & df_agg$Y_cell == j] <- -1 # setting cells that are outside the domain to -1
       }
     }
   }
