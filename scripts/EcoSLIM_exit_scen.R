@@ -258,8 +258,9 @@ pdf_exit_C_fw1$scen <- "C"
 pdf_exit_D_fw1$scen <- "D"
 pdf_exit_E_fw1$scen <- "E"
 pdf_exit_F_fw1$scen <- "F"
-pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1)
-#pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_F_fw1)
+#pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1)
+#pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1)
+pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_C_fw1,pdf_exit_F_fw1)
 
 bin_size_path <- 200
 pdf_exit_A_fw1_path <- pdfxn(exited_particles_A, max(exited_particles_A$path_len), bin_size_path, column = "path_len")
@@ -292,7 +293,8 @@ pdf_exit_D_fw1_spath$scen <- "D"
 pdf_exit_E_fw1_spath$scen <- "E"
 pdf_exit_F_fw1_spath$scen <- "F"
 #pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_D_fw1_spath,pdf_exit_E_fw1_spath)
-pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_B_fw1_spath,pdf_exit_C_fw1_spath,pdf_exit_F_fw1_spath)
+#pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_B_fw1_spath,pdf_exit_C_fw1_spath)
+pdf_exited_all_spath <- rbind(pdf_exit_A_fw1_spath,pdf_exit_C_fw1_spath,pdf_exit_F_fw1_spath)
 
 bin_size_rat <- 0.02
 pdf_exit_A_fw1_arat <- pdfxn(exited_particles_A, 1, bin_size_rat,column = "ratio_age")
@@ -300,13 +302,15 @@ pdf_exit_B_fw1_arat <- pdfxn(exited_particles_B, 1, bin_size_rat,column = "ratio
 pdf_exit_C_fw1_arat <- pdfxn(exited_particles_C, 1, bin_size_rat,column = "ratio_age")
 pdf_exit_D_fw1_arat <- pdfxn(exited_particles_D, 1, bin_size_rat,column = "ratio_age")
 pdf_exit_E_fw1_arat <- pdfxn(exited_particles_E, 1, bin_size_rat,column = "ratio_age")
+pdf_exit_F_fw1_arat <- pdfxn(exited_particles_F, 1, bin_size_rat,column = "ratio_age")
 
 pdf_exit_A_fw1_arat$scen <- "A"
 pdf_exit_B_fw1_arat$scen <- "B"
 pdf_exit_C_fw1_arat$scen <- "C"
 pdf_exit_D_fw1_arat$scen <- "D"
 pdf_exit_E_fw1_arat$scen <- "E"
-pdf_exited_all_arat <- rbind(pdf_exit_A_fw1_arat,pdf_exit_B_fw1_arat,pdf_exit_C_fw1_arat,pdf_exit_D_fw1_arat,pdf_exit_E_fw1_arat)
+pdf_exit_F_fw1_arat$scen <- "F"
+pdf_exited_all_arat <- rbind(pdf_exit_A_fw1_arat,pdf_exit_B_fw1_arat,pdf_exit_C_fw1_arat,pdf_exit_D_fw1_arat,pdf_exit_E_fw1_arat,pdf_exit_F_fw1_arat)
 
 # calculating variance time series
 var_bin <- 3
@@ -329,29 +333,52 @@ var_bin_all <- rbind(var_spath_A,var_spath_D,var_spath_E)
 #var_bin_all <- rbind(var_spath_A,var_spath_B,var_spath_C,var_spath_D,var_spath_E,var_spath_F)
 var_bin_all <- var_bin_all[which(var_bin_all$count > 9),]
 
-var_bin_fig <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line() + geom_point(size =0.5) + 
+var_bin_fig <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line(size = 1) + #geom_point(size =0.5) + 
   scale_x_continuous(name="Saturated age (yr)",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
   ggtitle("Variance of saturated lengths of exited particles") + 
   scale_y_log10(name=bquote('Variance of saturated path lengths ('*m^2*')'), expand=c(0,0), limits = c(1000,1000000000), breaks = c(1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
-  scale_color_manual(values = c("black","darkorange","purple","green","firebrick", "dodgerblue"))  + labs(color = "Scenario") +
+  scale_color_manual(values = c("black","dodgerblue","green3"))  + labs(color = "Scenario") +
   expand_limits(x = 10, y = 0) + theme_bw() + 
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = c(0.85, 0.15),
-        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5))
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black", size = 16)) +
+  theme(axis.title.y = element_text(color="black",face='bold'))
 var_bin_fig
 
+var_bin_poster <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line(size = 1) + #geom_point(size =0.5) + 
+  scale_x_continuous(name="",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
+  ggtitle("") + 
+  scale_y_log10(name="", expand=c(0,0), limits = c(1000,1000000000), breaks = c(1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
+  scale_color_manual(values = c("black","darkorange","purple"))  + labs(color = "Scenario") +
+  expand_limits(x = 10, y = 0) + theme_bw() + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black", size = 16)) +
+  theme(axis.title.y = element_text(color="black",face='bold'))
+var_bin_poster
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen)) +
-  #geom_boxplot(data = exited_particles_A, aes(x = bin_yr,y = path_len_plot,group=bin),fill="coral", color="black") +
-#pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
-  #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
-  #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
+
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen), size = 1.25) +
   scale_x_log10(name="Age (years)",limits = c(3,800), breaks = c(3,25,50,100,200,400,600,800,1000),labels = scales::comma,expand=c(0,0)) +
-  ggtitle("PDF of saturated age of all exited particles - forward tracking") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.07)) + #, sec.axis = sec_axis(~.*3000000, name = "Total particle path length (m)",labels = scales::comma)) + 
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","orange"))  + labs(color = "Scenario") +
+  ggtitle("PDF of saturated ages") + 
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.07)) +
+  scale_color_manual(values = c("black","darkorange","purple"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16))
 pdf_fig1
+
+pdf_fig_poster <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen), size = 1.25) +
+  scale_x_log10(name="",limits = c(3,800), breaks = c(3,25,50,100,200,400,600,800,1000),labels = scales::comma,expand=c(0,0)) +
+  ggtitle("") + 
+  scale_y_continuous(name="", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.03)) +
+  scale_color_manual(values = c("black","dodgerblue","green3"))  + labs(color = "Scenario") +
+  expand_limits(x = 100, y = 0) + theme_bw() + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16))
+pdf_fig_poster
 
 
 pdf_fig2 <- ggplot() + geom_line(data = pdf_exited_all_path, aes(x = path_len,y = Density_pdf, group=scen,col = scen)) +
@@ -361,23 +388,20 @@ pdf_fig2 <- ggplot() + geom_line(data = pdf_exited_all_path, aes(x = path_len,y 
   scale_x_log10(name="Particle Path Length (m)",limits = c(200,80000), breaks = c(200,1000,5000,10000,20000,40000,60000,80000),labels = scales::comma,expand=c(0,0)) +
   ggtitle("PDF of path lengths for all exited particles - forward tracking") + 
   scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.002), limits = c(0,0.03)) + 
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","orange"))  + labs(color = "Scenario") +
+  scale_color_manual(values = c("black", "dodgerblue","sienna"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig2
 
-pdf_fig3 <- ggplot() + geom_line(data = pdf_exited_all_spath, aes(x = spath_len,y = Density_pdf, group=scen,col = scen)) +
-  #geom_boxplot(data = exited_particles_A, aes(x = bin_yr,y = path_len_plot,group=bin),fill="coral", color="black") +
-  #geom_boxplot(data = exited_particles_A, aes(x = bin,y = path_len),fill="coral", color="black") +
-  #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
-  #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
-  #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
-  scale_x_log10(name="Particle Saturated Zone Path Length (m)",limits = c(200,80000), breaks = c(200,1000,5000,10000,20000,40000,60000,80000),labels = scales::comma,expand=c(0,0)) +
-  ggtitle("PDF of saturated path lengths for all exited particles - forward tracking") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,1,0.002), limits = c(0,0.02)) + #, sec.axis = sec_axis(~.*100000, name = "Relative humidity [%]")) + 
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","orange"))  + labs(color = "Scenario") +
+pdf_fig3 <- ggplot() + geom_line(data = pdf_exited_all_spath, aes(x = spath_len,y = Density_pdf, group=scen,col = scen), size = 1) +
+  scale_x_log10(name="Particle Path Length in the Saturated Zone (m)",limits = c(200,80000), breaks = c(200,1000,5000,10000,20000,40000,60000,80000),labels = scales::comma,expand=c(0,0)) +
+  ggtitle("PDF of path lengths in the saturated zone") + 
+  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,1,0.002), limits = c(0,0.03)) + 
+  scale_color_manual(values = c("black", "dodgerblue","green3"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=10),axis.text.y = element_text(color="black"))
 pdf_fig3
 
 pdf_fig4 <- ggplot() + geom_line(data = pdf_exited_all_spath, aes(x = path_len-spath_len,y = Density_pdf, group=scen,col = scen)) +
@@ -394,18 +418,16 @@ pdf_fig4 <- ggplot() + geom_line(data = pdf_exited_all_spath, aes(x = path_len-s
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 pdf_fig4
 
-pdf_fig5 <- ggplot() + geom_line(data = pdf_exited_all_arat, aes(x = ratio_age,y = Density_pdf, group=scen,col = scen)) +
-  #geom_boxplot(data = exited_particles_A, aes(x = bin_yr,y = path_len_plot,group=bin),fill="coral", color="black") +
-  #geom_boxplot(data = exited_particles_A, aes(x = bin,y = path_len),fill="coral", color="black") +
-  #pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = age,y = Density_norm)) +
-  #scale_x_log10(name="Age (years)",limits = c(100,1000), breaks = scales::trans_breaks("log10", function(x) 10^x), 
-  #  labels = scales::trans_format("log10", scales::math_format(10^.x)), expand=c(0,0)) + annotation_logticks(base =10, sides = "b") +
-  scale_x_continuous(name="Ratio of time spent in the saturated zone to total time in domain",limits = c(0,1),expand=c(0,0)) +
-  ggtitle("PDF of ratio of particle time spent in the saturated zone - forward tracking") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.15,0.01), limits = c(0,0.15)) + #, sec.axis = sec_axis(~.*100000, name = "Relative humidity [%]")) + 
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","darkgreen","orange"))  + labs(color = "Scenario") +
+pdf_fig5 <- ggplot() + geom_line(data = pdf_exited_all_arat, aes(x = 1-ratio_age,y = Density_pdf, group=scen,col = scen), size = 1) +
+  scale_x_continuous(name="",limits = c(0,1),expand=c(0,0)) +
+  #Ratio of time spent in the unsaturated zone to total age
+  ggtitle("") + 
+  scale_y_continuous(name="", expand=c(0,0), breaks = seq(0,0.14,0.02), limits = c(0,0.14)) +
+  scale_color_manual(values = c("black","firebrick", "dodgerblue","darkorange","purple","green3"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),title =element_text(size=12, face='bold'),
+        axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black", size=12),legend.text = element_text(color="black",size=16,face = "bold"))
 pdf_fig5
 
 ggplot() + geom_point(data = exited_particles_A, aes(x = age,y = path_len,color=spath_len)) + ggtitle("age vs. path length")

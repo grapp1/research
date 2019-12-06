@@ -121,7 +121,7 @@ cell_avg_E <- left_join(x = cell_avg_E, y = sap_len_rat_E[ , c("X_cell", "Y_cell
 cell_avg_A$scen <- "A"
 cell_avg_D$scen <- "D"
 cell_avg_E$scen <- "E"
-cell_avg_ADE <- rbind(cell_avg_A, cell_avg_D, cell_avg_E)
+cell_avg_all <- rbind(cell_avg_A, cell_avg_B, cell_avg_C, cell_avg_D,cell_avg_E, cell_avg_F)
 cell_avg_ADE$tenm_ratio <- cell_avg_ADE$soil_len_ratio + cell_avg_ADE$sap_len_ratio
 
 layer_colnames <- c(names(exited_particles_A[17:37]))
@@ -193,44 +193,35 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y 
 cell_avg_scatterA
 
 
-cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.6) + 
-  scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
-  ggtitle("Scenario D") + 
-  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), 
-                     limits = c(0,60000),labels = scales::comma) + #, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) + 
+cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y = spath_len/1000,color=dtw),alpha = 0.6) + 
+  scale_x_continuous(name="",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
+  ggtitle("") + 
+  scale_y_continuous(name="", expand=c(0,0), breaks = seq(0,70,10), 
+                     limits = c(0,60),labels = scales::comma) + #, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) + 
   scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
   #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",plot.margin = margin(5,15,5,5)) + 
-  #geom_abline(slope = bl_slope, intercept = 0, col="black") +
-  #geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
-  #                 y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed") + 
-  #geom_segment(aes(x = max(0,(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), xend = max(cell_avg_D$age), 
-  #                 y = max(lmres_D$coefficients[1],bl_slope*(-lmres_D$coefficients[1]/lmres_D$coefficients[2])), yend = (bl_slope*max(cell_avg_D$age)+res_max_D)), col="blue", linetype = "dashed")
-  #geom_segment(aes(x = (-lmres_A$coefficients[1]/lmres_A$coefficients[2]), xend = max(cell_avg_A$age), 
-  #                 y = bl_slope*(-lmres_A$coefficients[1]/lmres_A$coefficients[2]), yend = (bl_slope*max(cell_avg_A$age)+res_max_A)), col="darkred", linetype = "dashed")
-  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="black", linetype = "dashed") + 
-  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="darkorange", linetype = "dashed")
-#cell_avg_scatterD <- cell_avg_scatterD + 
-#  geom_line(data = var_bin_all[which(var_bin_all$scen == "D"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="blue") + 
-#  geom_point(data = var_bin_all[which(var_bin_all$scen == "D"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="blue",size = 0.5)
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+  geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed", size = 1) + 
+  geom_abline(slope = lmres_D$coefficients[2]/1000, intercept = lmres_D$coefficients[1]/1000, col="darkorange", linetype = "dashed", size = 1)
 cell_avg_scatterD
 
-cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = sat_age,y = spath_len,color=dtw),alpha = 0.6) + 
-  scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
-  ggtitle("Scenario E") + 
-  scale_y_continuous(name="Particle saturated path length (m)", expand=c(0,0), breaks = seq(0,70000,10000), limits = c(0,60000),labels = scales::comma) + #, 
-                     #sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) +  
+cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = sat_age,y = spath_len/1000,color=dtw),alpha = 0.6) + 
+  scale_x_continuous(name="",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
+  ggtitle("") + 
+  scale_y_continuous(name="", expand=c(0,0), breaks = seq(0,70,10), 
+                     limits = c(0,60),labels = scales::comma) + #, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) + 
   scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
+  #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
   expand_limits(x = 0, y = 0) + theme_bw() + 
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",plot.margin = margin(5,15,5,5)) + 
-  #geom_abline(slope = bl_slope, intercept = 0, col="black") +
-  geom_abline(slope = lmres_A$coefficients[2], intercept = lmres_A$coefficients[1], col="black", linetype = "dashed") + 
-  geom_abline(slope = lmres_D$coefficients[2], intercept = lmres_D$coefficients[1], col="darkorange", linetype = "dashed") +
-  geom_abline(slope = lmres_E$coefficients[2], intercept = lmres_E$coefficients[1], col="purple", linetype = "dashed")
-#cell_avg_scatterE <- cell_avg_scatterE + 
-#  geom_line(data = var_bin_all[which(var_bin_all$scen == "E"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4") +
-#  geom_point(data = var_bin_all[which(var_bin_all$scen == "E"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4",size = 0.5)
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+  geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed", size = 1) + 
+  geom_abline(slope = lmres_D$coefficients[2]/1000, intercept = lmres_D$coefficients[1]/1000, col="darkorange", linetype = "dashed", size = 1) +
+  geom_abline(slope = lmres_E$coefficients[2]/1000, intercept = lmres_E$coefficients[1]/1000, col="purple", linetype = "dashed", size = 1)
 cell_avg_scatterE
 
 
@@ -264,35 +255,43 @@ col_num <- which(colnames(deeplyr_A)=="deeplyr")
 deeplyr_A$deeplyr_bins <- cut(deeplyr_A[,col_num], c(deeplyr_bins), include.lowest = TRUE)
 summary(deeplyr_A$deeplyr_bins)
 deeplyr_plotE <- ggplot() + geom_tile(data = deeplyr_E, aes(x = X,y = Y, fill = factor(deeplyr_bins)), color="gray") + 
-  scale_fill_manual(values=c("gray50","white","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
-                    labels=c("NA","Outside of Basin","600-800","400-600","300-400","200-300","150-200","100-150","60-100","20-60","10-20","2-10","0-2")) +
+  #scale_fill_manual(values=c("gray50","white","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
+  scale_fill_manual(values=c("gray50","white",brewer.pal(11, "Spectral")), guide = guide_legend(reverse = TRUE, ncol = 4),
+                      labels=c("NA","Outside of Basin","600 - 800","400 - 600","300 - 400","200 - 300","150 - 200","100 - 150","60 - 100","20 - 60","10 - 20","2 - 10","0 - 2")) +
   #scale_fill_manual(values=c("gray50","white","black","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
   #                  labels=c("NA","Outside of Basin","> 800","600-800","400-600","300-400","200-300","150-200","100-150","60-100","20-60","10-20","2-10","0-2")) +
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  labs(fill = "Maximum flowpath\ndepth (m)") + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="gray", size=0.1), legend.position="none") + 
-  ggtitle("Scenario E - maximum depth of particle below ground surface")
+  labs(fill = "Maximum flowpath depth (m)") + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=8),axis.text.y = element_text(color="black",size=8),legend.text = element_text(color="black",size=12)) + 
+  ggtitle("")
 deeplyr_plotE
 
-grid.arrange(deeplyr_plotA, deeplyr_plotD,deeplyr_plotE, nrow = 1,top = "Maps of maximum depth of particle below ground surface for Scenarios A, D, and E - forward tracking")
+#grid.arrange(deeplyr_plotA, deeplyr_plotD,deeplyr_plotE, nrow = 1,top = "Maps of maximum depth of particle below ground surface for Scenarios A, D, and E")
+grid.arrange(deeplyr_plotD,deeplyr_plotE, nrow = 1)
+
 
 ## box plot preparation
-dtw_bins <- matrix(c(-1,20,100,200,300,450))
-col_num <- which(colnames(cell_avg_ADE)=="dtw")
-cell_avg_ADE$bin <- cut(cell_avg_ADE[,col_num], c(dtw_bins), include.lowest = TRUE)
+dtw_bins <- matrix(c(-1,50,200,450))
+col_num <- which(colnames(cell_avg_all)=="dtw")
+cell_avg_all$bin <- cut(cell_avg_all[,col_num], c(dtw_bins), include.lowest = TRUE)
 #col_num2 <- which(colnames(cell_sap_AC)=="dtw")
 #cell_sap_AC$bin <- cut(cell_sap_AC[,col_num2], c(dtw_bins), include.lowest = TRUE)
+cell_avg_all$usat_age_ratio <- cell_avg_all$usat_age/cell_avg_all$age
+cell_avg_all$usat_len_ratio <- cell_avg_all$upath_len/cell_avg_all$path_len
 
 
-stat_plot1 <- ggplot() + geom_boxplot(data = cell_avg_ADE, aes(x = bin,y = tenm_ratio,fill=scen)) + 
-  scale_x_discrete(name="Depth to water range (m)", labels = c("< 20","20 - 100","100 - 200","200 - 300","300 - 450")) +
-  ggtitle("Ratio of length spent in top 10 meters of the domain for Scenarios A, D, and E") + 
+stat_plot1 <- ggplot() + geom_boxplot(data = cell_avg_all, aes(x = bin,y = usat_len_ratio,fill=scen)) + 
+  scale_x_discrete(name="Depth to water range (m)", labels = c("< 50","50 - 200","> 200","200 - 300","300 - 450")) +
+  ggtitle("Ratio of time spent in unsaturated zone for all scenarios") + 
   #scale_y_log10(name="Ratio of length spent in top two meters of the domain", expand=c(0,0), breaks = c(0.0001,0.001,0.01,0.1,1.0), limits = c(0.0001,1)) + 
-  scale_y_continuous(name="Ratio of length spent in top 10 meters of the domain", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
-  scale_fill_manual(values = c("darkgreen","firebrick", "dodgerblue"))  + labs(fill = "Scenario") +
+  scale_y_continuous(name="Ratio of time spent in unsaturated zone to total age", expand=c(0,0), breaks = seq(0,1,0.1), limits = c(0,1)) + 
+  scale_fill_manual(values = c("gray50","firebrick", "dodgerblue","darkorange","purple","sienna"), guide = guide_legend(ncol = 2))  + labs(fill = "Scenario") +
   expand_limits(x = 0, y = 0) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = c(0.90, 0.90),
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5))
 stat_plot1
 
 stat_plot2 <- ggplot() + geom_boxplot(data = cell_sap_AC, aes(x = bin,y = sap_len_ratio,fill=scen)) + 
@@ -315,3 +314,7 @@ ggplot() + geom_point(data = cell_avg_D[which(cell_avg_D$age > 100),], aes(x = d
 summary(cell_avg_D_shallow$upath_ratio)
 
 
+
+scale_y_continuous(name="Particle saturated path length (km)", expand=c(0,0), breaks = seq(0,70,10), 
+                   limits = c(0,60),labels = scales::comma) + #, sec.axis = sec_axis(~.*1, name=bquote('Variance of saturated path lengths ('*m^2*')'),labels = c("1e+03","1e+04","1e+05","1e+06","1e+07","1e+08","1e+09"))) + 
+  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,200),labels = c("< 2","100","500"), colors=brewer.pal(10, "Spectral")[10:1]) + 

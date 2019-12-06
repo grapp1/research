@@ -10,8 +10,8 @@ library(RColorBrewer) # adding radical color ramps
 source("~/research/scripts/PFB-ReadFcn.R")
 
 # setting file names and variables
-press_file <- "/Users/grapp/Desktop/working/A_v5_outputs/A_v5.out.press.00991.pfb"
-satur_file <- "/Users/grapp/Desktop/working/A_v5_outputs/A_v5.out.satur.00991.pfb"
+press_file <- "/Users/grapp/Desktop/working/C_v4_outputs/C_v4.out.press.01036.pfb"
+satur_file <- "/Users/grapp/Desktop/working/C_v4_outputs/C_v4.out.satur.01036.pfb"
 nx <- 91
 ny <- 70
 nz <- 20
@@ -84,14 +84,16 @@ wt_elev.df3$dtw[wt_elev.df3$flowpath == 0] <- 9999
 
 
 ### saving water table file
-#wt_D_v4_993.df <- wt_elev.df3
-#save(wt_D_v4_993.df, file="~/research/Scenario_D/wt_D_v4_993.df.Rda")
+wt_C_v4_1036.df <- wt_elev.df3
+save(wt_C_v4_1036.df, file="~/research/Scenario_C/wt_C_v4_1036.df.Rda")
 #load(file="~/research/Scenario_A/A_v5/wt_A_v5_991.df.Rda")
 
 
 #########################################################################################################################################################
 # read in wt_elev.df2 file that was already generated above
 #wt_elev.df2 <- read.csv(file="~/research/A_v1/A_v1_wt.csv", header=TRUE, sep="\t")
+
+#wt_elev.df3 <- wt_C_v4_1036.df
 
 wt_elev.df3$dtw_cuts <- cut(wt_elev.df3$dtw, c(-1,0,2,5,10,20,50,100,200,300,400,1000,Inf), include.lowest = TRUE)
 levels(wt_elev.df3$dtw_cuts)
@@ -105,8 +107,39 @@ wt_dtw_binplot <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fact
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
   ggtitle(paste("Depth to Water for Scenario D_v4")) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none")
 wt_dtw_binplot
+
+
+plot2_colors <- brewer.pal(11, "Spectral")
+plot2_colors <- plot2_colors[11:1]
+wt_dtw_binplot2 <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = factor(dtw_cuts)), colour = "black") + labs(fill = "Depth to Water (m)") +
+  #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","wheat","gray50"),
+  #                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100","Outside of Main Basin")) +
+  #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","gray50"),
+  scale_fill_manual(values=c("midnightblue",plot2_colors[2:11],"gray50"),
+                    labels=c("< 0","0 - 2","2 - 5","5 - 10","10 - 20","20 - 50","50 - 100","100 - 200","200 - 300","300 - 400","> 400","Outside of Main Basin")) +   #,">400"
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  ggtitle(paste("")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12),axis.text.x = element_text(color="black",size=10),axis.text.y = element_text(color="black",size=10),legend.text = element_text(color="black",size=12,face = "bold"))
+wt_dtw_binplot2
+
+wt_dtw_binplot2 <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw), colour = "black") + labs(fill = "Depth to Water (m)") +
+  #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","firebrick1","darkred","wheat","gray50"),
+  #                    labels=c("< 0","0-2","2-5","5-10","10-20","20-50","50-100","> 100","Outside of Main Basin")) +
+  #  scale_fill_manual(values=c("navy","cyan4", "chartreuse","yellow","orange","orangered3","firebrick1","darkred","purple","purple4","gray50"),
+  #scale_fill_manual(values=c("midnightblue",plot2_colors[2:11],"gray50"),
+  #                  labels=c("< 0","0 - 2","2 - 5","5 - 10","10 - 20","20 - 50","50 - 100","100 - 200","200 - 300","300 - 400","> 400","Outside of Main Basin")) +   #,">400"
+  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=plot2_colors) +
+  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  ggtitle(paste("Depth to Water for Scenario C")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="top",
+        legend.text = element_text(color="black",size=12))
+wt_dtw_binplot2
 
 
 wt_elev.df3$wt_elev[wt_elev.df3$flowpath == 0] <- 9999
@@ -139,13 +172,15 @@ levels(wt_DE_diff.df$DE_diff_cuts)
 DEdiff_bands <- brewer.pal(11, "BrBG")
 #DEdiff_bands[5] <- "white"
 
-wt_DEdiff_binplot <- ggplot(wt_DE_diff.df, aes(X.x, Y.x)) + geom_tile(aes(fill = factor(DE_diff_cuts)), colour = "black") + labs(fill = "Scenario E water table minus\nScenario D water table (m)") +
+col3 <- guide_legend(ncol = 3)
+wt_DEdiff_binplot <- ggplot(wt_DE_diff.df, aes(X.x, Y.x)) + geom_tile(aes(fill = factor(DE_diff_cuts)), colour = "black") + labs(fill = "Difference in water tables (m)") +
   scale_fill_manual(values=c(DEdiff_bands[2:11],"gray50"),
-                    labels=c("-40 to -30","-30 to -20","-20 to -10","-10 to 0","0 to +10","+10 to +20","+20 to +30","+30 to +40","+40 to +50","> +50","Outside of Main Basin")) +   #,">400"
+                    labels=c("-40 to -30","-30 to -20","-20 to -10","-10 to 0","0 to +10","+10 to +20","+20 to +30","+30 to +40","+40 to +50","> +50","Outside of Main Basin"),guide = col3) +   #,">400"
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
   ggtitle(paste("Water table difference between Scenarios D and E")) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"))
 wt_DEdiff_binplot
 
 

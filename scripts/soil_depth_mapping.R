@@ -202,7 +202,8 @@ soil_fig <- ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = 
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
   ggtitle("Soil depth map for Scenario F") + labs(fill = "Soil depth (m)") + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1))
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1),legend.position = c(0.9, 0.88),
+        legend.background = element_rect(linetype="solid", colour ="black"))
 soil_fig
 
 ggsave("~/research/domain/soil_depth_ScenF_20191016_v4.tiff",plot = soil_fig, width = (1150/300), height = (802/300), units = "in",dpi = 300)
