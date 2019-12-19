@@ -122,7 +122,7 @@ wt_dtw_binplot2 <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = fac
   scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
   scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
   ggtitle(paste("")) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "right",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
         title =element_text(size=12),axis.text.x = element_text(color="black",size=10),axis.text.y = element_text(color="black",size=10),legend.text = element_text(color="black",size=12,face = "bold"))
 wt_dtw_binplot2
