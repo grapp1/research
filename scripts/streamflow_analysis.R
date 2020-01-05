@@ -20,51 +20,29 @@ source("~/research/scripts/var_bin_fxn.R")
 source("~/research/scripts/particle_flowpath_fxn.R")
 
 precip <- read.table(file = "/Users/grapp/Desktop/working/CLM_data/Forcing1D_gr.txt", header = FALSE)
-precip <- data.frame(precip[,c(3)])
-precip$week <- 0
-precip$week <- rep(c(1:168), each=168)
-plot(precip$V3)
+precip <- data.frame(precip[1:8760,c(3)])
+colnames(precip) <- c("precip")
+precip$hour <- row(precip)
+plot(precip$precip)
 
-wbal_A <- read.table(file = "/Users/grapp/Desktop/working/A_v5_outputs/wb_A_v5.txt", header = TRUE)
-wbal_B <- read.table(file = "/Users/grapp/Desktop/working/B_v4_outputs/wb_B_v4.txt", header = TRUE)
-wbal_A2 <- read.table(file = "/Users/grapp/Downloads/wb_A_v6q.txt", header = TRUE)
-wbal_B2 <- read.table(file = "/Users/grapp/Downloads/wb_B_v5q.txt", header = TRUE)
-wbal_A3 <- read.table(file = "/Users/grapp/Downloads/wb_A_v6q2.txt", header = TRUE)
-wbal_B3 <- read.table(file = "/Users/grapp/Downloads/wb_B_v5q2.txt", header = TRUE)
+
+wbal_A <- read.table(file = "/Users/grapp/Downloads/wb_A_v6q2.txt", header = TRUE)
+
 
 wbal_C <- read.table(file = "/Users/grapp/Desktop/working/C_v4_outputs/wb_C_v4.txt", header = TRUE)
 wbal_D <- read.table(file = "/Users/grapp/Desktop/working/D_v4_outputs/wb_D_v4.txt", header = TRUE)
 wbal_E <- read.table(file = "/Users/grapp/Desktop/working/E_v1_outputs/wb_E_v1_pt2.txt", header = TRUE)
 wbal_F <- read.table(file = "/Users/grapp/Desktop/working/F_v1_working/wb_F_v1.txt", header = TRUE)
-wbal_A$scen <- "A_week"
-wbal_B$scen <- "B_week"
-wbal_A2$scen <- "A_daily"
-wbal_B2$scen <- "B_daily"
-wbal_A3$scen <- "A_hour"
-wbal_B3$scen <- "B_hour"
+wbal_A$scen <- "A"
 
-wbal_A3$day <- rep(1:365, each = 24)
-wbal_A3 <- aggregate(wbal_A3$Total_surface_runoff, by = list(Category = wbal_A3$day), FUN = sum)
-colnames(wbal_A3) <- c("day", "Total_surface_runoff")
-wbal_A3$Total_surface_runoff <- wbal_A3$Total_surface_runoff/24
-
-wbal_B3$day <- rep(1:365, each = 24)
-wbal_B3 <- aggregate(wbal_B3$Total_surface_runoff, by = wbal_B3$day, FUN = sum)
-
-
-wbal_A <- prob_exc(wbal_A[522:1042,])
-wbal_B <- prob_exc(wbal_B[522:1042,])
-wbal_A2 <- prob_exc(wbal_A2)
-wbal_B2 <- prob_exc(wbal_B2)
-wbal_A3 <- prob_exc(wbal_A3)
-wbal_B3 <- prob_exc(wbal_B3)
+wbal_A$day <- rep(1:365, each = 24)
+wbal_A <- aggregate(wbal_A$Total_surface_runoff, by = list(Category = wbal_A$day), FUN = sum)
+colnames(wbal_A) <- c("day", "Total_surface_runoff")
+wbal_A$Total_surface_runoff <- wbal_A$Total_surface_runoff/24
 
 
 
-wbal_C <- prob_exc(wbal_C)
-wbal_D <- prob_exc(wbal_D)
-wbal_E <- prob_exc(wbal_E)
-wbal_F <- prob_exc(wbal_F[522:1042,])
+wbal_A <- prob_exc(wbal_A)
 
 outflow_all <- rbind(wbal_A,wbal_A2)
 
