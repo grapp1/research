@@ -31,7 +31,7 @@ wbal_B <- read.table(file = "~/research/streamflow/wb_B_v5q2.txt", header = TRUE
 wbal_C <- read.table(file = "~/research/streamflow/wb_C_v5q.txt", header = TRUE)
 wbal_D <- read.table(file = "~/research/streamflow/wb_D_v5q.txt", header = TRUE)
 wbal_E <- read.table(file = "~/research/streamflow/wb_E_v2q.txt", header = TRUE)
-#wbal_F <- read.table(file = "~/research/streamflow/wb_F_v2q.txt", header = TRUE)
+wbal_F <- read.table(file = "~/research/streamflow/wb_F_v2q.txt", header = TRUE)
 wbal_A$day <- rep(1:365, each = 24)
 wbal_A <- aggregate(wbal_A$Total_surface_runoff, by = list(Category = wbal_A$day), FUN = sum)
 colnames(wbal_A) <- c("day", "Total_surface_runoff")
@@ -62,16 +62,23 @@ colnames(wbal_E) <- c("day", "Total_surface_runoff")
 wbal_E$Total_surface_runoff <- wbal_E$Total_surface_runoff/24
 wbal_E <- prob_exc(wbal_E)
 
+wbal_F$day <- rep(1:365, each = 24)
+wbal_F <- aggregate(wbal_F$Total_surface_runoff, by = list(Category = wbal_F$day), FUN = sum)
+colnames(wbal_F) <- c("day", "Total_surface_runoff")
+wbal_F$Total_surface_runoff <- wbal_F$Total_surface_runoff/24
+wbal_F <- prob_exc(wbal_F)
+
 wbal_A$scen <- "A"
 wbal_B$scen <- "B"
 wbal_C$scen <- "C"
-wbal_D$scen <- "D"
-wbal_E$scen <- "E"
+wbal_D$scen <- "E"
+wbal_E$scen <- "F"
+wbal_F$scen <- "D"
 
 
 
 
-outflow_all <- rbind(wbal_A,wbal_B,wbal_C,wbal_D,wbal_E)
+outflow_all <- rbind(wbal_A,wbal_B,wbal_C,wbal_D,wbal_E,wbal_F)
 
 #outflow_all <- outflow_all[,c(1,4,6:8)]
 colnames(outflow_all) <- c("day","runoff_m3","rank","prob_exc","scen")
