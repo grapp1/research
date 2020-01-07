@@ -106,7 +106,7 @@ outflow_precip <- full_join(outflow_all, precip_day, by = "day")
 
 
 #outflow_all <- outflow_all[,c(1,4,6:8)]
-colnames(outflow_precip) <- c("day","runoff_m3","rank","prob_exc","cu_ro","scen","precip","cu_prec")
+colnames(outflow_precip) <- c("day","runoff_m3","rank","prob_exc","cu_ro","scen","precip","cu_prec","date")
 
 outflow_precip$runoff_mm <- outflow_precip$runoff_m3*(1000/(90*90*3948))
 outflow_precip$cu_ro_mm <- outflow_precip$cu_ro*(1000/(90*90*3948))
@@ -115,9 +115,9 @@ outflow_precip$cu_ro_mm <- outflow_precip$cu_ro*(1000/(90*90*3948))
 
 
 ## flow-duration curves
-ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_m3, group=scen,col = scen), size = 1) +
+ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_mm, group=scen,col = scen), size = 1) +
   scale_color_manual(values = c("black","firebrick", "dodgerblue","darkorange","purple","green3"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
-  scale_y_log10(name="Discharge (m3/hr)",limits = c(400,10000), expand=c(0,0), breaks = c(500,1000,1300,2000,5000,10000),labels = scales::comma) +
+  scale_y_log10(name="Discharge (mm)",limits = c(.3,8), expand=c(0,0), breaks = c(0.3,0.5,1,2,4,8)) +
   #scale_x_reverse(trans = "log10", name="Probability of exceedance",limits = c(1,0.001), expand=c(0,0), breaks = c(seq(0.001,0.01,0.1,1))) +
   scale_x_log10(name="Probability of exceedance",limits = c(0.002,1), expand=c(0,0), breaks = c(0.001,0.002,0.01,0.05,0.1,1.0)) +
   ggtitle(paste("Flow-duration curves")) + theme_bw() +
@@ -125,6 +125,8 @@ ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_m3, grou
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
         legend.text = element_text(color="black",size=12))
 
+
+## cumulative discharge and precipitation plot
 ggplot() + geom_line(data = outflow_precip, aes(x = day,y = cu_ro_mm, group=scen,col = scen), size = 1) +
   scale_color_manual(values = c("slategrey","firebrick", "dodgerblue","darkorange","purple","green3","black"), guide = guide_legend(ncol = 3))  + labs(color = "") +
   geom_line(data = precip_day, aes(x = day, y = cu_prec,col = "Precipitation"), size = 1, linetype = "twodash") +
