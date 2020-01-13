@@ -34,12 +34,12 @@ for(i in 1:nrow(precip_day)){
 precip_day$date <- seq(as.Date("2008/10/01"), by = "day", length.out = 365)
 
 
-wbal_A <- read.table(file = "~/research/streamflow/wb_A_v6q2.txt", header = TRUE)
-wbal_B <- read.table(file = "~/research/streamflow/wb_B_v5q2.txt", header = TRUE)
-wbal_C <- read.table(file = "~/research/streamflow/wb_C_v5q.txt", header = TRUE)
-wbal_D <- read.table(file = "~/research/streamflow/wb_D_v5q.txt", header = TRUE)
-wbal_E <- read.table(file = "~/research/streamflow/wb_E_v2q.txt", header = TRUE)
-wbal_F <- read.table(file = "~/research/streamflow/wb_F_v2q.txt", header = TRUE)
+wbal_A <- read.table(file = "~/research/outputs/streamflow/wb_A_v6q2.txt", header = TRUE)
+wbal_B <- read.table(file = "~/research/outputs/streamflow/wb_B_v5q2.txt", header = TRUE)
+wbal_C <- read.table(file = "~/research/outputs/streamflow/wb_C_v5q.txt", header = TRUE)
+wbal_D <- read.table(file = "~/research/outputs/streamflow/wb_D_v5q.txt", header = TRUE)
+wbal_E <- read.table(file = "~/research/outputs/streamflow/wb_E_v2q.txt", header = TRUE)
+wbal_F <- read.table(file = "~/research/outputs/streamflow/wb_F_v2q.txt", header = TRUE)
 wbal_A$day <- rep(1:365, each = 24)
 wbal_A <- aggregate(wbal_A$Total_surface_runoff, by = list(Category = wbal_A$day), FUN = sum)
 colnames(wbal_A) <- c("day", "Total_surface_runoff")
@@ -117,6 +117,7 @@ outflow_precip$cu_ro_mm <- outflow_precip$cu_ro*(1000/(90*90*3948))
 ## flow-duration curves
 ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_mm, group=scen,col = scen), size = 1) +
   scale_color_manual(values = c("black","firebrick", "dodgerblue","darkorange","purple","green3"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
+  #scale_color_manual(values = c("black", "darkorange","purple"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
   scale_y_log10(name="Discharge (mm)",limits = c(.3,8), expand=c(0,0), breaks = c(0.3,0.5,1,2,4,8)) +
   #scale_x_reverse(trans = "log10", name="Probability of exceedance",limits = c(1,0.001), expand=c(0,0), breaks = c(seq(0.001,0.01,0.1,1))) +
   scale_x_log10(name="Probability of exceedance",limits = c(0.002,1), expand=c(0,0), breaks = c(0.001,0.002,0.01,0.05,0.1,1.0)) +
