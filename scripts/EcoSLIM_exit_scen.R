@@ -608,3 +608,4 @@ soil_len_plot <- ggplot() + geom_tile(data = soil_len_avg_C, aes(x = X,y = Y, fi
 soil_len_plot
 
 
+
