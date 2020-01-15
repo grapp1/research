@@ -42,6 +42,9 @@ precip_szn$bin_pct[3] <- (precip_day$cu_prec[273]-precip_day$cu_prec[181])/preci
 precip_szn$bin_pct[4] <- (precip_day$cu_prec[365]-precip_day$cu_prec[273])/precip_day$cu_prec[365]
 precip_szn$scen <- "precip"
 
+outflow_szn <- outflow_precip
+outflow_szn$szn_cuts <- cut(outflow_szn$day, c(0,90,181,273,Inf), include.lowest = TRUE)
+outflow_szn_agg <- aggregate(x = outflow_szn$Total_surface_runoff, by = list(outflow_szn$szn_cuts, outflow_szn$scen), FUN = sum)
 
 
 time_exit_all <- rbind(time_exit_A,time_exit_B,time_exit_C,time_exit_D,time_exit_E,time_exit_F)
@@ -53,9 +56,6 @@ ggplot() + geom_bar(data = time_exit_all, aes(x = bin, y= bin_pct, fill = scen),
   geom_point(data = precip_szn, aes(x = bin, y= bin_pct), size = 10, shape = 18) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="right")
 
-print(precip_day$cu_prec[90]/precip_day$cu_prec[365])
-print((precip_day$cu_prec[181]-precip_day$cu_prec[90])/precip_day$cu_prec[365])
-print((precip_day$cu_prec[273]-precip_day$cu_prec[181])/precip_day$cu_prec[365])
-print((precip_day$cu_prec[365]-precip_day$cu_prec[273])/precip_day$cu_prec[365])
+list(outflow_precip$scen,outflow_precip$rank)
 
 
