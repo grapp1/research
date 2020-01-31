@@ -113,8 +113,13 @@ outflow_precip$cu_ro_mm <- outflow_precip$cu_ro*(1000/(90*90*3948))
 
 #lm_qBC <- lm(wbal_C$Total_surface_runoff ~ wbal_C$Total_surface_runoff)
 
+tapply(outflow_precip$runoff_m3, outflow_precip$scen, sd)
 
-## flow-duration curves
+summary(outflow_precip$runoff_m3[outflow_precip$scen == "A"])
+sd(outflow_precip$runoff_m3[outflow_precip$scen == "A"])
+
+
+## flow-duration curves - log-log
 ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_mm, group=scen,col = scen), size = 1) +
   scale_color_manual(values = c("black","firebrick", "dodgerblue","darkorange","purple","green3"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
   #scale_color_manual(values = c("black", "darkorange","purple"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
@@ -125,6 +130,19 @@ ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_mm, grou
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position=c(0.8,0.8),
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
         legend.text = element_text(color="black",size=12))
+
+## flow-duration curves - log(y), linear(x)
+ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_mm, group=scen,col = scen), size = 1) +
+  scale_color_manual(values = c("black","firebrick", "dodgerblue","darkorange","purple","green3"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
+  #scale_color_manual(values = c("black", "darkorange","purple"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
+  scale_y_log10(name="Discharge (mm)",limits = c(.3,8), expand=c(0,0), breaks = c(0.3,0.5,1,2,4,8)) +
+  #scale_x_reverse(trans = "log10", name="Probability of exceedance",limits = c(1,0.001), expand=c(0,0), breaks = c(seq(0.001,0.01,0.1,1))) +
+  scale_x_continuous(name="Probability of exceedance",limits = c(0,1), expand=c(0,0), breaks = c(seq(0,1,0.1))) +
+  ggtitle(paste("Flow-duration curves")) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position=c(0.8,0.8),
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        legend.text = element_text(color="black",size=12))
+
 
 
 ## cumulative discharge and precipitation plot
@@ -164,7 +182,12 @@ ggplot() + geom_boxplot(data = outflow_all, aes(x = scen,y = runoff_m3,fill=scen
   scale_y_log10(name="Weekly runoff (m3)", expand=c(0,0), breaks = c(500,1000,5000,25000), limits = c(400,26000),labels = scales::comma)
 
 
-
+sd(exited_particles_A$sat_age)
+sd(exited_particles_B$sat_age)
+sd(exited_particles_C$sat_age)
+sd(exited_particles_D$sat_age)
+sd(exited_particles_E$sat_age)
+sd(exited_particles_F$sat_age)
 
 
 
