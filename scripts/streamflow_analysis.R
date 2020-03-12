@@ -102,6 +102,8 @@ wbal_E$scen <- "F"
 wbal_F$scen <- "D"
 
 outflow_all <- rbind(wbal_A,wbal_B,wbal_C,wbal_D,wbal_E,wbal_F)
+outflow_all <- rbind(wbal_A,wbal_B,wbal_C,wbal_F)
+outflow_all <- rbind(wbal_A,wbal_D,wbal_E)
 outflow_precip <- full_join(outflow_all, precip_day, by = "day")
 
 
@@ -109,6 +111,7 @@ outflow_precip <- full_join(outflow_all, precip_day, by = "day")
 colnames(outflow_precip) <- c("day","runoff_m3","rank","prob_exc","cu_ro","scen","precip","cu_prec","date")
 
 outflow_precip$runoff_mm <- outflow_precip$runoff_m3*(1000/(90*90*3948))
+outflow_precip$runoff_m3h <- outflow_precip$runoff_m3/24
 outflow_precip$cu_ro_mm <- outflow_precip$cu_ro*(1000/(90*90*3948))
 
 #lm_qBC <- lm(wbal_C$Total_surface_runoff ~ wbal_C$Total_surface_runoff)
@@ -120,16 +123,30 @@ sd(outflow_precip$runoff_m3[outflow_precip$scen == "A"])
 
 
 ## flow-duration curves - log-log
-ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_mm, group=scen,col = scen), size = 1) +
-  scale_color_manual(values = c("black","firebrick", "dodgerblue","darkorange","purple","green3"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
-  #scale_color_manual(values = c("black", "darkorange","purple"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
-  scale_y_log10(name="Discharge (mm)",limits = c(.3,8), expand=c(0,0), breaks = c(0.3,0.5,1,2,4,8)) +
-  #scale_x_reverse(trans = "log10", name="Probability of exceedance",limits = c(1,0.001), expand=c(0,0), breaks = c(seq(0.001,0.01,0.1,1))) +
-  scale_x_log10(name="Probability of exceedance",limits = c(0.002,1), expand=c(0,0), breaks = c(0.001,0.002,0.01,0.05,0.1,1.0)) +
-  ggtitle(paste("Flow-duration curves")) + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position=c(0.8,0.8),
+flow_pub1 <- ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_m3h, group=scen,col = scen), size = 1) +
+  scale_color_manual(values = c("black","firebrick", "dodgerblue","green3","darkorange","purple"), guide = guide_legend(ncol = 2))  + labs(color = "Scenario") +
+  scale_y_log10(name="",limits = c(400,10000), expand=c(0,0), breaks = c(400,1000,2000,5000,10000),labels = scales::comma) +
+  scale_x_log10(name="",limits = c(0.002,1), expand=c(0,0), breaks = c(0.002,0.01,0.05,0.1,0.5,1.0)) +
+  theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),
         legend.text = element_text(color="black",size=12))
+flow_pub1
+
+flow_pub2 <- ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_m3h, group=scen,col = scen), size = 1) +
+  scale_color_manual(values = c("black","darkorange","purple"), guide = guide_legend(ncol = 3))  + labs(color = "Scenario") +
+  scale_y_log10(name="",limits = c(400,10000), expand=c(0,0), breaks = c(400,1000,2000,5000,10000),labels = scales::comma) +
+  scale_x_log10(name="",limits = c(0.002,1), expand=c(0,0), breaks = c(0.002,0.01,0.05,0.1,0.5,1.0)) +
+  theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),
+        legend.text = element_text(color="black",size=12))
+flow_pub2
+
+flow_pub3 <- grid.arrange(flow_pub1,flow_pub2, nrow = 1)
+ggsave(filename = "/Users/grapp/research/outputs/final_pub/flow_dur_plot2.eps", plot = flow_pub1)
 
 ## flow-duration curves - log(y), linear(x)
 ggplot() + geom_line(data = outflow_precip, aes(x = prob_exc,y = runoff_mm, group=scen,col = scen), size = 1) +

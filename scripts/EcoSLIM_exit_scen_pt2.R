@@ -173,7 +173,7 @@ cell_avg_scatterA <- ggplot() + geom_point(data = cell_avg_A, aes(x = sat_age,y 
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),legend.text = element_text(color="black",size=12,face = "bold")) + 
   geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed",size = 1)
 cell_avg_scatterA
 
@@ -190,14 +190,14 @@ cell_avg_scatterB <- ggplot() + geom_point(data = cell_avg_B, aes(x = sat_age,y 
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),legend.text = element_text(color="black",size=12,face = "bold")) + 
 
   geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed",size = 1) + 
   geom_abline(slope = lmres_B$coefficients[2]/1000, intercept = lmres_B$coefficients[1]/1000, col="firebrick", linetype = "dashed",size = 1)
 
 cell_avg_scatterB
 
-cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_F, aes(x = sat_age,y = spath_len/1000,color=dtw),alpha = 0.6) + 
+cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_C, aes(x = sat_age,y = spath_len/1000,color=dtw),alpha = 0.6) + 
   #scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   #ggtitle("Scenario A") + 
   #scale_y_continuous(name="Particle saturated path length (km)", expand=c(0,0), breaks = seq(0,70,10),
@@ -210,35 +210,41 @@ cell_avg_scatterC <- ggplot() + geom_point(data = cell_avg_F, aes(x = sat_age,y 
   expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),legend.text = element_text(color="black",size=12,face = "bold")) + 
   #geom_abline(slope = bl_slope, intercept = 0, col="black") + 
   geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed",size = 1) + 
-  geom_abline(slope = lmres_F$coefficients[2]/1000, intercept = lmres_F$coefficients[1]/1000, col="green3", linetype = "dashed",size = 1) +
+  geom_abline(slope = lmres_B$coefficients[2]/1000, intercept = lmres_B$coefficients[1]/1000, col="firebrick", linetype = "dashed",size = 1) +
   geom_abline(slope = lmres_C$coefficients[2]/1000, intercept = lmres_C$coefficients[1]/1000, col="dodgerblue", linetype = "dashed",size = 1)
 
 #cell_avg_scatterC <- cell_avg_scatterC + geom_line(data = var_bin_all[which(var_bin_all$scen == "C"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4") + 
 #  geom_point(data = var_bin_all[which(var_bin_all$scen == "C"),], aes(x = sat_age,y = vplot_div*log(variance/1000)),color="chartreuse4",size =0.5)
 cell_avg_scatterC
 
-cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = sat_age,y = spath_len/1000,color=dtw),alpha = 0.5) + 
-  #scale_x_continuous(name="Particle saturated age (yr)",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
-  #ggtitle("Scenario A") + 
-  #scale_y_continuous(name="Particle saturated path length (km)", expand=c(0,0), breaks = seq(0,70,10),
+cell_avg_scatterF <- ggplot() + geom_point(data = cell_avg_F, aes(x = sat_age,y = spath_len/1000,color=dtw),alpha = 0.6) + 
   scale_x_continuous(name="",limits = c(0,800), expand=c(0,0), breaks = c(0,100,200,300,400,500,600,700,800)) +
   ggtitle("") + 
   scale_y_continuous(name="", expand=c(0,0), breaks = seq(0,70,10), 
-                     limits = c(0,60),labels = scales::comma) +
-  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,100), colors=rainbow(10)) + 
-  #scale_colour_gradient(name="Ratio of length\nspent in top 2m",limits = c(0,1),breaks = seq(0,1,0.2), low = "red", high = "blue") +
+                     limits = c(0,60),labels = scales::comma) + 
+  scale_colour_gradientn(name="Depth to water\nat starting cell (m)",limits = c(-1,450),breaks = seq(0,450,200), colors=rainbow(10)) + 
+
+  expand_limits(x = 0, y = 0) + theme_bw() +
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),legend.text = element_text(color="black",size=12,face = "bold")) + 
+
   geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed",size = 1) + 
+  geom_abline(slope = lmres_B$coefficients[2]/1000, intercept = lmres_B$coefficients[1]/1000, col="firebrick", linetype = "dashed",size = 1) +
   geom_abline(slope = lmres_C$coefficients[2]/1000, intercept = lmres_C$coefficients[1]/1000, col="dodgerblue", linetype = "dashed",size = 1) +
   geom_abline(slope = lmres_F$coefficients[2]/1000, intercept = lmres_F$coefficients[1]/1000, col="green3", linetype = "dashed",size = 1)
 cell_avg_scatterF
 
 grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC,var_bin_fig, nrow = 2,top = "Scatter plots of cell-averaged saturated particle path lengths and ages for Scenarios A, B, and C")
+
+
+
+scatter_pub <- grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC,cell_avg_scatterF, cell_avg_scatterD,cell_avg_scatterE, nrow = 2)
+ggsave(filename = "/Users/grapp/research/outputs/final_pub/scatter_pub2.pdf", plot = scatter_pub)
+
 
 # age vs. dtw
 ggplot() + geom_point(data = cell_avg_A, aes(x = age,y = dtw,color=path_len),alpha = 1)

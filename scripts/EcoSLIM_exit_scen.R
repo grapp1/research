@@ -255,12 +255,12 @@ pdf_exit_F_fw1 <- pdfxn(exited_particles_F, max(exited_particles_F$age), bin_siz
 pdf_exit_A_fw1$scen <- "A"
 pdf_exit_B_fw1$scen <- "B"
 pdf_exit_C_fw1$scen <- "C"
-pdf_exit_D_fw1$scen <- "D"
-pdf_exit_E_fw1$scen <- "E"
-pdf_exit_F_fw1$scen <- "F"
+pdf_exit_D_fw1$scen <- "E"
+pdf_exit_E_fw1$scen <- "F"
+pdf_exit_F_fw1$scen <- "D"
 #pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1)
 #pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1)
-pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_C_fw1,pdf_exit_F_fw1)
+pdf_exited_all <- rbind(pdf_exit_A_fw1,pdf_exit_B_fw1,pdf_exit_C_fw1,pdf_exit_D_fw1,pdf_exit_E_fw1,pdf_exit_F_fw1)
 
 bin_size_path <- 200
 pdf_exit_A_fw1_path <- pdfxn(exited_particles_A, max(exited_particles_A$path_len), bin_size_path, column = "path_len")
@@ -324,24 +324,26 @@ var_spath_F <- var_bin_fxn(exited_particles_F, max(exited_particles_F$age), var_
 var_spath_A$scen <- "A"
 var_spath_B$scen <- "B"
 var_spath_C$scen <- "C"
-var_spath_D$scen <- "D"
-var_spath_E$scen <- "E"
-var_spath_F$scen <- "F"
-#var_bin_all <- rbind(var_spath_A,var_spath_B,var_spath_C)
-#var_bin_all <- rbind(var_spath_A,var_spath_C,var_spath_F)
-var_bin_all <- rbind(var_spath_A,var_spath_D,var_spath_E)
-#var_bin_all <- rbind(var_spath_A,var_spath_B,var_spath_C,var_spath_D,var_spath_E,var_spath_F)
+var_spath_D$scen <- "E"
+var_spath_E$scen <- "F"
+var_spath_F$scen <- "D"
+var_bin_1 <- rbind(var_spath_A,var_spath_B,var_spath_C,var_spath_F)
+var_bin_1 <- var_bin_1[which(var_bin_1$count > 9),]
+var_bin_2 <- rbind(var_spath_A,var_spath_D,var_spath_E)
+var_bin_2 <- var_bin_2[which(var_bin_2$count > 9),]
+var_bin_all <- rbind(var_spath_A,var_spath_B,var_spath_C,var_spath_D,var_spath_E,var_spath_F)
 var_bin_all <- var_bin_all[which(var_bin_all$count > 9),]
 
-var_bin_fig <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line(size = 1) + #geom_point(size =0.5) + 
+var_bin_fig <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line(size = 0.75) + #geom_point(size =0.5) + 
   scale_x_continuous(name="Saturated age (yr)",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
   ggtitle("Variance of saturated lengths of exited particles") + 
   scale_y_log10(name=bquote('Variance of saturated path lengths ('*m^2*')'), expand=c(0,0), limits = c(1000,1000000000), breaks = c(1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
-  scale_color_manual(values = c("black","dodgerblue","green3"))  + labs(color = "Scenario") +
+  #scale_color_manual(values = c("black","firebrick","dodgerblue","green3"))  + labs(color = "Scenario") +
+  scale_color_manual(values = c("black","darkorange","purple"))  + labs(color = "Scenario") +
   expand_limits(x = 10, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black", size = 16)) +
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=10),axis.text.y = element_text(color="black", size = 10)) +
   theme(axis.title.y = element_text(color="black",face='bold'))
 var_bin_fig
 
@@ -349,24 +351,49 @@ var_bin_poster <- ggplot(data = var_bin_all, aes(x = sat_age,y = variance, group
   scale_x_continuous(name="",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
   ggtitle("") + 
   scale_y_log10(name="", expand=c(0,0), limits = c(1000,1000000000), breaks = c(1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
+  scale_color_manual(values = c("black","firebrick","dodgerblue","green3","darkorange","purple"), guide = guide_legend(ncol = 2))  + labs(color = "Scenario") +
+  expand_limits(x = 10, y = 0) + theme_bw() + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "right",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black", size = 12)) +
+  theme(axis.title.y = element_text(color="black",face='bold'))
+var_bin_poster
+
+var_bin_pub1 <- ggplot(data = var_bin_1, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line(size = 1) + #geom_point(size =0.5) + 
+  scale_x_continuous(name="",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
+  ggtitle("") + 
+  scale_y_log10(name="", expand=c(0,0), limits = c(1000,1000000000), breaks = c(1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
+  scale_color_manual(values = c("black","firebrick","dodgerblue","green3"))  + labs(color = "Scenario") +
+  expand_limits(x = 10, y = 0) + theme_bw() + 
+  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=14),axis.text.y = element_text(color="black", size = 14)) +
+  theme(axis.title.y = element_text(color="black",face='bold'))
+var_bin_pub1
+
+var_bin_pub2 <- ggplot(data = var_bin_2, aes(x = sat_age,y = variance, group=scen,col = scen)) + geom_line(size = 1) + #geom_point(size =0.5) + 
+  scale_x_continuous(name="",limits = c(0,800), breaks=c(0,100,200,300,400,500,600,700,800),labels = scales::comma,expand=c(0,0)) +
+  ggtitle("") + 
+  scale_y_log10(name="", expand=c(0,0), limits = c(1000,1000000000), breaks = c(1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000)) +  
   scale_color_manual(values = c("black","darkorange","purple"))  + labs(color = "Scenario") +
   expand_limits(x = 10, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black", size = 16)) +
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=14),axis.text.y = element_text(color="black", size = 14)) +
   theme(axis.title.y = element_text(color="black",face='bold'))
-var_bin_poster
+var_bin_pub2
+
+grid.arrange(var_bin_pub1,var_bin_pub2, nrow = 1)
 
 
-pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen), size = 1.25) +
-  scale_x_log10(name="Age (years)",limits = c(3,800), breaks = c(3,25,50,100,200,400,600,800,1000),labels = scales::comma,expand=c(0,0)) +
-  ggtitle("PDF of saturated ages") + 
-  scale_y_continuous(name="Density", expand=c(0,0), breaks = seq(0,0.1,0.005), limits = c(0,0.07)) +
-  scale_color_manual(values = c("black","darkorange","purple"))  + labs(color = "Scenario") +
+pdf_fig1 <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen), size = 0.75) +
+  scale_x_log10(name="",limits = c(3,800), breaks = c(3,25,50,100,200,400,600,800,1000),labels = scales::comma,expand=c(0,0)) +
+  scale_y_continuous(name="", expand=c(0,0), breaks = seq(0,0.1,0.01), limits = c(0,0.07)) +
+  scale_color_manual(values = c("black","firebrick","dodgerblue","green3","darkorange","purple"))  + labs(color = "Scenario") +
   expand_limits(x = 100, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="black"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16))
+        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12))
 pdf_fig1
 
 pdf_fig_poster <- ggplot() + geom_line(data = pdf_exited_all, aes(x = sat_age,y = Density_pdf, group=scen,col = scen), size = 1.25) +

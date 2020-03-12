@@ -203,7 +203,7 @@ cell_avg_scatterD <- ggplot() + geom_point(data = cell_avg_D, aes(x = sat_age,y 
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),legend.text = element_text(color="black",size=12,face = "bold")) + 
   geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed", size = 1) + 
   geom_abline(slope = lmres_D$coefficients[2]/1000, intercept = lmres_D$coefficients[1]/1000, col="darkorange", linetype = "dashed", size = 1)
 cell_avg_scatterD
@@ -218,7 +218,7 @@ cell_avg_scatterE <- ggplot() + geom_point(data = cell_avg_E, aes(x = sat_age,y 
   expand_limits(x = 0, y = 0) + theme_bw() + 
   theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=16),axis.text.y = element_text(color="black",size=16),legend.text = element_text(color="black",size=12,face = "bold")) + 
+        title =element_text(size=20, face='bold'),axis.text.x = element_text(color="black",size=12),axis.text.y = element_text(color="black",size=12),legend.text = element_text(color="black",size=12,face = "bold")) + 
   geom_abline(slope = lmres_A$coefficients[2]/1000, intercept = lmres_A$coefficients[1]/1000, col="black", linetype = "dashed", size = 1) + 
   geom_abline(slope = lmres_D$coefficients[2]/1000, intercept = lmres_D$coefficients[1]/1000, col="darkorange", linetype = "dashed", size = 1) +
   geom_abline(slope = lmres_E$coefficients[2]/1000, intercept = lmres_E$coefficients[1]/1000, col="purple", linetype = "dashed", size = 1)
@@ -226,6 +226,9 @@ cell_avg_scatterE
 
 
 grid.arrange(cell_avg_scatterA, cell_avg_scatterD,cell_avg_scatterE,var_bin_fig, nrow = 2,top = "Scatter plots of cell-averaged saturated particle path lengths and ages for Scenarios A, D, and E")
+grid.arrange(cell_avg_scatterA, cell_avg_scatterB,cell_avg_scatterC,cell_avg_scatterF, cell_avg_scatterD,cell_avg_scatterE, nrow = 2)
+
+
 
 ### age vs. dtw
 ggplot() + geom_point(data = cell_avg_C, aes(x = age,y = dtw,color=path_len),alpha = 1)
@@ -254,23 +257,51 @@ deeplyr_bins <- matrix(c(-2.5,-1.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,9.5,11.5,12.5
 col_num <- which(colnames(deeplyr_A)=="deeplyr")
 deeplyr_A$deeplyr_bins <- cut(deeplyr_A[,col_num], c(deeplyr_bins), include.lowest = TRUE)
 summary(deeplyr_A$deeplyr_bins)
-deeplyr_plotE <- ggplot() + geom_tile(data = deeplyr_E, aes(x = X,y = Y, fill = factor(deeplyr_bins)), color="gray") + 
+deeplyr_plotA <- ggplot() + geom_tile(data = deeplyr_A, aes(x = X,y = Y, fill = factor(deeplyr_bins)), color="gray",size = 0.05) + 
+  #scale_fill_manual(values=c("gray50","white","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
+  scale_fill_manual(values=c("gray50","white",brewer.pal(11, "Spectral")[1],brewer.pal(11, "Spectral")), guide = guide_legend(reverse = TRUE, ncol = 4),
+                      labels=c("NA","Outside of Domain","> 600","400 - 600","300 - 400","200 - 300","150 - 200","100 - 150","60 - 100","20 - 60","10 - 20","2 - 10","0 - 2")) +
+  scale_x_continuous(name="",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  labs(fill = "Maximum flowpath depth (m)") + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=10),legend.text = element_text(color="black",size=10),
+        axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank()) + 
+  ggtitle("")
+deeplyr_plotA
+
+deeplyr_plotD <- ggplot() + geom_tile(data = deeplyr_D, aes(x = X,y = Y, fill = factor(deeplyr_bins)), color="gray",size = 0.05) + 
   #scale_fill_manual(values=c("gray50","white","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
   scale_fill_manual(values=c("gray50","white",brewer.pal(11, "Spectral")), guide = guide_legend(reverse = TRUE, ncol = 4),
-                      labels=c("NA","Outside of Basin","600 - 800","400 - 600","300 - 400","200 - 300","150 - 200","100 - 150","60 - 100","20 - 60","10 - 20","2 - 10","0 - 2")) +
-  #scale_fill_manual(values=c("gray50","white","black","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
-  #                  labels=c("NA","Outside of Basin","> 800","600-800","400-600","300-400","200-300","150-200","100-150","60-100","20-60","10-20","2-10","0-2")) +
-  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
-  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+                    labels=c("NA","Outside of Domain","> 600","400 - 600","300 - 400","200 - 300","150 - 200","100 - 150","60 - 100","20 - 60","10 - 20","2 - 10","0 - 2")) +
+  scale_x_continuous(name="",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
   labs(fill = "Maximum flowpath depth (m)") + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
         legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
-        title =element_text(size=12, face='bold'),axis.text.x = element_text(color="black",size=8),axis.text.y = element_text(color="black",size=8),legend.text = element_text(color="black",size=12)) + 
+        title =element_text(size=10),legend.text = element_text(color="black",size=10),
+        axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank()) + 
+  ggtitle("")
+deeplyr_plotD
+
+deeplyr_plotE <- ggplot() + geom_tile(data = deeplyr_E, aes(x = X,y = Y, fill = factor(deeplyr_bins)), color="gray",size = 0.05) + 
+  #scale_fill_manual(values=c("gray50","white","purple4","purple","darkred","firebrick1","orangered3","orange","yellow", "chartreuse","cyan","cyan4","navy"),
+  scale_fill_manual(values=c("gray50","white",brewer.pal(11, "Spectral")), guide = guide_legend(reverse = TRUE, ncol = 4),
+                    labels=c("NA","Outside of Domain","> 600","400 - 600","300 - 400","200 - 300","150 - 200","100 - 150","60 - 100","20 - 60","10 - 20","2 - 10","0 - 2")) +
+  scale_x_continuous(name="",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
+  scale_y_continuous(name="",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
+  labs(fill = "Maximum flowpath depth (m)") + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position = "none",
+        legend.background = element_rect(linetype="solid", colour ="white"),plot.margin = margin(5,15,5,5),
+        title =element_text(size=10),legend.text = element_text(color="black",size=10),
+        axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank()) + 
   ggtitle("")
 deeplyr_plotE
 
+
 #grid.arrange(deeplyr_plotA, deeplyr_plotD,deeplyr_plotE, nrow = 1,top = "Maps of maximum depth of particle below ground surface for Scenarios A, D, and E")
-grid.arrange(deeplyr_plotD,deeplyr_plotE, nrow = 1)
+grid.arrange(deeplyr_plotA,deeplyr_plotD,deeplyr_plotE, nrow = 1)
 
 
 ## box plot preparation

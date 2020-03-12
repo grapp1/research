@@ -101,6 +101,37 @@ write.table(domain_riv, file = "/Users/grapp/Desktop/working/workflow/domain_riv
 
 
 
+### 20200304 creation of domain for paper - uses above domain_riv file
+dem_pr_grid_melt <- melt(dem_pr_grid)
+
+domain_riv_dem <- domain_riv
+
+count <- 0
+for(i in 121030:nrow(domain_riv_dem)){
+  if(domain_riv_dem$X91.70.20[i] == 1){
+    rownum <- (i-121030)
+    domain_riv_dem$X91.70.20[i] <- dem_pr_grid_melt[rownum,2]
+    count <- count + 1
+  }
+}
+for(i in 1:121030){
+  if(domain_riv_dem$X91.70.20[i] == 1){
+    domain_riv_dem$X91.70.20[i] <- 9999
+  }
+}
+for(i in 1:nrow(domain_riv_dem)){
+  if(domain_riv_dem$X91.70.20[i] == 2){
+    domain_riv_dem$X91.70.20[i] <- 0
+  }
+}
+print(count)
+unique(domain_riv$X91.70.20)
+
+write.table(domain_riv_dem, file = "/Users/grapp/Desktop/working/workflow/domain_riv_dem.sa", row.names = FALSE, col.names = FALSE, quote = FALSE)
+## add header, run file.conversion.tcl and then vtk_example.tcl
+
+
+
 
 
 

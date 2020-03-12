@@ -142,6 +142,70 @@ wt_dtw_binplot2 <- ggplot(wt_elev.df3, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw
 wt_dtw_binplot2
 
 
+
+
+# dtw maps for paper
+wt_dtw_pubA <- ggplot(wt_A_v5_991.df, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw_cuts), colour = "black", size = 0.05) + labs(fill = "Depth to Water (m)") +
+  scale_fill_manual(values=c("midnightblue",plot2_colors[2:11],"white"), guide = guide_legend(ncol = 12),
+                    labels=c("                                 ","                                 ","                                 ","                                 ","                                 ","                                 ","                                 ","                                 ","                                 ",
+                             "                                 ","                                 ","                                 ")) +
+  scale_x_continuous(name="",expand=c(0,0)) + 
+  scale_y_continuous(name="",expand=c(0,0)) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.text = element_text(color="black",size=10),axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank())
+wt_dtw_pubA
+
+wt_dtw_pubB <- ggplot(wt_B_v4_1037.df, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw_cuts), colour = "black", size = 0.05) + labs(fill = "Depth to Water (m)") +
+  scale_fill_manual(values=c("midnightblue",plot2_colors[2:11],"white"),
+                    labels=c("< 0","0 - 2","2 - 5","5 - 10","10 - 20","20 - 50","50 - 100","100 - 200","200 - 300","300 - 400","> 400","Outside of Main Basin")) +
+  scale_x_continuous(name="",expand=c(0,0)) + 
+  scale_y_continuous(name="",expand=c(0,0)) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.text = element_text(color="black",size=12),axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank())
+wt_dtw_pubB
+
+wt_dtw_pubC <- ggplot(wt_C_v4_1036.df, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw_cuts), colour = "black", size = 0.05) + labs(fill = "Depth to Water (m)") +
+  scale_fill_manual(values=c("midnightblue",plot2_colors[2:11],"white"),
+                    labels=c("< 0","0 - 2","2 - 5","5 - 10","10 - 20","20 - 50","50 - 100","100 - 200","200 - 300","300 - 400","> 400","Outside of Main Basin")) +
+  scale_x_continuous(name="",expand=c(0,0)) + 
+  scale_y_continuous(name="",expand=c(0,0)) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.text = element_text(color="black",size=12),axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank())
+wt_dtw_pubC
+
+wt_dtw_pubD <- ggplot(wt_D_v4_993.df, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw_cuts), colour = "black", size = 0.05) + labs(fill = "Depth to Water (m)") +
+  scale_fill_manual(values=c("midnightblue",plot2_colors[2:10],"white"),
+                    labels=c("< 0","0 - 2","2 - 5","5 - 10","10 - 20","20 - 50","50 - 100","100 - 200","200 - 300","300 - 400","> 400","Outside of Main Basin")) +
+  scale_x_continuous(name="",expand=c(0,0)) + 
+  scale_y_continuous(name="",expand=c(0,0)) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.text = element_text(color="black",size=12),axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank())
+wt_dtw_pubD
+
+wt_dtw_pubE <- ggplot(wt_E_v1_1552.df, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw_cuts), colour = "black", size = 0.05) + labs(fill = "Depth to Water (m)") +
+  scale_fill_manual(values=c("midnightblue",plot2_colors[2:10],"white"),
+                    labels=c("< 0","0 - 2","2 - 5","5 - 10","10 - 20","20 - 50","50 - 100","100 - 200","200 - 300","300 - 400","> 400","Outside of Main Basin")) +
+  scale_x_continuous(name="",expand=c(0,0)) + 
+  scale_y_continuous(name="",expand=c(0,0)) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.text = element_text(color="black",size=12),axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank())
+wt_dtw_pubE
+
+wt_dtw_pubF <- ggplot(wt_F_v1_997.df, aes(X.x, Y.x)) + geom_tile(aes(fill = dtw_cuts), colour = "black", size = 0.05) + labs(fill = "Depth to Water (m)") +
+  scale_fill_manual(values=c("midnightblue",plot2_colors[2:11],"white"),
+                    labels=c("< 0","0 - 2","2 - 5","5 - 10","10 - 20","20 - 50","50 - 100","100 - 200","200 - 300","300 - 400","> 400","Outside of Main Basin")) +
+  scale_x_continuous(name="",expand=c(0,0)) + 
+  scale_y_continuous(name="",expand=c(0,0)) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.text = element_text(color="black",size=12),axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank())
+wt_dtw_pubF
+
+grid.arrange(wt_dtw_pubA,wt_dtw_pubB,wt_dtw_pubC,wt_dtw_pubF,wt_dtw_pubD,wt_dtw_pubE, nrow = 2)
+
+
+
+
+
 wt_elev.df3$wt_elev[wt_elev.df3$flowpath == 0] <- 9999
 wt_elev.df3$wt_elev_cuts <- cut(wt_elev.df3$wt_elev, c(1200,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,Inf), include.lowest = TRUE)
 levels(wt_elev.df3$wt_elev_cuts)
