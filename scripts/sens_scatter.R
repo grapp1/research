@@ -25,5 +25,11 @@ sens_fig <- sens_fig %>% layout(scene = list(xaxis = list(title = 'Discharge'),
 
 sens_fig
 
+col2rgb("firebrick")
+col2rgb("dodgerblue")
+col2rgb("green3")
+col2rgb("orange")
+col2rgb("purple")
+
 
 
