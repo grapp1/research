@@ -196,14 +196,15 @@ colnames(stream_soil.df)[3] <- "Y"
 
 ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = avg_elev), color="gray")
 
+load("~/research/domain/stream_soil_df.Rda")
+
 soil_fig <- ggplot() + geom_tile(data = stream_soil.df, aes(x = X,y = Y, fill = factor(soil_depth)), color="gray") + 
-  scale_fill_manual(values=c("white","bisque4","orange","red","blue","black"),
+  scale_fill_manual(values=c("white","bisque4",brewer.pal(5, "YlOrBr")[2:5]),
                     labels = c("Outside of Main Basin","0.1","0.4","1.0","2.0","4.0")) +
-  scale_x_continuous(name="X (m)",expand=c(0,0),breaks=c(seq(0,8200,1000)),labels = scales::comma) + 
-  scale_y_continuous(name="Y (m)",expand=c(0,0),breaks=c(seq(0,6000,1000)),labels = scales::comma) +
-  ggtitle("Soil depth map for Scenario F") + labs(fill = "Soil depth (m)") + theme_bw() +
-  theme(panel.border = element_rect(colour = "black", size=1, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1),legend.position = c(0.9, 0.88),
-        legend.background = element_rect(linetype="solid", colour ="black"))
+  scale_x_continuous(name="",expand=c(0,0)) + 
+  scale_y_continuous(name="",expand=c(0,0)) + theme_bw() +
+  theme(panel.border = element_rect(colour = "black", size=0.5, fill=NA), panel.grid.major = element_line(colour="grey", size=0.1), legend.position="none",
+        legend.text = element_text(color="black",size=10),axis.ticks.x=element_blank(),axis.ticks.y=element_blank(),axis.text.x=element_blank(),axis.text.y=element_blank())
 soil_fig
 
 ggsave("~/research/domain/soil_depth_ScenF_20191016_v4.tiff",plot = soil_fig, width = (1150/300), height = (802/300), units = "in",dpi = 300)
